@@ -1,9 +1,9 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity('tb_user')
 export class User extends BaseEntity {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('increment')
     user_idx!: number;
 
     @Column()
@@ -11,6 +11,9 @@ export class User extends BaseEntity {
 
     @Column()
     user_pw: string;
+    
+    @Column({unique:true})
+    user_phone: string;
 
     @Column()
     user_info: string;

@@ -14,6 +14,9 @@ export class CreateUserDto {
     readonly user_pw: string;
 
     @IsString()
+    readonly user_phone: string;
+
+    @IsString()
     readonly user_info: string;
 
     @IsString()
