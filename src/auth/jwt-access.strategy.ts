@@ -1,19 +1,18 @@
 import { Inject, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
-// import { Strategy } from "passport-local";
 import { jwtConfig } from "./auth.config";
 import { Repository } from "typeorm";
 import { User } from "src/user/entities/user.entity";
 
 @Injectable()       // JwtStrategy Class를 다른 곳에서 DI(Depoendency Injection)를 통해 이용할 수 있게 구성
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtAccessStrategy extends PassportStrategy(Strategy) {
 
-    private logger = new Logger('jwt.strategy.ts');
+    private logger = new Logger('jwt-access.strategy.ts');
 
     constructor(@Inject('USER_REPOSITORY') private userRepository: Repository<User>) {      // PassportStrategy를 상속한 JwtStrategy의 생성자 UserRepository를 호출
         super({     // JWT를 가져온 뒤 secret를 이용해서 유효한 값인지 검증하는 구성
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),       // Request Header에서 Bearer auth 뽑아내기
             ignoreEpiration: false,
             secretOrKey: jwtConfig.secret,
         });
@@ -25,8 +24,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         const user: User = await this.userRepository.findOne({
             select: ['user_idx', 'user_id', 'user_phone', 'user_info', 'user_createdate'],      // 보여줄 데이터만 추출
             where: {user_id : user_id}      // 조건
-        });        // 존재하는 아이디인지 검사
-        if(!user) {
+        });
+        if(!user) {     // 존재하는 아이디인지 검사
             throw new UnauthorizedException(`존재하지 않는 회원입니다. 입력한 ID : ${user_id}`);
         }
         return user;

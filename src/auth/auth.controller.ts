@@ -2,7 +2,6 @@ import { Body, Controller, HttpStatus, Logger, Post, Req, Request, Res, UseGuard
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @ApiTags('로그인')
@@ -18,8 +17,12 @@ export class AuthController {
     async loginUser(@Body() loginAuthDto: LoginAuthDto, @Res() res) {
         this.logger.log('클라이언트에서 전달 된 값 : ', loginAuthDto);
         const loginAuth: {message: string, data: string, statusCode: number} = await this.authService.loginUser(loginAuthDto);
+        if (loginAuth.statusCode === 200) {     // 로그인 성공시 RefreshToken도 함께 발급
+            this.authService.setRefreshToken(loginAuthDto, res);
+        }
         return res.status(HttpStatus.OK).json(loginAuth);       // res.status()를 호출해서 200에 대한 내용 전달 + service단에서 만든 데이터를 JSON 형태도 전달
     }
+
 
     @Post('test')
     @UseGuards(JwtAuthGuard)

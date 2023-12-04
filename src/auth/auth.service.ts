@@ -19,7 +19,7 @@ export class AuthService {
             const findUser = await this.userRepository.findOne({select:['user_id', 'user_pw'], where:{user_id:user_id}});       // select통해 해당 값만 가져오고 where로 user_id 검색
             if(findUser && (await bcrypt.compare(user_pw, findUser.user_pw))) {     // 해당하는 값이 있는지 검사
                 const payload = {user_id};      // payload 상수형 변수에 id값을 넣어줌
-                const accessToken = await this.jwtService.sign(payload);        // payload 변수 값을 보내 전자 서명이 이루어지게 하고, 이를 accessToken 상수형 변수에 넣어줌
+                const accessToken = await this.jwtService.sign(payload, {expiresIn: '60s'});        // payload 변수 값을 보내 전자 서명이 이루어지게 하고, 이를 accessToken 상수형 변수에 넣어줌
                 return {message: `로그인 성공`, data: accessToken, statusCode: 200};
             } else {
                 this.logger.log('로그인에 실패하였습니다.');
@@ -30,6 +30,15 @@ export class AuthService {
             this.logger.error(`에러내용 : ${error}`);
             throw new InternalServerErrorException('로그인 시도중 문제 발생');
         }
+    }
+
+    // RefreshToken 발급
+    async setRefreshToken(loginAuthDto: LoginAuthDto, res) {
+        const {user_id, user_pw} = loginAuthDto;
+        const payload = {user_id};
+        const refreshToken = this.jwtService.sign(payload, {expiresIn: '2w'});
+        res.cookie('refreshToken', refreshToken, {httpOnly: true});
+        return;
     }
 
 }
