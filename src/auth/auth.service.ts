@@ -32,6 +32,14 @@ export class AuthService {
         }
     }
 
+    // AccessToken 발급
+    async getAccessToken(loginAuthDto: LoginAuthDto) {
+        const {user_id, user_pw} = loginAuthDto;
+        const payload = {user_id};
+        const accessToken = this.jwtService.sign(payload, {expiresIn: '60s'});
+        return accessToken;
+    }
+
     // RefreshToken 발급
     async setRefreshToken(loginAuthDto: LoginAuthDto, res) {
         const {user_id, user_pw} = loginAuthDto;

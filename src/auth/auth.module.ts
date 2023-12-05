@@ -7,6 +7,7 @@ import { PassportModule } from '@nestjs/passport';
 import { jwtConfig } from './auth.config';
 import { JwtAccessStrategy } from './jwt-access.strategy';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 
 @Module({
     imports: [
@@ -17,7 +18,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
             signOptions: {expiresIn: '60s'}     // Token 만료 시간 (* 현재 service단에서 직접 설정하였음)
         })],
     controllers: [AuthController],
-    providers: [AuthService, JwtAuthGuard, JwtAccessStrategy],      // JwtAccessStrategy 추가
-    exports: [JwtAccessStrategy, PassportModule]      // JwtAccessStrategy, PassportModule 추가
+    providers: [AuthService, JwtAuthGuard, JwtAccessStrategy, JwtRefreshStrategy],      // JwtAccessStrategy, JwtRefreshToken 추가
+    exports: [JwtAccessStrategy, JwtRefreshStrategy, PassportModule]      // JwtAccessStrategy, JwtRefreshToken, PassportModule 추가
 })
 export class AuthModule { }
