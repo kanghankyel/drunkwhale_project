@@ -1,12 +1,11 @@
 import { Body, Controller, Get, HttpStatus, Logger, Post, Req, Request, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 
-@ApiTags('로그인')
+@ApiTags('AUTH 모듈')
 @Controller('auth')
 export class AuthController {
 
@@ -15,6 +14,7 @@ export class AuthController {
     private logger = new Logger('auth.controller.ts');
 
     // 로그인
+    @ApiOperation({summary:'로그인', description:'로그인'})
     @Post('login')
     async loginUser(@Body() loginAuthDto: LoginAuthDto, @Res() res) {
         this.logger.log('클라이언트에서 전달 된 값 : ', loginAuthDto);
@@ -26,6 +26,8 @@ export class AuthController {
     }
 
     // 토큰 재발급
+    @ApiOperation({summary:'토큰재발급', description:'토큰재발급'})
+    @ApiBearerAuth()
     @Post('refresh')
     @UseGuards(AuthGuard('refresh'))
     async refresh(@Req() req, @Res({passthrough: true}) res) {
@@ -43,16 +45,16 @@ export class AuthController {
     }
 
 
-    @Post('test')
-    @UseGuards(JwtAuthGuard)
-    test(@Req() req, @Res() res) {
-        // console.log('요청값 확인 : ', req);
-        if(req.user) {
-            this.logger.log('회원 정보 : ' + req.user);
-            return res.json({user: req.user});
-        }
-        return res.json({});
-    }
+    // @Post('test')
+    // @UseGuards(JwtAuthGuard)
+    // test(@Req() req, @Res() res) {
+    //     console.log('요청값 확인 : ', req);
+    //     if(req.user) {
+    //         this.logger.log('회원 정보 : ' + req.user);
+    //         return res.json({user: req.user});
+    //     }
+    //     return res.json({});
+    // }
 
 
 }

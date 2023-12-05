@@ -3,16 +3,17 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
-@ApiTags('회원 가입,조회,수정,삭제')
+@ApiTags('USER 모듈')
 @Controller('user')
 export class UserController {
 
   constructor(private readonly userService: UserService) {}
 
   // 회원 생성
+  @ApiOperation({summary:'회원가입', description:'회원가입'})
   @Post('signin')
   async createUser(@Body() createUserDto: CreateUserDto): Promise<CreateUserDto> {
     const saltOrRounds = 10;    // jwt Salt값
@@ -22,6 +23,8 @@ export class UserController {
   }
 
   // 로그인한 회원 마이페이지
+  @ApiOperation({summary:'마이페이지', description:'마이페이지 (나의정보)'})
+  @ApiBearerAuth()
   @Get('myinfo')
   @UseGuards(JwtAuthGuard)
   async myinfo(@Req() req) {

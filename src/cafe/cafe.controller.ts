@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CafeService } from './cafe.service';
 import { CreateCafeDto } from './dto/create-cafe.dto';
 import { UpdateCafeDto } from './dto/update-cafe.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('CAFE 모듈')
 @Controller('cafe')
 export class CafeController {
 
