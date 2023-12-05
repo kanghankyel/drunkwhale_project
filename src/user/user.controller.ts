@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('회원 가입,조회,수정,삭제')
 @Controller('user')
@@ -19,6 +20,16 @@ export class UserController {
     const user = {...createUserDto, user_pw: hashedPassword};
     return this.userService.createUser(user);
   }
+
+  // 로그인한 회원 마이페이지
+  @Get('myinfo')
+  @UseGuards(JwtAuthGuard)
+  async myinfo(@Req() req) {
+    const user_id = req.user.user_id;
+    const userinfo = await this.userService.findUserInfo(user_id);
+    return userinfo;
+  }
+  
 
   // // 회원 전체 조회
   // @Get()

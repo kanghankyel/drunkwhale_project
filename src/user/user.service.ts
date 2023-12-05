@@ -38,14 +38,17 @@ export class UserService {
   //   return await this.userRepository.find();
   // }
 
-  // // 회원 하나 조회
-  // async findOneUser(user_id: string): Promise<User> {
-  //   const userdata = await this.userRepository.findOne({where:{user_id}});   // 해당 데이터 검색
-  //   if(!userdata) {
-  //     throw new NotFoundException(`해당 ID는 존재하지 않습니다. 입력하신 ID : ${user_id}`);    // 일치하지 않는 값 입력시 오류 반환
-  //   }
-  //   return await this.userRepository.findOne({where:{user_id}});
-  // }
+  // 회원 정보 하나 검색 (마이페이지)
+  async findUserInfo(user_id: string): Promise<User> {
+    const userdata = await this.userRepository.findOne({
+      select: {user_id:true, user_phone:true, user_info:true},
+      where:{user_id},
+    });   // 해당 데이터 검색
+    if(!userdata) {
+      throw new NotFoundException(`해당 ID는 존재하지 않습니다. 입력된 ID : ${user_id}`);    // 일치하지 않는 값 입력시 오류 반환
+    }
+  return userdata;
+  }
 
   // // 회원 수정
   // async updateUser(user_idx: number, updateUserDto: UpdateUserDto): Promise<User> {
