@@ -10,25 +10,27 @@ export class CreateUserDto {
 
     @ApiProperty({description:'회원 아이디'})
     @IsString()
-    @IsNotEmpty()
-    readonly user_id: string;
+    readonly user_id: string | null;
 
     @ApiProperty({description:'회원 비밀번호'})
     @IsString()
-    readonly user_pw: string;
+    readonly user_pw: string | null;
+
+    @ApiProperty({description:'회원 이름'})
+    @IsString()
+    readonly user_name: string | null;
 
     @ApiProperty({description:'회원 전화번호'})
-    @IsNotEmpty()
     @IsString()
-    readonly user_phone: string;
+    readonly user_phone: string | null;
 
     @ApiProperty({description:'회원 이메일'})
     @IsString()
-    readonly user_email: string;
+    readonly user_email: string | null;
 
     @ApiProperty({description:'회원 정보'})
     @IsString()
-    readonly user_info: string;
+    readonly user_info: string | null;
 
     @ApiProperty({description:'회원 생성일'})
     @IsString()

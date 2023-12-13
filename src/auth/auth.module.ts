@@ -8,6 +8,7 @@ import { jwtConfig } from './auth.config';
 import { JwtAccessStrategy } from './jwt-access.strategy';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtRefreshStrategy } from './jwt-refresh.strategy';
+import { JwtGoogleStrategy } from './jwt-oauth-google.strategy';
 
 @Module({
     imports: [
@@ -15,10 +16,10 @@ import { JwtRefreshStrategy } from './jwt-refresh.strategy';
         PassportModule,     // Passport모듈 import
         JwtModule.register({
             secret: jwtConfig.secret,       // Token을 만들 때 이용하는 비밀 값
-            signOptions: {expiresIn: '60s'}     // Token 만료 시간 (* 현재 service단에서 직접 설정하였음)
+            signOptions: {expiresIn: '1h'}     // Token 만료 시간 (* 현재 service단에서 직접 설정하였음)
         })],
     controllers: [AuthController],
-    providers: [AuthService, JwtAuthGuard, JwtAccessStrategy, JwtRefreshStrategy],      // JwtAccessStrategy, JwtRefreshToken 추가
-    exports: [JwtAccessStrategy, JwtRefreshStrategy, PassportModule]      // JwtAccessStrategy, JwtRefreshToken, PassportModule 추가
+    providers: [AuthService, JwtAuthGuard, JwtAccessStrategy, JwtRefreshStrategy, JwtGoogleStrategy],      // JwtAccessStrategy, JwtRefreshToken 추가
+    exports: [JwtAccessStrategy, JwtRefreshStrategy, JwtGoogleStrategy, PassportModule]      // JwtAccessStrategy, JwtRefreshToken, PassportModule 추가
 })
 export class AuthModule { }

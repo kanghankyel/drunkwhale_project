@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { OauthCreateuserDto } from 'src/auth/dto/oauth-createuser.dto';
 
 @Injectable()
 export class UserService {
@@ -11,7 +12,7 @@ export class UserService {
 
   // 회원 생성
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const {user_idx, user_id, user_pw, user_phone, user_email, user_info, user_createdate} = createUserDto;
+    const {user_idx, user_id, user_pw, user_name, user_phone, user_email, user_info, user_createdate} = createUserDto;
     const usercheck = await this.userRepository.findOne({where:{user_phone}});
     if(usercheck) {
       throw new ConflictException(`이미 등록된 회원입니다. 입력하신 번호 : ${user_phone}`);    // 중복된 전화번호 체크
@@ -20,6 +21,7 @@ export class UserService {
         user_idx,
         user_id,
         user_pw,
+        user_name,
         user_phone,
         user_email,
         user_info,
@@ -27,11 +29,6 @@ export class UserService {
     });
     await this.userRepository.save(result);   // 저장하고 반환
     return result;
-  }
-
-  // 로그인시 사용될 회원 조회
-  async findOneUser(user_id: string): Promise<User> {
-    return await this.userRepository.findOne({where:{user_id}});
   }
 
   // // 회원 전체 조회

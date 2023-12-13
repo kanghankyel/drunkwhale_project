@@ -15,6 +15,11 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsOptional()
     user_pw?: string;
 
+    @ApiProperty({description:'회원 이름'})
+    @IsString()
+    @IsOptional()
+    user_name?: string;
+
     @ApiProperty({description:'회원 전화번호'})
     @IsString()
     @IsOptional()

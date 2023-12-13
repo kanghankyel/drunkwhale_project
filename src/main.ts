@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import * as passport from 'passport';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,6 +18,15 @@ async function bootstrap() {
 
   // cookie-parser 설정
   app.use(cookieParser());
+
+  // Passport 초기화 추가
+  app.use(passport.initialize());
+
+  // CORS 활성화
+  app.enableCors({
+    origin: 'http://localhost:3001',
+    credentials: true,
+  });
 
   await app.listen(3000);
 }

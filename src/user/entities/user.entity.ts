@@ -6,19 +6,22 @@ export class User extends BaseEntity {
     @PrimaryGeneratedColumn('increment')
     user_idx!: number;
 
-    @Column()
+    @Column({nullable:true})
     user_id: string;
 
-    @Column()
+    @Column({nullable:true})
     user_pw: string;
+
+    @Column({nullable:true})
+    user_name: string;
     
-    @Column({unique:true})
+    @Column({unique:true, nullable:true})
     user_phone: string;
 
-    @Column()
+    @Column({nullable:true})
     user_email: string;
 
-    @Column()
+    @Column({nullable:true})
     user_info: string;
 
     @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
