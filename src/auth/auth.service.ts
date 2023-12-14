@@ -34,15 +34,17 @@ export class AuthService {
         }
     }
 
-    // 소셜 회원가입&로그인
-    async oAuthLogin(profile) {
+    // 소셜 회원가입 & 로그인
+    async oAuthLogin(profile, clientIP) {
         this.logger.debug(profile);
         this.logger.debug(profile.user_email);
         const user = await this.userRepository.findOne({where:{user_email: profile.user_email}});
         if(!user) {     // 일치하는 회원없을 시 회원가입 진행
             const newUser = await this.userRepository.create({
+                user_id: 'google_' + profile.user_id,
                 user_name: profile.user_name,
-                user_email: profile.user_email
+                user_email: profile.user_email,
+                user_ip: clientIP,
             });
             await this.userRepository.save(newUser);
             return newUser;

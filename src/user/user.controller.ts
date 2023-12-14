@@ -15,10 +15,11 @@ export class UserController {
   // 회원 생성
   @ApiOperation({summary:'회원가입', description:'회원가입'})
   @Post('signin')
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<CreateUserDto> {
+  async createUser(@Body() createUserDto: CreateUserDto, @Req() req): Promise<CreateUserDto> {
     const saltOrRounds = 10;    // jwt Salt값
     const hashedPassword = await bcrypt.hash(createUserDto.user_pw, saltOrRounds);    // bcrypt 사용 비밀번호 암호화
-    const user = {...createUserDto, user_pw: hashedPassword};
+    const clientIP = req.ip;    // 가입자의 IPv6 가져오기
+    const user = {...createUserDto, user_pw: hashedPassword, user_ip: clientIP};    // 입력된 정보와, 암호화된 비밀번호, ip를 전송
     return this.userService.createUser(user);
   }
 

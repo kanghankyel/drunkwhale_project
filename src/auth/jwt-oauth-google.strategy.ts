@@ -20,10 +20,11 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
     async validate(accessToken, refreshToken, profile: Profile) {      // 인증결과를 받는 부분
         if(!profile.emails){
-            this.logger.error(`해당 porfile의 email이 없습니다.`);
+            this.logger.error(`해당 profile의 email이 없습니다.`);
         }
         console.log(profile);
         return {
+            user_id: profile.id,
             user_name: profile.displayName,
             user_email: profile.emails[0].value
         };

@@ -22,7 +22,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy) {
         this.logger.log(`PassportStrategy를 상속한 JwtAccessStrategy의 validate(payload)를 호출. 매개변수로 들어온 값 : ${payload}`);
         const {user_id} = payload;      // Client에서 전달된 JWT Payload에서 회원 아이디를 추출
         const user: User = await this.userRepository.findOne({
-            select: ['user_idx', 'user_id', 'user_phone', 'user_info', 'user_createdate'],      // 보여줄 데이터만 추출
+            select: ['user_idx', 'user_id', 'user_name', 'user_phone', 'user_email', 'user_birth', 'user_gender', 'user_postcode', 'user_add', 'user_adddetail', 'user_status', 'user_createdate', 'user_updatedate'],      // 보여줄 데이터만 추출
             where: {user_id : user_id}      // 조건
         });
         if(!user) {     // 존재하는 아이디인지 검사

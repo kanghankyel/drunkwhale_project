@@ -67,7 +67,8 @@ export class AuthController {
     @Get('login/google/redirect')
     @UseGuards(AuthGuard('google'))
     async googleRedirect(@Req() req, @Res() res) {
-        const user = await this.authService.oAuthLogin(req.user);
+        const clientIP = req.ip;        // 회원 Ip정보 추가로 받기
+        const user = await this.authService.oAuthLogin(req.user, clientIP);
         const token = this.authService.setOAuthRefreshToken(user, res);
         this.logger.log(`소셜로그인 정보 :  ${user.user_email}`);
         res.redirect('http://localhost:3000/');

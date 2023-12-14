@@ -25,7 +25,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
         this.logger.log(`PassportStrategy를 상속한 JwtRefreshStrategy의 validate(payload)를 호출. 매개변수로 들어온 값 : ${payload}`);
         const {user_id} = payload;
         const user: User = await this.userRepository.findOne({
-            select: ['user_idx', 'user_id', 'user_phone', 'user_info', 'user_createdate'],
+            select: ['user_idx', 'user_id', 'user_name', 'user_phone', 'user_email', 'user_birth', 'user_gender', 'user_postcode', 'user_add', 'user_adddetail', 'user_status', 'user_createdate', 'user_updatedate'],
             where: {user_id : user_id}
         });
         if(!user) {
