@@ -3,12 +3,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { request } from 'http';
+import { Role } from 'src/role/entities/role.entity';
+import { RoleService } from 'src/role/role.service';
 
 @Injectable()
 export class UserService {
 
-  constructor(@Inject('USER_REPOSITORY') private userRepository: Repository<User>) {};
+  constructor(
+    @Inject('USER_REPOSITORY') private userRepository: Repository<User>, 
+    @Inject('ROLE_REPOSITORY') private roleRepository: Repository<Role>,
+    private roleService: RoleService,
+    ) {};
 
   // 회원 생성
   async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -17,33 +22,22 @@ export class UserService {
     if(usercheck) {
       throw new ConflictException(`이미 등록된 회원입니다. 입력하신 번호 : ${user_id}`);    // 중복된 아이디 체크
     }
-    const result = this.userRepository.create({
+    const user = this.userRepository.create({
         user_id,
         user_pw,
         user_name,
         user_email,
         user_ip,
     });
-    await this.userRepository.save(result);   // 저장하고 반환
-    return result;
+    await this.userRepository.save(user);   // 저장하고 반환
+    await this.roleService.createDefaultRole(user);   // 기본권한 지급
+    return user;
   }
 
   // // 회원 전체 조회
   // async findAllUser(): Promise<User[]> {
   //   return await this.userRepository.find();
   // }
-
-  // 회원 정보 하나 검색 (마이페이지)
-  async findUserInfo(user_id: string): Promise<User> {
-    const userdata = await this.userRepository.findOne({
-      select: {user_id:true, user_phone:true, user_email:true},
-      where:{user_id},
-    });   // 해당 데이터 검색
-    if(!userdata) {
-      throw new NotFoundException(`해당 ID는 존재하지 않습니다. 입력된 ID : ${user_id}`);    // 일치하지 않는 값 입력시 오류 반환
-    }
-  return userdata;
-  }
 
   // // 회원 수정
   // async updateUser(user_idx: number, updateUserDto: UpdateUserDto): Promise<User> {

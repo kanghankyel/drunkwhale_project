@@ -23,15 +23,35 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 
     async validate(payload: any) {      // 검증 성공시 실행, 실패시 에러   * Passport는 validate에 성공할시 리턴값을 request.user에 저장
         this.logger.log(`PassportStrategy를 상속한 JwtRefreshStrategy의 validate(payload)를 호출. 매개변수로 들어온 값 : ${payload}`);
+        console.log(payload);
         const {user_id} = payload;
         const user: User = await this.userRepository.findOne({
-            select: ['user_idx', 'user_id', 'user_name', 'user_phone', 'user_email', 'user_birth', 'user_gender', 'user_postcode', 'user_add', 'user_adddetail', 'user_status', 'user_createdate', 'user_updatedate'],
+            relations: ['roles'],
+            select: ['user_idx', 'user_id', 'user_name', 'user_phone', 'user_email', 'user_birth', 'user_gender', 'user_postcode', 'user_add', 'user_adddetail', 'user_status', 'user_createdate', 'user_updatedate', 'roles'],
             where: {user_id : user_id}
         });
         if(!user) {
             throw new UnauthorizedException(`존재하지 않는 회원입니다. 입력한 ID : ${user_id}`);
         }
-        return user;
+
+        const modifiedUser = {
+            user_idx: user.user_idx,
+            user_id: user.user_id,
+            user_name: user.user_name,
+            user_phone: user.user_phone,
+            user_email: user.user_email,
+            user_birth: user.user_birth,
+            user_gender: user.user_gender,
+            user_postcode: user.user_postcode,
+            user_add: user.user_add,
+            user_adddetail: user.user_adddetail,
+            user_status: user.user_status,
+            user_createdate: user.user_createdate,
+            user_updatedate: user.user_updatedate,
+            roles: user.roles.map(role => role.role_type),
+        };
+
+        return modifiedUser;
     }
 
 }

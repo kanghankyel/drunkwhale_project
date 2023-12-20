@@ -1,4 +1,5 @@
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
+import { Role } from "src/role/entities/role.entity";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('tb_user')
 export class User extends BaseEntity {
@@ -50,5 +51,8 @@ export class User extends BaseEntity {
 
     @DeleteDateColumn({type: 'timestamp', default: null, nullable: true})
     user_deletedate: string;
+
+    @OneToMany(type => Role, role => role.user)     // {eager: true}
+    roles?: any[];
 
 }

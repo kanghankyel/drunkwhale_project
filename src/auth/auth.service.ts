@@ -6,17 +6,25 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/user.service';
 import { OauthCreateuserDto } from './dto/oauth-createuser.dto';
+import { RoleService } from 'src/role/role.service';
+import { Role } from 'src/role/entities/role.entity';
 
 @Injectable()
 export class AuthService {
 
-    constructor(@Inject('USER_REPOSITORY') private userRepository: Repository<User>, private jwtService: JwtService, private userService: UserService) {};
+    constructor(
+        @Inject('USER_REPOSITORY') private userRepository: Repository<User>, 
+        @Inject('ROLE_REPOSITORY') private roleRepository: Repository<Role>,
+        private jwtService: JwtService, 
+        private userService: UserService,
+        private roleService: RoleService,
+        ) {};
 
     private logger = new Logger('auth.service.ts');
 
     // 로그인
-    async loginUser(loginAuthDto: LoginAuthDto): Promise<{message: string, data: string, statusCode: number}> {     // Promise<많은 변수>로 Method 반환
-        const {user_id, user_pw} = loginAuthDto;
+    async loginUser(user: User): Promise<{message: string, data: string, statusCode: number}> {     // Promise<많은 변수>로 Method 반환
+        const {user_id, user_pw} = user;
         try {
             const findUser = await this.userRepository.findOne({select:['user_id', 'user_pw'], where:{user_id:user_id}});       // select통해 해당 값만 가져오고 where로 user_id 검색
             if(findUser && (await bcrypt.compare(user_pw, findUser.user_pw))) {     // 해당하는 값이 있는지 검사
@@ -47,23 +55,24 @@ export class AuthService {
                 user_ip: clientIP,
             });
             await this.userRepository.save(newUser);
+            await this.roleService.createDefaultRole(newUser);      // 기본 권한 지급
             return newUser;
         }
         return user;
     }
 
     // AccessToken 발급
-    async getAccessToken(loginAuthDto: LoginAuthDto) {
-        const {user_id, user_pw} = loginAuthDto;
-        const payload = {user_id};
+    async getAccessToken(user: User) {
+        const {user_id, roles} = user;
+        const payload = {user_id, roles};
         const accessToken = this.jwtService.sign(payload, {expiresIn: '1h'});
         return accessToken;
     }
 
     // RefreshToken 발급
-    async setRefreshToken(loginAuthDto: LoginAuthDto, res) {
-        const {user_id, user_pw} = loginAuthDto;
-        const payload = {user_id};
+    async setRefreshToken(user: User, res) {
+        const {user_id, roles} = user;
+        const payload = {user_id, roles};
         const refreshToken = this.jwtService.sign(payload, {expiresIn: '30d'});
         res.cookie('refreshToken', refreshToken, {httpOnly: true});
         return refreshToken;

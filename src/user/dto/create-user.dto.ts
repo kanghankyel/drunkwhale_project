@@ -68,4 +68,7 @@ export class CreateUserDto {
     @IsString()
     readonly user_deletedate: string | null;
 
+    @IsString({each: true})
+    readonly roles: string[] | null;
+
 }
