@@ -1,14 +1,9 @@
 import { Body, Controller, Get, HttpStatus, Logger, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LoginAuthDto } from './dto/login-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { RolesGuard } from 'src/role/role.guard';
-import { Roles } from 'src/role/role.decorator';
-import { RoleEnum } from 'src/role/role.enum';
 
 @ApiTags('AUTH 모듈')
 @Controller('auth')
@@ -75,10 +70,14 @@ export class AuthController {
     async googleRedirect(@Req() req, @Res() res) {
         const clientIP = req.ip;        // 회원 Ip정보 추가로 받기
         const user = await this.authService.oAuthLogin(req.user, clientIP);
-        const token = this.authService.setOAuthRefreshToken(user, res);
+        const hasInfo = await this.authService.checkUserInfo(user);     // 회원 서브정보 체크
+        const token = this.authService.setRefreshToken(user, res);
         this.logger.log(`소셜로그인 정보 :  ${user.user_email}`);
-        res.redirect('http://localhost:3000/');
+        if(hasInfo) {
+            res.redirect('http://localhost:3000/');     // 서브정보가 있으면 localhost:3000/로 리다이렉트
+        } else {
+            res.redirect(`http://localhost:3000/user/moreinfo/${user.user_id}`);        // 서브정보가 없으면 localhost:3000/user/moreinfo로 리다이렉트
+        }
     }
-
 
 }

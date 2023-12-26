@@ -2,10 +2,9 @@ import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestj
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { LoginAuthDto } from './dto/login-auth.dto';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/user.service';
-import { OauthCreateuserDto } from './dto/oauth-createuser.dto';
+// import { OauthCreateuserDto } from './dto/oauth-createuser.dto';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/entities/role.entity';
 
@@ -61,6 +60,14 @@ export class AuthService {
         return user;
     }
 
+    // 가입된 회원의 서브정보가 있는지 확인
+    async checkUserInfo(user: User) {
+        if(!user.user_phone) {
+            return false;
+        }
+        return true;
+    }
+
     // AccessToken 발급
     async getAccessToken(user: User) {
         const {user_id, roles} = user;
@@ -79,13 +86,13 @@ export class AuthService {
     }
 
     // 소설로그인 RefreshToken 발급
-    async setOAuthRefreshToken(oAuthCreateuserDto: OauthCreateuserDto, res) {
-        const {user_email} = oAuthCreateuserDto;
-        const payload = {user_email};
-        const refreshToken = this.jwtService.sign(payload, {expiresIn: '30d'});
-        res.cookie('refreshToken', refreshToken, {httpOnly: true});
-        return refreshToken;
-    }
+    // async setOAuthRefreshToken(oAuthCreateuserDto: OauthCreateuserDto, res) {
+    //     const {user_email} = oAuthCreateuserDto;
+    //     const payload = {user_email};
+    //     const refreshToken = this.jwtService.sign(payload, {expiresIn: '30d'});
+    //     res.cookie('refreshToken', refreshToken, {httpOnly: true});
+    //     return refreshToken;
+    // }
 
     // async kakaoLogin({req, res}) {
     //     let user = await this.userService.findOneUserGoogle(req.user.user_email);

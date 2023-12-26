@@ -1,10 +1,11 @@
 import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { RoleService } from 'src/role/role.service';
+import { InputUserDto } from './dto/input-user.dto';
 
 @Injectable()
 export class UserService {
@@ -34,32 +35,23 @@ export class UserService {
     return user;
   }
 
-  // // 회원 전체 조회
-  // async findAllUser(): Promise<User[]> {
-  //   return await this.userRepository.find();
-  // }
+  // 회원가입 추가 정보기입
+  async inputUser(user_id: string, inputUserDto: InputUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({where:{user_id}});
+    if(!user) {
+      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_id}`);
+    }
+    // console.log('회원 추가정보 반영 전 : ', user);
+    user.user_phone = inputUserDto.user_phone;
+    user.user_birth = inputUserDto.user_birth;
+    user.user_gender = inputUserDto.user_gender;
+    user.user_postcode = inputUserDto.user_postcode;
+    user.user_add = inputUserDto.user_add;
+    user.user_adddetail = inputUserDto.user_adddetail;
+    // console.log('회원 추가정보 반영 후 : ', user);
+    const updatedUser = await this.userRepository.save(user);
+    // console.log('회원 추가정보 저장 후 : ', updatedUser);
+    return updatedUser;
+  }
 
-  // // 회원 수정
-  // async updateUser(user_idx: number, updateUserDto: UpdateUserDto): Promise<User> {
-  //   const userdata = await this.userRepository.findOne({where:{user_idx}});   // 해당 데이터 검색
-  //   if(!userdata) {
-  //     throw new NotFoundException(`해당 ID는 존재하지 않습니다. 입력하신 ID : ${user_idx}`);    // 일치하지 않는 값 입력시 오류 반환
-  //   }
-  //   await this.userRepository.update(user_idx, updateUserDto);    // 업데이트
-  //   return await this.userRepository.findOne({where:{user_idx}});   // 업데이트된 항목 반환
-  // }
-
-  // // 회원 삭제
-  // async removeUser(user_idx: number): Promise<any> {
-  //   try {
-  //     const userdata = await this.userRepository.findOne({where:{user_idx}});   // 해당 데이터 검색
-  //     if(!userdata) {
-  //       return {message: `해당하는 ID가 없습니다. 입력하신 ID : ${user_idx}`, error: true, statusCode: 404};    // 일치하지 않는 값 입력시 오류 반환
-  //     }
-  //     await this.userRepository.delete(user_idx);
-  //     return {message: `삭제가 완료되었습니다. 삭제된 ID : ${user_idx}`, deleted: true, error: false, statusCode: 200};    // 삭제 성공 여부 반환
-  //   } catch (error) {
-  //     return {message: '삭제에 실패하였습니다. 다시 시도해주십시오.', deleted: false, error: true, statusCode: 500};    // 삭제 실패 여부 반환
-  //   }
-  // }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Res, Put } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,6 +9,7 @@ import { RolesGuard } from 'src/role/role.guard';
 import { RoleEnum } from 'src/role/role.enum';
 import { User } from './entities/user.entity';
 import { Roles } from 'src/role/role.decorator';
+import { InputUserDto } from './dto/input-user.dto';
 
 @ApiTags('USER 모듈')
 @Controller('user')
@@ -29,6 +30,13 @@ export class UserController {
       user_ip: clientIP,    // 입력된 정보와, 암호화된 비밀번호, ip를 전송
     };
     return this.userService.createUser(user);
+  }
+
+  // 회원가입 추가 정보기입
+  @ApiOperation({summary:'회원추가정보', description:'회원추가정보'})
+  @Patch('moreinfo/:user_id')
+  async inputUser(@Param('user_id') user_id: string, @Body() inputUserDto: InputUserDto) {
+    return this.userService.inputUser(user_id, inputUserDto);
   }
 
   // 로그인한 회원(ROLE_USER) 마이페이지
@@ -53,27 +61,4 @@ export class UserController {
     return userinfo;
   }
   
-  // // 회원 전체 조회
-  // @Get()
-  // findAllUser() {
-  //   return this.userService.findAllUser();
-  // }
-
-  // // 회원 하나 조회
-  // @Get(':user_id')
-  // findOneUser(@Param('user_id') user_id: string) {
-  //   return this.userService.findOneUser(user_id);
-  // }
-
-  // // 회원 수정
-  // @Patch(':user_idx')
-  // updateUser(@Param('user_idx') user_idx: number, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.userService.updateUser(user_idx, updateUserDto);
-  // }
-
-  // // 회원 삭제
-  // @Delete(':user_idx')
-  // removeUser(@Param('user_idx') user_idx: number) {
-  //   return this.userService.removeUser(user_idx);
-  // }
 }

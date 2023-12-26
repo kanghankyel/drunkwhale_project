@@ -15,7 +15,7 @@ export const databaseProviders = [
                 // password: 'Gks@631401',
                 database: 'doggo',
                 entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-                synchronize: true,
+                synchronize: true,      // 배포시에는 false
                 logging: "all",
             });
 

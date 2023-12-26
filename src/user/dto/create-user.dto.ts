@@ -54,7 +54,7 @@ export class CreateUserDto {
 
     @ApiProperty({description:'회원 상태'})
     @IsString()
-    readonly user_status: string | null;
+    readonly user_status: string;
 
     @ApiProperty({description:'회원 생성일'})
     @IsString()
