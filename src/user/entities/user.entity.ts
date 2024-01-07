@@ -1,3 +1,4 @@
+import { Dog } from "src/dog/entities/dog.entity";
 import { Role } from "src/role/entities/role.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -57,5 +58,8 @@ export class User extends BaseEntity {
 
     @OneToMany(type => Role, role => role.user)     // {eager: true}
     roles?: any[];
+
+    @OneToMany(() => Dog, (dog) => dog.user)
+    dogs: Dog[];
 
 }

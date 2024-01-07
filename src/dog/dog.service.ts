@@ -1,26 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateDogDto } from './dto/create-dog.dto';
 import { UpdateDogDto } from './dto/update-dog.dto';
+import { Dog } from './entities/dog.entity';
+import { Repository } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class DogService {
-  create(createDogDto: CreateDogDto) {
-    return 'This action adds a new dog';
+
+  constructor(
+    @Inject('DOG_REPOSITORY') private dogRepository: Repository<Dog>,
+    @Inject('USER_REPOSITORY') private userRepository: Repository<User>
+  ) {};
+
+  private logger = new Logger('dog.service.ts');
+
+  async createDog(user_id: string, createDogDto: CreateDogDto) {
+    const user = await this.userRepository.findOne({where:{user_id}});
+    if(!user) {
+      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_id}`);
+    }
+    const dog = new Dog();
+    dog.dog_name = createDogDto.dog_name;
+    dog.dog_gender = createDogDto.dog_gender;
+    dog.dog_species = createDogDto.dog_species;
+    dog.dog_size = createDogDto.dog_size;
+    dog.dog_age = createDogDto.dog_age;
+    dog.dog_personality = createDogDto.dog_personality;
+    dog.dog_info = createDogDto.dog_info;
+    dog.dog_updatedate = null;
+    dog.user_idx = user.user_idx;
+    await this.dogRepository.save(dog);
+    this.logger.debug(JSON.stringify(user.user_id) + ' 님의 애완견정보입력 완료');
+    return dog;
   }
 
-  findAll() {
-    return `This action returns all dog`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} dog`;
-  }
-
-  update(id: number, updateDogDto: UpdateDogDto) {
-    return `This action updates a #${id} dog`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} dog`;
-  }
 }
