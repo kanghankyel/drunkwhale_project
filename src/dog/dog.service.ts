@@ -15,6 +15,7 @@ export class DogService {
 
   private logger = new Logger('dog.service.ts');
 
+  // 회원 반려동물 정보입력
   async createDog(user_id: string, createDogDto: CreateDogDto) {
     const user = await this.userRepository.findOne({where:{user_id}});
     if(!user) {
@@ -33,6 +34,12 @@ export class DogService {
     await this.dogRepository.save(dog);
     this.logger.debug(JSON.stringify(user.user_id) + ' 님의 애완견정보입력 완료');
     return dog;
+  }
+
+  // 회원 반려동물 정보보기(개인)
+  async getMyPets(user_idx: number) {
+    const dogs = await this.dogRepository.find({where:{user_idx: user_idx}});
+    return {pets: dogs};
   }
 
 }
