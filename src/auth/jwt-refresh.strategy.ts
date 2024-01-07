@@ -27,7 +27,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
         const {user_id} = payload;
         const user: User = await this.userRepository.findOne({
             relations: ['roles'],
-            select: ['user_idx', 'user_id', 'user_name', 'user_phone', 'user_email', 'user_birth', 'user_gender', 'user_postcode', 'user_add', 'user_adddetail', 'user_status', 'user_createdate', 'user_updatedate', 'roles'],
+            select: ['user_idx', 'user_id', 'user_name', 'user_nickname', 'user_phone', 'user_email', 'user_birth', 'user_gender', 'user_postcode', 'user_add', 'user_adddetail', 'user_status', 'user_createdate', 'user_updatedate', 'roles'],
             where: {user_id : user_id}
         });
         if(!user) {
@@ -38,6 +38,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
             user_idx: user.user_idx,
             user_id: user.user_id,
             user_name: user.user_name,
+            user_nickname: user.user_nickname,
             user_phone: user.user_phone,
             user_email: user.user_email,
             user_birth: user.user_birth,

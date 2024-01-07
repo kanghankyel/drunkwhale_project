@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Res, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Res, Put, Logger } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -16,6 +16,8 @@ import { InputUserDto } from './dto/input-user.dto';
 export class UserController {
 
   constructor(private readonly userService: UserService) {}
+
+  private logger = new Logger('user.controller.ts');
 
   // 회원 생성
   @ApiOperation({summary:'회원가입', description:'회원가입'})

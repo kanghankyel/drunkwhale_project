@@ -20,6 +20,10 @@ export class CreateUserDto {
     @IsString()
     readonly user_name: string | null;
 
+    @ApiProperty({description:'회원 닉네임'})
+    @IsString()
+    readonly user_nickname: string | null;
+
     @ApiProperty({description:'회원 전화번호'})
     @IsString()
     readonly user_phone: string | null;

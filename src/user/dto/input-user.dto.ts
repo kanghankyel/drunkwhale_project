@@ -4,6 +4,10 @@ import { CreateUserDto } from "./create-user.dto";
 
 export class InputUserDto extends PartialType(CreateUserDto) {
 
+    @ApiProperty({description:'회원 닉네임'})
+    @IsString()
+    user_nickname?: string;
+
     @ApiProperty({description:'회원 전화번호'})
     @IsString()
     user_phone: string;

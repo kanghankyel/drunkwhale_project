@@ -15,6 +15,9 @@ export class User extends BaseEntity {
 
     @Column({nullable: true})
     user_name: string;
+
+    @Column({nullable: true})
+    user_nickname: string;
     
     @Column({unique: true, nullable: true})
     user_phone: string;
@@ -40,7 +43,7 @@ export class User extends BaseEntity {
     @Column({nullable: true})
     user_adddetail: string;
 
-    @Column({default: 'I'})
+    @Column({default: 'A'})
     user_status: string;
 
     @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})

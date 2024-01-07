@@ -24,7 +24,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy) {
         const {user_id} = payload;      // Client에서 전달된 JWT Payload에서 회원 아이디를 추출
         const user: User = await this.userRepository.findOne({
             relations: ['roles'],
-            select: ['user_idx', 'user_id', 'user_name', 'user_phone', 'user_email', 'user_birth', 'user_gender', 'user_postcode', 'user_add', 'user_adddetail', 'user_status', 'user_createdate', 'user_updatedate', 'roles'],      // 보여줄 데이터만 추출
+            select: ['user_idx', 'user_id', 'user_name', 'user_nickname', 'user_phone', 'user_email', 'user_birth', 'user_gender', 'user_postcode', 'user_add', 'user_adddetail', 'user_status', 'user_createdate', 'user_updatedate', 'roles'],      // 보여줄 데이터만 추출
             where: {user_id : user_id}      // 조건
         });
         if(!user) {     // 존재하는 아이디인지 검사
@@ -36,6 +36,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy) {
             user_idx: user.user_idx,
             user_id: user.user_id,
             user_name: user.user_name,
+            user_nickname: user.user_nickname,
             user_phone: user.user_phone,
             user_email: user.user_email,
             user_birth: user.user_birth,

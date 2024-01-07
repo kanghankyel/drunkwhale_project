@@ -4,9 +4,10 @@ import { UserModule } from './user/user.module';
 import { CafeModule } from './cafe/cafe.module';
 import { AuthModule } from './auth/auth.module';
 import { RoleModule } from './role/role.module';
+import { DogModule } from './dog/dog.module';
 
 @Module({
-  imports: [DatabaseModule, UserModule, CafeModule, AuthModule, RoleModule],
+  imports: [DatabaseModule, UserModule, CafeModule, AuthModule, RoleModule, DogModule],
   controllers: [],
   providers: [],
 })
