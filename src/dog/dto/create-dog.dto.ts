@@ -26,7 +26,7 @@ export class CreateDogDto {
 
     @ApiProperty({description:'강아지 나이'})
     @IsString()
-    readonly dog_age: string | null;
+    readonly dog_birth: string | null;
 
     @ApiProperty({description:'강아지 성격'})
     @IsString()

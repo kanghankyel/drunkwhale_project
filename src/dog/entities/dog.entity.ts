@@ -20,7 +20,7 @@ export class Dog extends BaseEntity {
     dog_size: string;
 
     @Column({nullable: true})
-    dog_age: string;
+    dog_birth: string;
 
     @Column({nullable: true})
     dog_personality: string;

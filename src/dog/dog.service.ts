@@ -26,7 +26,7 @@ export class DogService {
     dog.dog_gender = createDogDto.dog_gender;
     dog.dog_species = createDogDto.dog_species;
     dog.dog_size = createDogDto.dog_size;
-    dog.dog_age = createDogDto.dog_age;
+    dog.dog_birth = createDogDto.dog_birth;
     dog.dog_personality = createDogDto.dog_personality;
     dog.dog_info = createDogDto.dog_info;
     dog.dog_updatedate = null;
