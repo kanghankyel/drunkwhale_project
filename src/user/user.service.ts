@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Not, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
-// import { RoleService } from 'src/role/role.service';
+import { RoleService } from 'src/role/role.service';
 import { InputUserDto } from './dto/input-user.dto';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class UserService {
   constructor(
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>, 
     @Inject('ROLE_REPOSITORY') private roleRepository: Repository<Role>,
-    // private roleService: RoleService,
+    private roleService: RoleService,
     ) {};
   
   private logger = new Logger('user.service.ts');
@@ -33,7 +33,7 @@ export class UserService {
         user_ip,
     });
     await this.userRepository.save(user);   // 저장하고 반환
-    // await this.roleService.createDefaultRole(user);   // 기본권한 지급
+    await this.roleService.createDefaultRole(user);   // 기본권한 지급
     return user;
   }
 
