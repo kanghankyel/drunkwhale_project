@@ -9,7 +9,7 @@ import { RoleService } from 'src/role/role.service';
 @Module({
   imports: [DatabaseModule, RoleModule],
   controllers: [UserController],
-  providers: [...userRepository, UserService, RoleService],
+  providers: [...userRepository, UserService, /*RoleService*/],
   exports: [...userRepository, UserService],
 })
 export class UserModule {}
