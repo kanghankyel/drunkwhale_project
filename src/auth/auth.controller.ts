@@ -60,7 +60,8 @@ export class AuthController {
     @Get('login/google')
     @UseGuards(AuthGuard('google'))
     async googleAuth(@Req() req, @Res() res) {
-        res.redirect('http://localhost:3000/auth/login/google/redirect');
+        // res.redirect('http://localhost:3000/auth/login/google/redirect');
+        res.redirect('/auth/login/google/redirect');
     }
 
     // OAuth 소셜로그인 & 회원가입
@@ -74,9 +75,11 @@ export class AuthController {
         const token = this.authService.setRefreshToken(user, res);
         this.logger.log(`소셜로그인 정보 :  ${user.user_email}`);
         if(hasInfo) {
-            res.redirect('http://localhost:3000/');     // 서브정보가 있으면 localhost:3000/로 리다이렉트
+            // res.redirect('http://localhost:3000/');     // 서브정보가 있으면 localhost:3000/로 리다이렉트
+            res.redirect('/');
         } else {
-            res.redirect(`http://localhost:3000/user/moreinfo/${user.user_id}`);        // 서브정보가 없으면 localhost:3000/user/moreinfo로 리다이렉트
+            // res.redirect(`http://localhost:3000/user/moreinfo/${user.user_id}`);        // 서브정보가 없으면 localhost:3000/user/moreinfo로 리다이렉트
+            res.redirect(`/user/moreinfo/${user.user_id}`);
         }
     }
 

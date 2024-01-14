@@ -28,6 +28,9 @@ export class Dog extends BaseEntity {
     @Column({nullable: true})
     dog_info: string;
 
+    @Column({default: 'A'})
+    dog_status: string;
+
     @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     dog_createdate: string;
 

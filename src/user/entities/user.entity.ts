@@ -1,5 +1,6 @@
 import { Dog } from "src/dog/entities/dog.entity";
 import { Role } from "src/role/entities/role.entity";
+import { Store } from "src/store/entities/store.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('tb_user')
@@ -61,5 +62,8 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Dog, (dog) => dog.user)
     dogs: Dog[];
+
+    @OneToMany(() => Store, (store) => store.user)
+    store: Store[];
 
 }

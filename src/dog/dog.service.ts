@@ -1,6 +1,5 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateDogDto } from './dto/create-dog.dto';
-import { UpdateDogDto } from './dto/update-dog.dto';
 import { Dog } from './entities/dog.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
@@ -37,8 +36,12 @@ export class DogService {
   }
 
   // 회원 반려동물 정보보기(개인)
-  async getMyPets(user_idx: number) {
-    const dogs = await this.dogRepository.find({where:{user_idx: user_idx}});
+  async getMyPets(user_id: string) {
+    const user = await this.userRepository.findOne({where:{user_id}});
+    if(!user) {
+      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_id}`);
+    }
+    const dogs = await this.dogRepository.find({where:{user_idx: user.user_idx}});    // 회원테이블의 user_id에 해당하는 user_idx를 가져와서 강아지테이블의 user_idx에 대입하여 해당 정보 추출.
     return {pets: dogs};
   }
 

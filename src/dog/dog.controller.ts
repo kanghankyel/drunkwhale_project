@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards } from '@nestjs/common';
 import { DogService } from './dog.service';
 import { CreateDogDto } from './dto/create-dog.dto';
-import { UpdateDogDto } from './dto/update-dog.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/role/role.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -29,11 +28,11 @@ export class DogController {
   // 회원 반려동물 정보보기(개인)
   @ApiOperation({summary:'반려동물 정보보기(개인)', description:'반려동물 정보보기(개인)'})
   @ApiBearerAuth()
-  @Get('/mypet/:user_idx')
+  @Get('/mypet/:user_id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async myPets(@Param('user_idx') user_idx: number) {
-    return this.dogService.getMyPets(user_idx);
+  async myPets(@Param('user_id') user_id: string) {
+    return this.dogService.getMyPets(user_id);
   }
 
 }
