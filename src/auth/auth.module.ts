@@ -11,6 +11,7 @@ import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 import { JwtGoogleStrategy } from './jwt-oauth-google.strategy';
 import { RoleService } from 'src/role/role.service';
 import { RoleModule } from 'src/role/role.module';
+import { JwtKakaoStrategy } from './jwt-social-kakao.strategy';
 
 @Module({
     imports: [
@@ -22,7 +23,7 @@ import { RoleModule } from 'src/role/role.module';
             signOptions: {expiresIn: '1h'}     // Token 만료 시간 (* 현재 service단에서 직접 설정하였음)
         })],
     controllers: [AuthController],
-    providers: [AuthService, RoleService, JwtAuthGuard, JwtAccessStrategy, JwtRefreshStrategy, JwtGoogleStrategy],      // JwtAccessStrategy, JwtRefreshToken 추가
-    exports: [JwtAccessStrategy, JwtRefreshStrategy, JwtGoogleStrategy, PassportModule]      // JwtAccessStrategy, JwtRefreshToken, PassportModule 추가
+    providers: [AuthService, RoleService, JwtAuthGuard, JwtAccessStrategy, JwtRefreshStrategy, JwtGoogleStrategy, JwtKakaoStrategy],      // JwtAccessStrategy, JwtRefreshToken 추가
+    exports: [JwtAccessStrategy, JwtRefreshStrategy, JwtGoogleStrategy, JwtKakaoStrategy, PassportModule]      // JwtAccessStrategy, JwtRefreshToken, PassportModule 추가
 })
 export class AuthModule { }

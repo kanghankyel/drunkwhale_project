@@ -7,6 +7,8 @@ import { UserService } from 'src/user/user.service';
 // import { OauthCreateuserDto } from './dto/oauth-createuser.dto';
 import { RoleService } from 'src/role/role.service';
 import { Role } from 'src/role/entities/role.entity';
+import { firstValueFrom } from 'rxjs';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -66,6 +68,17 @@ export class AuthService {
             return false;
         }
         return true;
+    }
+
+    // 이메일로 해당 회원이 있는지 검사
+    async checkUserEmail(kakaoEmail: string) {
+        const user = await this.userRepository.findOne({where:{user_email: kakaoEmail}});
+        // return !!user;
+        if(!user) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     // AccessToken 발급
