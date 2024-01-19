@@ -20,16 +20,22 @@ export class UserService {
 
   // 회원 생성
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const {user_id, user_pw, user_name, user_email, user_ip} = createUserDto;
-    const usercheck = await this.userRepository.findOne({where:{user_id}});
+    const {user_email, user_pw, user_name, user_nickname, user_phone, user_postcode, user_add, user_adddetail, user_birth, user_gender, user_ip} = createUserDto;
+    const usercheck = await this.userRepository.findOne({where:{user_email}});
     if(usercheck) {
-      throw new ConflictException(`이미 등록된 회원입니다. 입력하신 번호 : ${user_id}`);    // 중복된 아이디 체크
+      throw new ConflictException(`이미 등록된 회원입니다. 입력하신 번호 : ${user_email}`);    // 중복된 아이디 체크
     }
     const user = this.userRepository.create({
-        user_id,
+        user_email,
         user_pw,
         user_name,
-        user_email,
+        user_nickname,
+        user_phone,
+        user_postcode,
+        user_add,
+        user_adddetail,
+        user_birth,
+        user_gender,
         user_ip,
     });
     await this.userRepository.save(user);   // 저장하고 반환
@@ -38,10 +44,10 @@ export class UserService {
   }
 
   // 회원가입 추가 정보기입
-  async inputUser(user_id: string, inputUserDto: InputUserDto): Promise<User> {
-    const user = await this.userRepository.findOne({where:{user_id}});
+  async inputUser(user_email: string, inputUserDto: InputUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({where:{user_email}});
     if(!user) {
-      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_id}`);
+      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_email}`);
     }
     const inputPhone = inputUserDto.user_phone;
     const checkPhone = await this.userRepository.findOne({where:{user_phone:inputPhone}});

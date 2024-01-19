@@ -34,11 +34,12 @@ export class UserController {
     return this.userService.createUser(user);
   }
 
+  // 현재 소셜로그인 방식의 차이로 쓰이지 않음.
   // 회원가입 추가 정보기입
-  @ApiOperation({summary:'회원추가정보', description:'회원추가정보'})
-  @Patch('moreinfo/:user_id')
-  async inputUser(@Param('user_id') user_id: string, @Body() inputUserDto: InputUserDto) {
-    return this.userService.inputUser(user_id, inputUserDto);
+  @ApiOperation({summary:'회원필수정보 추가기입. 백엔드 전용. ###현재사용X', description:'회원필수정보 추가기입'})
+  @Patch('moreinfo/:user_email')
+  async inputUser(@Param('user_email') user_email: string, @Body() inputUserDto: InputUserDto) {
+    return this.userService.inputUser(user_email, inputUserDto);
   }
 
   // 로그인한 회원(ROLE_USER) 마이페이지

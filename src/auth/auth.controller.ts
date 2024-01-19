@@ -1,26 +1,31 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Logger, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Inject, Logger, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import axios from 'axios';
+import { userRepository } from 'src/user/user.repository';
+import { Repository } from 'typeorm';
 
 @ApiTags('AUTH 모듈')
 @Controller()
 export class AuthController {
 
-    constructor(private authService: AuthService, private userService: UserService) {}
+    constructor(
+        private authService: AuthService,
+        private userService: UserService,
+        @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
+        ) {}
 
     private logger = new Logger('auth.controller.ts');
 
     // 일반 로그인
     @ApiOperation({summary:'로그인', description:'로그인'})
-    @Post('auth/login')
+    @Post('login')
     async loginUser(@Body() user: User, @Res() res) {
-        this.logger.log(`클라이언트에서 전달 된 값 (아이디만) : ${user.user_id}`);
-        console.log(user);
-        const loginAuth: {message: string, data: string, statusCode: number} = await this.authService.loginUser(user);
+        this.logger.log(`클라이언트에서 전달 된 값 (아이디만) : ${user.user_email}`);
+        const loginAuth: {message: string, data: string, statusCode: number} = await this.authService.loginUser(user, res);
         if (loginAuth.statusCode === 200) {     // 로그인 성공시 RefreshToken도 함께 발급
             this.authService.setRefreshToken(user, res);
         }
@@ -35,10 +40,11 @@ export class AuthController {
     async refresh(@Req() req, @Res({passthrough: true}) res) {
         try {
             const user = req.user;
+            // const user = req.user.user_email;
             const accessToken = await this.authService.getAccessToken(user);
             const refreshToken = this.authService.setRefreshToken(user, res);
             res.cookie('refreshToken', refreshToken, {httpOnly: true});
-            this.logger.debug(`RefreshToken 발급 성공 - 사용자 : ${user.user_id}`);
+            this.logger.debug(`RefreshToken 발급 성공 - 사용자 : ${user.user_email}`);
             return {accessToken};
         } catch (error) {
             this.logger.error(`RefreshToken 발급 중 오류 : ${error.message}`);
@@ -51,25 +57,16 @@ export class AuthController {
     @Post('auth/logout')
     @UseGuards(AuthGuard('refresh'))
     logout(@Req() req, @Res() res) {
-        this.logger.log(`${req.user.user_id} 가 로그아웃 되었습니다.`);
+        this.logger.log(`${req.user.user_email} 가 로그아웃 되었습니다.`);
         res.clearCookie('refreshToken'); // 쿠키 삭제
         return res.send({result: '로그아웃완료'});
     }
-
-    // 순수 백엔드 카카오소셜로그인 로직. 현재는 프런트와 협의하에 사용하지 않음. (백엔드port:3000, 프론트엔드port:3001 기준)
-    // @Get('login-callback')
-    // @UseGuards(AuthGuard('kakao'))
-    // async kakaoCallback(@Req() req, @Res() res) {
-    //     const kakaoProfile = req.user?.profile;
-    //     this.logger.debug('auth.controller.ts에서 보여주는 kakaoProfile')
-    //     console.log(kakaoProfile);
-    // }
 
     // 카카오 소셜로그인
     @ApiOperation({summary:'소셜로그인(카카오)', description:'카카오소셜로그인. 회원유무검사 및 정보전송'})
     @Post('api/user/social-login')
     async kakaoCode(@Body() userToken, @Res() res) {        // 프론트에서 인가받은 코드 백에서 확인.
-        this.logger.debug(userToken);
+        this.logger.log(`프론트에서 전송된 카카오로그인 시 제공되는 코드 : ${userToken.token}`);
         const code = userToken.token;
         try {
             // 카카오로그인 '토큰 받기' 로직
@@ -84,53 +81,73 @@ export class AuthController {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
             });
-            // this.logger.debug(response.data);
-            const accessToken = response.data.access_token;
-            const refreshToken = response.data.refresh_token;
-            this.logger.debug('accessToken: ', accessToken);
-            this.logger.debug('refreshToken: ', refreshToken);
+            const kakaoAccessToken = response.data.access_token;
+            const kakaoRefreshToken = response.data.refresh_token;
+            this.logger.log(`카카오 AccessToken: ${kakaoAccessToken}`);
+            this.logger.log(`카카오 RefreshToken: ${kakaoRefreshToken}`);
 
             // 카카오 '사용자 정보 가져오기' 로직
             const userInfoResponse = await axios.get('https://kapi.kakao.com/v2/user/me', {
                 headers: {
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${kakaoAccessToken}`,
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
             });
-            // this.logger.debug(userInfoResponse.data.kakao_account);
             const kakaoName = userInfoResponse.data.kakao_account.name;
             const kakaoEmail = userInfoResponse.data.kakao_account.email;
             const kakaoPhone = userInfoResponse.data.kakao_account.phone_number;
-            this.logger.debug(kakaoName);
-            this.logger.debug(kakaoEmail);
-            this.logger.debug(kakaoPhone);
+            this.logger.log(`카카오코드애서 사용자 정보 추출 => {name:${kakaoName}, email:${kakaoEmail}, phone:${kakaoPhone}}`);
             
             // 카카오로그인한 회원이 데이터베이스 내에 있는지 검사
             const userCheckByEmail = await this.authService.checkUserEmail(kakaoEmail);
             if(userCheckByEmail) {
-                this.logger.debug(`이미 등록된 회원입니다. 입력된 카카오회원 : ${kakaoEmail}`);
-                return res.status(200);     // 해당 회원이 존재하면 프론트로 200코드 전송
+                this.logger.log(`이미 등록된 회원입니다. 입력된 카카오회원 : ${kakaoEmail}`);
+                const user = await this.userRepository.findOne({where:{user_email: kakaoEmail}});
+                const accessToken = await this.authService.getAccessToken(user);
+                const refreshToken = await this.authService.setRefreshToken(user, res);
+                this.logger.debug('카카오로그인 로직 후 발급하는 홈페이지 자체 accessToken : ', accessToken);
+                this.logger.debug('카카오로그인 로직 후 발급하는 홈페이지 자체 refreshToken : ', refreshToken);
+                res.header('Authorization', `Bearer ${accessToken}`);
+                res.cookie('refreshToken', refreshToken, {httpOnly: true});     // ####### 현재 refreshToken값 출력 잘되고, 쿠키로 전송이 되지만 크롬에서 확인하면 refreshToken의 value가 undefined가 되어있음. 원인 알 수 없음.
+                return res.status(200).json({data: accessToken});     // 해당 회원이 존재하면 프론트로 200코드 전송
             } else {
-                this.logger.debug(`등록되지 않은 회원입니다. 입력된 카카오회원 : ${kakaoEmail}`);
+                this.logger.log(`등록되지 않은 회원입니다. 입력된 카카오회원 : ${kakaoEmail}`);
                 return res.status(404).json({name:kakaoName, email:kakaoEmail, phone:kakaoPhone});      // 해당 회원이 존재하지 않으면 프론트로 404코드와 회원 정보 전송
             }
         } catch (error) {
-            this.logger.error('카카오로그인 중 서버 오류 발생 : ', error);
-            return res.status(500).send('카카오로그인 중 서버 오류 발생.');
+            if(error.response && error.response.status === 400) {
+                this.logger.error('카카오로그인 사용자 토큰 요청시 동일한 인가코드가 여러번 사용됨 : ', error);
+                return res.status(400).json({message: '카카오로그인 사용자 토큰 요청시 동일한 인가코드가 여러번 사용되었습니다. 인가코드는 일회용으로 사용자 토큰 요청시 매번 새로운 인가코드를 발급받아 사용해주셔야 합니다. 사용자 토큰 요청마다 새로운 인가코드를 사용하시면 문제를 해결하실 수 있습니다.'})
+            } else {
+                this.logger.error('카카오로그인 중 서버 오류 발생 : ', error);
+                return res.status(500).send('카카오로그인 중 서버 오류 발생');
+            }
         }
     }
 
+    // 순수 백엔드 카카오소셜로그인 로직. 현재는 프런트와 협의하에 사용하지 않음. (백엔드port:3000, 프론트엔드port:3001 기준)
+    @ApiOperation({summary:'소셜로그인(카카오) 백엔드 전용. ###현재사용X', description:'카카오소셜로그인. 회원유무검사 및 정보전송'})
+    @Get('login-callback')
+    @UseGuards(AuthGuard('kakao'))
+    async kakaoCallback(@Req() req, @Res() res) {
+        const kakaoProfile = req.user?.profile;
+        this.logger.debug('auth.controller.ts에서 보여주는 kakaoProfile')
+        console.log(kakaoProfile);
+    }
+
+    // 순수 백엔드 구글소셜로그인 로직. 현재는 프런트와 협의하에 사용하지 않음. (백엔드port:3000 기준 = 구글 Redirect URL)
     // 포트 3001번인지 3000인지 확인하고 redirect url도 동일한지 확인.
     // OAuth 소셜로그인(구글) 입력창
-    @ApiOperation({summary:'소셜로그인(구글)', description:'소셜로그인(구글)'})
+    @ApiOperation({summary:'소셜로그인(구글) 백엔드 전용. ###현재사용X', description:'소셜로그인(구글)'})
     @Get('login/google')
     @UseGuards(AuthGuard('google'))
     async googleAuth(@Req() req, @Res() res) {
         res.redirect('http://localhost:3000/auth/login/google/redirect');
     }
 
+    // 순수 백엔드 소셜로그인 로직. 현재는 프런트와 협의하에 사용하지 않음. (백엔드port:3000 기준 = Redirect URL)
     // OAuth 소셜로그인 & 회원가입
-    @ApiOperation({summary:'소셜로그인 리다이렉트', description:'소셜로그인 리다이렉트'})
+    @ApiOperation({summary:'소셜로그인 리다이렉트. 백엔드 전용. ###현재사용X', description:'소셜로그인 리다이렉트'})
     @Get('login/google/redirect')
     @UseGuards(AuthGuard('google'))
     async googleRedirect(@Req() req, @Res() res) {
@@ -142,7 +159,7 @@ export class AuthController {
         if(hasInfo) {
             res.redirect('http://localhost:3000/');     // 서브정보가 있으면 localhost:3000/로 리다이렉트
         } else {
-            res.redirect(`http://localhost:3000/user/moreinfo/${user.user_id}`);        // 서브정보가 없으면 localhost:3000/user/moreinfo로 리다이렉트
+            res.redirect(`http://localhost:3000/user/moreinfo/${user.user_email}`);        // 서브정보가 없으면 localhost:3000/user/moreinfo로 리다이렉트
         }
     }
 

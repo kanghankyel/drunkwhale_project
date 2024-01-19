@@ -8,9 +8,9 @@ export class CreateUserDto {
     @IsNotEmpty()
     readonly user_idx: number;
 
-    @ApiProperty({description:'회원 아이디'})
+    @ApiProperty({description:'회원 이메일'})
     @IsString()
-    readonly user_id: string | null;
+    readonly user_email: string | null;
 
     @ApiProperty({description:'회원 비밀번호'})
     @IsString()
@@ -27,10 +27,6 @@ export class CreateUserDto {
     @ApiProperty({description:'회원 전화번호'})
     @IsString()
     readonly user_phone: string | null;
-
-    @ApiProperty({description:'회원 이메일'})
-    @IsString()
-    readonly user_email: string | null;
 
     @ApiProperty({description:'회원 생년월일'})
     @IsString()

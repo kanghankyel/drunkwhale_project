@@ -10,7 +10,7 @@ export class User extends BaseEntity {
     user_idx!: number;      // '!' 느낌표가 붙은 거는 이 프로퍼티가 null 또는 undefined가 아니라는 것을 단언하는 것
 
     @Column({nullable: true})
-    user_id: string;
+    user_email: string;
 
     @Column({nullable: true})
     user_pw: string;
@@ -23,9 +23,6 @@ export class User extends BaseEntity {
     
     @Column({unique: true, nullable: true})
     user_phone: string;
-
-    @Column({nullable: true})
-    user_email: string;
 
     @Column({nullable: true})
     user_birth: string;

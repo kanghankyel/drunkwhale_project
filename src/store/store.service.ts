@@ -15,10 +15,10 @@ export class StoreService {
   private logger = new Logger('store.service.ts');
 
   // 사업자 스토어 신청
-  async requestStore(user_id: string, createStoreDto: CreateStoreDto) {
-    const user = await this.userRepository.findOne({where:{user_id}});
+  async requestStore(user_email: string, createStoreDto: CreateStoreDto) {
+    const user = await this.userRepository.findOne({where:{user_email}});
     if(!user) {
-      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_id}`)
+      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_email}`)
     }
     const store = new Store();
     store.store_name = createStoreDto.store_name;
@@ -31,7 +31,7 @@ export class StoreService {
     store.store_updatedate = null;
     store.user_idx = user.user_idx;
     await this.storeRepository.save(store);
-    this.logger.debug(JSON.stringify(user.user_id) + ' 님의 스토어 신청');
+    this.logger.debug(JSON.stringify(user.user_email) + ' 님의 스토어 신청');
     return store;
   }
 

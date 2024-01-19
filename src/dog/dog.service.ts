@@ -15,10 +15,10 @@ export class DogService {
   private logger = new Logger('dog.service.ts');
 
   // 회원 반려동물 정보입력
-  async createDog(user_id: string, createDogDto: CreateDogDto) {
-    const user = await this.userRepository.findOne({where:{user_id}});
+  async createDog(user_email: string, createDogDto: CreateDogDto) {
+    const user = await this.userRepository.findOne({where:{user_email}});
     if(!user) {
-      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_id}`);
+      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_email}`);
     }
     const dog = new Dog();
     dog.dog_name = createDogDto.dog_name;
@@ -31,17 +31,17 @@ export class DogService {
     dog.dog_updatedate = null;
     dog.user_idx = user.user_idx;
     await this.dogRepository.save(dog);
-    this.logger.debug(JSON.stringify(user.user_id) + ' 님의 애완견정보입력 완료');
+    this.logger.debug(JSON.stringify(user.user_email) + ' 님의 애완견정보입력 완료');
     return dog;
   }
 
   // 회원 반려동물 정보보기(개인)
-  async getMyPets(user_id: string) {
-    const user = await this.userRepository.findOne({where:{user_id}});
+  async getMyPets(user_email: string) {
+    const user = await this.userRepository.findOne({where:{user_email}});
     if(!user) {
-      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_id}`);
+      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_email}`);
     }
-    const dogs = await this.dogRepository.find({where:{user_idx: user.user_idx}});    // 회원테이블의 user_id에 해당하는 user_idx를 가져와서 강아지테이블의 user_idx에 대입하여 해당 정보 추출.
+    const dogs = await this.dogRepository.find({where:{user_idx: user.user_idx}});    // 회원테이블의 user_email에 해당하는 user_idx를 가져와서 강아지테이블의 user_idx에 대입하여 해당 정보 추출.
     return {pets: dogs};
   }
 

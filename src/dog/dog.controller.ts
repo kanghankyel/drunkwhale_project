@@ -18,21 +18,21 @@ export class DogController {
   // 회원 반려동물 정보입력
   @ApiOperation({summary:'반려견 정보입력', description:'반려견 정보입력'})
   @ApiBearerAuth()
-  @Post('/createdog/:user_id')
+  @Post('/createdog/:user_email')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async createDog(@Param('user_id') user_id: string, @Body() createDogDto: CreateDogDto) {
-    return this.dogService.createDog(user_id, createDogDto);
+  async createDog(@Param('user_email') user_email: string, @Body() createDogDto: CreateDogDto) {
+    return this.dogService.createDog(user_email, createDogDto);
   }
 
   // 회원 반려동물 정보보기(개인)
   @ApiOperation({summary:'반려동물 정보보기(개인)', description:'반려동물 정보보기(개인)'})
   @ApiBearerAuth()
-  @Get('/mypet/:user_id')
+  @Get('/mypet/:user_email')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async myPets(@Param('user_id') user_id: string) {
-    return this.dogService.getMyPets(user_id);
+  async myPets(@Param('user_email') user_email: string) {
+    return this.dogService.getMyPets(user_email);
   }
 
 }

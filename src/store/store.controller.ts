@@ -18,11 +18,11 @@ export class StoreController {
   // 사업자 스토어 신청
   @ApiOperation({summary:'스토어 신청정보입력', description:'스토어 신청정보입력'})
   @ApiBearerAuth()
-  @Post('request/:user_id')
+  @Post('request/:user_email')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async requestStore(@Param('user_id') user_id: string, @Body() createStoreDto: CreateStoreDto) {
-    return this.storeService.requestStore(user_id, createStoreDto);
+  async requestStore(@Param('user_email') user_email: string, @Body() createStoreDto: CreateStoreDto) {
+    return this.storeService.requestStore(user_email, createStoreDto);
   }
 
 }

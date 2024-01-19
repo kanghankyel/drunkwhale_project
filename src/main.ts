@@ -12,6 +12,7 @@ async function bootstrap() {
     .setTitle('갱쥐야 가자')
     .setDescription('GBSB 합동 프로젝트 ver01')
     .setVersion('1.0')
+    .addBearerAuth()    // swagger에서 Bearer토큰 입력창 사용할 수 있게 함.
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
