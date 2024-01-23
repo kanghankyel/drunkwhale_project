@@ -4,59 +4,81 @@ import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinCol
 @Entity('tb_store')
 export class Store extends BaseEntity {
 
-    @PrimaryGeneratedColumn()
+    // 스토어_고유번호
+    @PrimaryGeneratedColumn('increment')
     store_idx!: number;
 
-    @Column()
+    // 스토어_상호명
+    @Column({nullable: true})
     store_name: string;
 
-    @Column()
-    store_type: string;
+    // 스토어_사업자등록번호
+    @Column({nullable: true})
+    store_registnum: string;
 
-    @Column()
+    // 스토어_대표자명
+    @Column({nullable: true})
+    store_ownername: string;
+
+    // 스토어_사업자전화번호
+    @Column({nullable: true})
     store_phone: string;
 
-    @Column()
-    store_regist: string;
+    // 스토어_유형
+    @Column({nullable: true})
+    store_type: string;
 
-    @Column()
+    // 스토어_우편번호
+    @Column({nullable: true})
     store_postcode: string;
 
-    @Column()
+    // 스토어_주소
+    @Column({nullable: true})
     store_add: string;
 
-    @Column()
+    // 스토어_상세주소
+    @Column({nullable: true})
     store_adddetail: string;
 
-    @Column()
+    // 스토어_개장시간
+    @Column({nullable: true})
     store_opentime: string;
 
-    @Column()
+    // 스토어_마감시간
+    @Column({nullable: true})
     store_closetime: string;
 
-    @Column()
+    // 스토어_소개정보
+    @Column({nullable: true})
     store_info: string;
 
-    @Column({default: 1000})
+    // 스토어_점수
+    @Column({nullable: true, default: 0})
     store_score: number;
 
-    @Column({default: 'A'})
+    // 스토어_상태
+    @Column({nullable: true})
     store_status: string;
 
+    // 스토어_생성일
     @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     store_createdate!: string;
 
+    // 스토어_수정일
     @UpdateDateColumn({type: 'timestamp', default: null, nullable: true})
     store_updatedate: string;
 
+    // 스토어_삭제일
     @DeleteDateColumn({type: 'timestamp', default: null, nullable: true})
     store_deletedate: string;
 
-    @Column()
-    user_idx: number;
+    // 가맹주_이메일 (FK)
+    @Column({nullable: true})
+    user_email: string;
 
+    // 가맹주 JOIN
     @ManyToOne(() => User)
-    @JoinColumn({name: 'user_idx'})
+    @JoinColumn({name: 'user_email', referencedColumnName: 'user_email'})       // referencedColumnName를 하지 않으니 user_email컬럼 형태를 Integer로 구성하는 문제가 있음
     user: User;
 
 }

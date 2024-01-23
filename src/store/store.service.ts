@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { Repository } from 'typeorm';
 import { Store } from './entities/store.entity';
@@ -15,23 +15,34 @@ export class StoreService {
   private logger = new Logger('store.service.ts');
 
   // 사업자 스토어 신청
-  async requestStore(user_email: string, createStoreDto: CreateStoreDto) {
-    const user = await this.userRepository.findOne({where:{user_email}});
-    if(!user) {
-      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_email}`)
+  async requestStore(createStoreDto: CreateStoreDto) {
+    const {store_name, store_registnum, store_ownername, store_phone, store_type, store_postcode, store_add, store_adddetail, store_status, user_email} = createStoreDto;
+    const storeCheckInWithdrawn = await this.storeRepository.findOne({where:{store_registnum, store_status:'W'}});
+    if(storeCheckInWithdrawn) {
+      throw new ConflictException(`이미 신청대기중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`);
     }
-    const store = new Store();
-    store.store_name = createStoreDto.store_name;
-    store.store_type = createStoreDto.store_type;
-    store.store_phone = createStoreDto.store_phone;
-    store.store_regist = createStoreDto.store_regist;
-    store.store_postcode = createStoreDto.store_postcode;
-    store.store_add = createStoreDto.store_add;
-    store.store_adddetail = createStoreDto.store_adddetail;
-    store.store_updatedate = null;
-    store.user_idx = user.user_idx;
+    const storeCheckInActive = await this.storeRepository.findOne({where:{store_registnum, store_status:'A'}});
+    if(storeCheckInActive) {
+      throw new ConflictException(`이미 활동중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`);
+    }
+    // const storeCheckUser = await this.storeRepository.findOne({where:{user_email}});
+    // if(!storeCheckUser) {
+    //   throw new NotFoundException(`해당 회원은 회원테이블에 등록되지 않은 회원입니다. 입력된 회원 : ${user_email}`);
+    // }
+    const store = this.storeRepository.create({
+      store_name,
+      store_registnum,
+      store_ownername,
+      store_phone,
+      store_type,
+      store_postcode,
+      store_add,
+      store_adddetail,
+      store_status: 'W',   // 점포가입신청 시 기본 상태값 지정 ( W = 가맹회원 신청가입대기중 )
+      store_updatedate: null,    //  updateColumn 초기값으로 Null 지정
+      user_email,
+    });
     await this.storeRepository.save(store);
-    this.logger.debug(JSON.stringify(user.user_email) + ' 님의 스토어 신청');
     return store;
   }
 

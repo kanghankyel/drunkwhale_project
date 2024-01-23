@@ -3,11 +3,6 @@ import { IsInt, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateUserDto {
 
-    @ApiProperty({description:'회원 고유번호'})
-    @IsInt()
-    @IsNotEmpty()
-    readonly user_idx: number;
-
     @ApiProperty({description:'회원 이메일'})
     @IsString()
     readonly user_email: string | null;
@@ -28,18 +23,6 @@ export class CreateUserDto {
     @IsString()
     readonly user_phone: string | null;
 
-    @ApiProperty({description:'회원 생년월일'})
-    @IsString()
-    readonly user_birth: string | null;
-
-    @ApiProperty({description:'회원 성별'})
-    @IsString()
-    readonly user_gender: string | null;
-
-    @ApiProperty({description:'회원 아이피'})
-    @IsString()
-    readonly user_ip: string | null;
-
     @ApiProperty({description:'회원 우편번호'})
     @IsString()
     readonly user_postcode: string | null;
@@ -52,22 +35,15 @@ export class CreateUserDto {
     @IsString()
     readonly user_adddetail: string | null;
 
-    @ApiProperty({description:'회원 상태'})
+    @ApiProperty({description:'회원 아이피'})
     @IsString()
-    readonly user_status: string;
+    readonly user_ip: string | null;
 
-    @ApiProperty({description:'회원 생성일'})
+    @ApiProperty({description:'회원 상태 ( A=일반회원활동중, B=일반회원블락, C=일반회원탈퇴, Z=가맹회원활동중, Y=가맹회원블락, X=가맹회원탈퇴, W=가맹회원신청대기중 )'})
     @IsString()
-    readonly user_createdate: string;
+    readonly user_status: string | null;
 
-    @ApiProperty({description:'회원 수정일'})
-    @IsString()
-    readonly user_updatedate: string | null;
-
-    @ApiProperty({description:'회원 탈퇴일'})
-    @IsString()
-    readonly user_deletedate: string | null;
-
+    @ApiProperty({description:'회원 권한'})
     @IsString({each: true})
     readonly roles: string[] | null;
 

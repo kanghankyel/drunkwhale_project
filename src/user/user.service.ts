@@ -1,11 +1,12 @@
 import { ConflictException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { RoleService } from 'src/role/role.service';
 import { InputUserDto } from './dto/input-user.dto';
+import { CreateOwnerDto } from './dto/create_owner.dto';
 
 @Injectable()
 export class UserService {
@@ -20,10 +21,18 @@ export class UserService {
 
   // 회원 생성
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const {user_email, user_pw, user_name, user_nickname, user_phone, user_postcode, user_add, user_adddetail, user_birth, user_gender, user_ip} = createUserDto;
-    const usercheck = await this.userRepository.findOne({where:{user_email}});
-    if(usercheck) {
-      throw new ConflictException(`이미 등록된 회원입니다. 입력하신 번호 : ${user_email}`);    // 중복된 아이디 체크
+    const {user_email, user_pw, user_name, user_nickname, user_phone, user_postcode, user_add, user_adddetail, user_ip, user_status} = createUserDto;
+    const userEmailCheck = await this.userRepository.findOne({where:{user_email, user_status:In(['A', 'B'])}});
+    const userPhoneCheck = await this.userRepository.findOne({where:{user_phone, user_status:In(['A', 'B'])}});
+    const userEamilCheckOwner = await this.userRepository.findOne({where:{user_email, user_status:In(['Z', 'Y', 'W'])}});
+    if(userEmailCheck) {
+      throw new ConflictException(`이미 등록된 회원입니다. 입력하신 계정 : ${user_email}`);    // 중복된 아이디 체크
+    }
+    if(userPhoneCheck) {
+      throw new ConflictException(`이미 등록된 회원입니다. 입력하신 번호 : ${user_phone}`);    // 중복된 전화번호 체크
+    }
+    if(userEamilCheckOwner) {
+      throw new ConflictException(`가맹회원은 일반회원에 등록하지 못합니다. 입력하신 계정 : ${user_email}`);    // 중복된 아이디 체크(가맹회원중에 있는지도 검사)
     }
     const user = this.userRepository.create({
         user_email,
@@ -34,9 +43,9 @@ export class UserService {
         user_postcode,
         user_add,
         user_adddetail,
-        user_birth,
-        user_gender,
         user_ip,
+        user_status: 'A',   // 회원가입 시 기본 상태값 지정 ( A = 일반회원 활동중 )
+        user_updatedate: null,    //  updateColumn 초기값으로 Null 지정
     });
     await this.userRepository.save(user);   // 저장하고 반환
     await this.roleService.createDefaultRole(user);   // 기본권한 지급
@@ -57,15 +66,45 @@ export class UserService {
     this.logger.debug('회원 추가정보 반영 전 : ' + JSON.stringify(user));
     user.user_nickname = inputUserDto.user_nickname;
     user.user_phone = inputUserDto.user_phone;
-    user.user_birth = inputUserDto.user_birth;
-    user.user_gender = inputUserDto.user_gender;
     user.user_postcode = inputUserDto.user_postcode;
     user.user_add = inputUserDto.user_add;
     user.user_adddetail = inputUserDto.user_adddetail;
     this.logger.debug('회원 추가정보 반영 후 : ' + JSON.stringify(user));
     const updatedUser = await this.userRepository.save(user);
-    // this.logger.debug('회원 추가정보 저장 후 : ' + JSON.stringify(updatedUser));
     return updatedUser;
+  }
+
+  // #########################################################################################################
+  // ######################################     아래는 가맹회원 로직    ###########################################
+  // #########################################################################################################
+
+  // 가맹회원 가입신청
+  async createOwner(createOwnerDto: CreateOwnerDto): Promise<User> {
+    const {user_email, user_pw, user_name, user_nickname, user_phone, user_ip, user_status} = createOwnerDto;
+    const ownerEmailCheck = await this.userRepository.findOne({where:{user_email, user_status:In(['Z', 'Y', 'W'])}});
+    const ownerPhoneCheck = await this.userRepository.findOne({where:{user_phone, user_status:In(['Z', 'Y', 'W'])}});
+    const ownerEamilCheckUser = await this.userRepository.findOne({where:{user_email, user_status:In(['A', 'B'])}});
+    if(ownerEmailCheck) {
+      throw new ConflictException(`이미 등록된 회원입니다. 입력하신 계정 : ${user_email}`);    // 중복된 아이디 체크
+    }
+    if(ownerPhoneCheck) {
+      throw new ConflictException(`이미 등록된 회원입니다. 입력하신 번호 : ${user_phone}`);    // 중복된 전화번호 체크
+    }
+    if(ownerEamilCheckUser) {
+      throw new ConflictException(`이미 등록된 일반회원 계정이 있습니다. 일반회원탈퇴 후 다시 등록해주세요. 입력하신 계정 : ${user_email}`);    // 중복된 아이디 체크(일반회원중에 있는지도 검사)
+    }
+    const owner = this.userRepository.create({
+      user_email,
+      user_pw,
+      user_name,
+      user_nickname,
+      user_phone,
+      user_ip,
+      user_status: 'W',   // 가맹회원가입 시 기본 상태값 지정 ( W = 가맹회원 신청가입대기중 )
+      user_updatedate: null,    //  updateColumn 초기값으로 Null 지정
+    });
+    await this.userRepository.save(owner);
+    return owner;
   }
 
 }

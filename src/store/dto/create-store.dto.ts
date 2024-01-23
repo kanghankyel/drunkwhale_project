@@ -3,26 +3,25 @@ import { IsInt, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateStoreDto {
 
-    @ApiProperty({description:'스토어 고유번호'})
-    @IsInt()
-    @IsNotEmpty()
-    readonly store_idx: number;
-
     @ApiProperty({description:'스토어 상호명'})
     @IsString()
     readonly store_name: string | null;
 
-    @ApiProperty({description:'스토어 종류'})
+    @ApiProperty({description:'스토어 사업자번호'})
     @IsString()
-    readonly store_type: string | null;
+    readonly store_registnum: string | null;
+
+    @ApiProperty({description:'스토어 대표자명'})
+    @IsString()
+    readonly store_ownername: string | null;
 
     @ApiProperty({description:'스토어 전화번호'})
     @IsString()
     readonly store_phone: string | null;
 
-    @ApiProperty({description:'스토어 사업자번호'})
+    @ApiProperty({description:'스토어 종류'})
     @IsString()
-    readonly store_regist: string | null;
+    readonly store_type: string | null;
 
     @ApiProperty({description:'스토어 우편번호'})
     @IsString()
@@ -35,5 +34,13 @@ export class CreateStoreDto {
     @ApiProperty({description:'스토어 상세주소'})
     @IsString()
     readonly store_adddetail: string | null;
+
+    @ApiProperty({description:'스토어 상태 ( A=스토어활동중, B=스토어블락, C=스토어탈퇴, W=스토어신청대기중 )'})
+    @IsString()
+    readonly store_status: string | null;
+
+    @ApiProperty({description:'스토어 회원이메일'})
+    @IsString()
+    readonly user_email: string | null;
 
 }
