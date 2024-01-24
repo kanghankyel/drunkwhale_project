@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, Logger } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { ROLES_KEY } from "./role.decorator";
 import { RoleEnum } from "./role.enum";
@@ -26,6 +26,7 @@ export class RolesGuard implements CanActivate {
             this.logger.warn(`권한접근한 회원 : ${user.user_id}`);
             this.logger.warn(`접근된 회원권한 : ${JSON.stringify(user.roles)}`)
             this.logger.warn(`이 페이지에 허용된 접근가능 역할: ${JSON.stringify(roles)}`);
+            throw new UnauthorizedException({message:'잘못된 권한 접근입니다.', error:'Unauthorized', statusCode:401});
         }
 
         return hasRequiredRole;

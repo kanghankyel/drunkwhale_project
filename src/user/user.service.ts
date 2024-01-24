@@ -15,7 +15,7 @@ export class UserService {
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>, 
     @Inject('ROLE_REPOSITORY') private roleRepository: Repository<Role>,
     private roleService: RoleService,
-    ) {};
+  ) {};
   
   private logger = new Logger('user.service.ts');
 

@@ -19,4 +19,14 @@ export class RoleService {
         return defaultRole;
     }
 
+    // 관리자가 신청대기중인 가맹회원 허가시 지급되는 권한 (ROLE_OWNER)
+    async giveOwnerRole(user: User) {
+        const setOwnerRole = this.roleRepository.create({
+            role_type: RoleEnum.ROLE_OWNER,
+            user
+        });
+        await this.roleRepository.save(setOwnerRole);
+        return setOwnerRole;
+    }
+
 }

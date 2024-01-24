@@ -9,5 +9,6 @@ import { storeRepository } from './store.repository';
   imports: [DatabaseModule, UserModule],
   controllers: [StoreController],
   providers: [...storeRepository, StoreService],
+  exports: [...storeRepository, StoreService],
 })
 export class StoreModule {}

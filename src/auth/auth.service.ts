@@ -56,7 +56,7 @@ export class AuthService {
                 return {message: `로그인 실패`, data: null, statusCode: 404};
             }
         } catch (error) {
-            this.logger.log('login 처리과정 중 문제 발생');
+            this.logger.error('login 처리과정 중 문제 발생');
             this.logger.error(`에러내용 : ${error}`);
             console.log(error);
             throw new InternalServerErrorException('로그인 시도중 문제 발생');
