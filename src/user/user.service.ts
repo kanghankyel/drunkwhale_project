@@ -20,7 +20,7 @@ export class UserService {
   private logger = new Logger('user.service.ts');
 
   // 회원 생성
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
+  async createUser(createUserDto: CreateUserDto) {
     const {user_email, user_pw, user_name, user_nickname, user_phone, user_postcode, user_add, user_adddetail, user_ip, user_status} = createUserDto;
     const userEmailCheck = await this.userRepository.findOne({where:{user_email, user_status:In(['A', 'B'])}});
     const userPhoneCheck = await this.userRepository.findOne({where:{user_phone, user_status:In(['A', 'B'])}});
@@ -49,7 +49,7 @@ export class UserService {
     });
     await this.userRepository.save(user);   // 저장하고 반환
     await this.roleService.createDefaultRole(user);   // 기본권한 지급
-    return user;
+    return {message:'회원가입완료', data:user, statusCode:200};
   }
 
   // 회원가입 추가 정보기입
@@ -79,7 +79,7 @@ export class UserService {
   // #########################################################################################################
 
   // 가맹회원 가입신청
-  async createOwner(createOwnerDto: CreateOwnerDto): Promise<User> {
+  async createOwner(createOwnerDto: CreateOwnerDto) {
     const {user_email, user_pw, user_name, user_nickname, user_phone, user_ip, user_status} = createOwnerDto;
     const ownerEmailCheck = await this.userRepository.findOne({where:{user_email, user_status:In(['Z', 'Y', 'W'])}});
     const ownerPhoneCheck = await this.userRepository.findOne({where:{user_phone, user_status:In(['Z', 'Y', 'W'])}});
@@ -104,7 +104,7 @@ export class UserService {
       user_updatedate: null,    //  updateColumn 초기값으로 Null 지정
     });
     await this.userRepository.save(owner);
-    return owner;
+    return {message:'가맹회원 신청가입완료', data:owner, statusCode:200};
   }
 
 }

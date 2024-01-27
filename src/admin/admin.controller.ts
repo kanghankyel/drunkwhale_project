@@ -16,10 +16,10 @@ export class AdminController {
 
   // 가맹회원+가맹스토어 신청 허가
   @ApiOperation({summary:'가맹회원+가맹스토어 신청 허가', description:'가맹회원+가맹스토어 신청 허가'})
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @Patch('api/admin/approve')
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(RoleEnum.ROLE_ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_ADMIN)
   async approveOwnerStore(@Body() body: {user_email: string}) {
     return this.adminService.approveOwnerStore(body.user_email);
   }

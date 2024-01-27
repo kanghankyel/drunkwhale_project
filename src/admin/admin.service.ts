@@ -58,16 +58,12 @@ export class AdminService {
           },
           statusCode:200,
         };
-      } else {
-        this.logger.error('예기치 않은 오류 발생.');
       }
     } catch (error) {
-      if(error.response && error.response.status === 500) {
-        this.logger.error('가맹주&스토어 신청 중 서버 문제 발생.');
-        this.logger.error(`에러내용 : ${error}`);
-        console.log(error);
-        throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
-      }
+      this.logger.error('가맹주&스토어 신청 중 서버 문제 발생.');
+      this.logger.error(`에러내용 : ${error}`);
+      console.log(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
     } 
   }
 

@@ -22,7 +22,7 @@ export class UserController {
   // 회원 생성
   @ApiOperation({summary:'회원가입', description:'회원가입'})
   @Post('user/signin')
-  async createUser(@Body() createUserDto: CreateUserDto, @Req() req): Promise<User> {
+  async createUser(@Body() createUserDto: CreateUserDto, @Req() req) {
     const saltOrRounds = 10;    // jwt Salt값
     const hashedPassword = await bcrypt.hash(createUserDto.user_pw, saltOrRounds);    // bcrypt 사용 비밀번호 암호화
     const clientIP = req.ip;    // 가입자의 IPv6 가져오기
@@ -71,7 +71,7 @@ export class UserController {
   // 가맹회원 가입신청
   @ApiOperation({summary:'가맹회원 가입신청', description:'가맹회원 가입신청'})
   @Post('owner/signin')
-  async createOwner(@Body() createOwnerDto: CreateOwnerDto, @Req() req): Promise<User> {
+  async createOwner(@Body() createOwnerDto: CreateOwnerDto, @Req() req) {
     const saltOrRounds = 10;    // jwt Salt값
     const hashedPassword = await bcrypt.hash(createOwnerDto.user_pw, saltOrRounds);    // bcrypt 사용 비밀번호 암호화
     const clientIP = req.ip;    // 가입자의 IPv6 가져오기
