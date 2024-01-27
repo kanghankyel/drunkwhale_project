@@ -1,18 +1,18 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('tb_cafe')
-export class Cafe extends BaseEntity {
+@Entity('tb_crud')
+export class Crud extends BaseEntity {
 
     @PrimaryGeneratedColumn()
-    cafe_idx: number;
+    crud_idx: number;
 
     @Column()
-    cafe_name: string;
+    crud_name: string;
 
     @Column()
-    cafe_info: string;
+    crud_info: string;
 
     @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
-    cafe_createdate: string;
+    crud_createdate: string;
 
 }

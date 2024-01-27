@@ -1,15 +1,15 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateCafeDto } from './create-cafe.dto';
+import { CreateCrudDto } from './create-crud.dto';
 import { IsOptional, IsString } from 'class-validator';
 
-export class UpdateCafeDto extends PartialType(CreateCafeDto) {
+export class UpdateCrudDto extends PartialType(CreateCrudDto) {
 
     @IsString()
     @IsOptional()
-    cafe_name?: string;
+    crud_name?: string;
 
     @IsString()
     @IsOptional()
-    cafe_info?: string;
+    crud_info?: string;
 
 }
