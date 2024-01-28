@@ -7,9 +7,10 @@ import { DogModule } from './dog/dog.module';
 import { StoreModule } from './store/store.module';
 import { AdminModule } from './admin/admin.module';
 import { CrudModule } from './crud/crud.module';
+import { MenuModule } from './menu/menu.module';
 
 @Module({
-  imports: [DatabaseModule, UserModule, AuthModule, RoleModule, DogModule, StoreModule, AdminModule, CrudModule],
+  imports: [DatabaseModule, UserModule, AuthModule, RoleModule, DogModule, StoreModule, AdminModule, CrudModule, MenuModule],
   controllers: [],
   providers: [],
 })

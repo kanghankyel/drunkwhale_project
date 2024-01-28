@@ -52,6 +52,7 @@ export class UserService {
     return {message:'회원가입완료', data:user, statusCode:200};
   }
 
+  // 현재 소셜로그인 방식의 차이로 쓰이지 않음.
   // 회원가입 추가 정보기입
   async inputUser(user_email: string, inputUserDto: InputUserDto): Promise<User> {
     const user = await this.userRepository.findOne({where:{user_email}});
