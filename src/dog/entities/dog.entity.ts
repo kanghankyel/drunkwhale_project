@@ -52,13 +52,13 @@ export class Dog extends BaseEntity {
     @DeleteDateColumn({type: 'timestamp', default: null, nullable: true})
     dog_deletedate: string;
 
-    // 회원_고유번호(FK)
+    // 회원_이메일(FK)
     @Column()
-    user_idx: number;
+    user_email: string;
 
     // 회원 JOIN
     @ManyToOne(() => User)
-    @JoinColumn({name: 'user_idx'})
+    @JoinColumn({name: 'user_email', referencedColumnName: 'user_email'})
     user: User;
 
     // 이 방식은 회원의 모든 정보까지 다 받아와서 게시하기 때문에 일단은 55줄~62줄로 대체

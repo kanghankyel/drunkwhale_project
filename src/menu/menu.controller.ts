@@ -17,10 +17,10 @@ export class MenuController {
 
   // 메뉴 상품등록
   @ApiOperation({summary:'메뉴 상품등록', description:'메뉴 상품등록'})
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @Post('api/create/menu')
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(RoleEnum.ROLE_OWNER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_OWNER)
   createMenu(@Body() createMenuDto: CreateMenuDto) {
     return this.menuService.createMenu(createMenuDto);
   }

@@ -31,4 +31,8 @@ export class CreateDogDto {
     @IsString()
     readonly dog_info: string | null;
 
+    @ApiProperty({description:'회원 이메일(FK)'})
+    @IsString()
+    readonly user_email: string | null;
+
 }

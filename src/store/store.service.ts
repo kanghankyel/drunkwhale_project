@@ -21,11 +21,11 @@ export class StoreService {
       const {store_name, store_registnum, store_ownername, store_phone, store_type, store_postcode, store_add, store_adddetail, store_status, user_email} = createStoreDto;
       const storeCheckInWithdrawn = await this.storeRepository.findOne({where:{store_registnum, store_status:'W'}});
       if(storeCheckInWithdrawn) {
-        throw new ConflictException(`이미 신청대기중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`);
+        return {message:`이미 신청대기중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`, statusCode:409};
       }
       const storeCheckInActive = await this.storeRepository.findOne({where:{store_registnum, store_status:'A'}});
       if(storeCheckInActive) {
-        throw new ConflictException(`이미 활동중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`);
+        return {message:`이미 활동중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`, statusCode:409};
       }
       // const storeCheckUser = await this.storeRepository.findOne({where:{user_email}});
       // if(!storeCheckUser) {
@@ -67,7 +67,7 @@ export class StoreService {
       store.store_info = inputStoreDto.store_info;
       const inputStore = await this.storeRepository.save(store);
       return {
-        message:'스토어 정보 입력입력이 완료되었습니다.',
+        message:'스토어 정보 입력이 완료되었습니다.',
         data:{store_name:inputStore.store_name, store_opentime:inputStore.store_opentime, store_closetime:inputStore.store_closetime},
         statusCode:200
       };

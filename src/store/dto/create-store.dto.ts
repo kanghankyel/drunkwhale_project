@@ -39,7 +39,7 @@ export class CreateStoreDto {
     @IsString()
     readonly store_status: string | null;
 
-    @ApiProperty({description:'스토어 회원이메일'})
+    @ApiProperty({description:'스토어 회원이메일(FK)'})
     @IsString()
     readonly user_email: string | null;
 
