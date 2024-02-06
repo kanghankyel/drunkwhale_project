@@ -3,6 +3,10 @@ import { IsInt, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateDogDto {
 
+    @ApiProperty({description:'강아지 이미지'})
+    @IsString()
+    readonly dog_image: string | null;
+
     @ApiProperty({description:'강아지 이름'})
     @IsString()
     readonly dog_name: string | null;
