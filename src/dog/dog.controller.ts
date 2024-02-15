@@ -35,11 +35,11 @@ export class DogController {
       },
     },
   })
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @Post('api/create/dog')
   @UseInterceptors(FileInterceptor('dog_image'))
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(RoleEnum.ROLE_USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
   async createDog(@UploadedFile() file, @Body() createDogDto: CreateDogDto) {
     return this.dogService.createDog(createDogDto, file);
   }
