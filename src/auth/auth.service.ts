@@ -24,6 +24,9 @@ export class AuthService {
     async loginUser(user: User, res): Promise<{message: string, data: string, statusCode: number}> {     // Promise<많은 변수>로 Method 반환
         const {user_email, user_pw} = user;
         try {
+            if (!user_email || !user_pw) {
+                return {message: '아이디 또는 비밀번호가 입력되지 않았습니다.', data: null, statusCode: 400};
+            }
             const findUser = await this.userRepository.findOne({        // select통해 해당 값만 가져오고 where로 user_email 검색
                 // relations: ['roles'],
                 select:['user_idx', 'user_email', 'user_pw', /*'user_name', 'user_nickname', 'user_phone', 'user_email', 'user_birth', 'user_gender', 'user_postcode', 'user_add', 'user_adddetail', 'user_status', 'user_createdate', 'user_updatedate', 'roles'*/],        // 일치하는 회원일시 가져올 데이터

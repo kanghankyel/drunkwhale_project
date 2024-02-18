@@ -28,6 +28,14 @@ export class Store extends BaseEntity {
     @Column({nullable: true})
     store_type: string;
 
+    // 스토어_대표이미지
+    @Column({nullable: true})
+    store_mainimg: string;
+
+    // 스토어_서브이미지
+    @Column('text', {array: true, nullable: true})      // 복수의 파일경로를 저장하기 위해 배열 형태로 지정
+    store_subimg: string[];
+
     // 스토어_우편번호
     @Column({nullable: true})
     store_postcode: string;

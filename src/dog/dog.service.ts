@@ -24,14 +24,12 @@ export class DogService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const {dog_image, dog_name, dog_gender, dog_species, dog_size, dog_birth, dog_personality, dog_info, user_email} = createDogDto;
+      const {dog_name, dog_gender, dog_species, dog_size, dog_birth, dog_personality, dog_info, user_email} = createDogDto;
       const user = await this.userRepository.findOne({where:{user_email:user_email, user_status:'A'}});
       if(!user) {
         return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
       }
       const dog = new Dog();
-      const dog_image_path = `uploads/${file.originalname}`;    // 이미지 파일 경로 정보
-      dog.dog_image = dog_image_path;
       dog.dog_name = createDogDto.dog_name;
       dog.dog_gender = createDogDto.dog_gender;
       dog.dog_species = createDogDto.dog_species;
@@ -41,25 +39,24 @@ export class DogService {
       dog.dog_info = createDogDto.dog_info;
       dog.dog_updatedate = null;
       dog.user_email = user.user_email;
-      // 3. 강아지 정보 트랜잭션 저장. 기존 코드 변경.
-      // await this.dogRepository.save(dog);
+      // SFTP서버에 파일 upload
+      if (file) {   // 이미지가 있을 경우에만 작동되게 하기
+        console.log(file);
+        if (!file.buffer) {
+          this.logger.error(`파일 객체에 buffer 속성이 포함되어 있지 않습니다.`);
+          throw new Error('유효한 파일 객체가 전달되지 않았습니다.');
+        }
+        const dog_image_path = `uploads/${file.originalname}`;    // 이미지 파일 경로 정보
+        dog.dog_image = dog_image_path;   // 이미지 파일 경로 정보 데이터베이스에 입력
+        const buffer = file.buffer;
+        await this.sftpService.uploadFileFromBuffer(buffer, `uploads/${file.originalname}`);
+        this.logger.debug(JSON.stringify(user.user_email) + ' 님의 애완견정보 SFTP서버로 전송 완료');
+      }
+      // 3. 강아지 정보 트랜잭션 저장. 기존 코드 변경. ( 기존코드 => await this.dogRepository.save(dog); )
       await queryRunner.manager.save(dog);
       this.logger.debug(JSON.stringify(user.user_email) + ' 님의 애완견정보입력 완료');
-      // SFTP서버에 파일 upload
-      console.log(file);
-      console.log(file.buffer);
-      if (!file) {
-        this.logger.error('파일 객체가 전달되지 않았습니다.');
-        throw new Error('유효한 파일 객체가 전달되지 않았습니다.');
-      } else if (!file.buffer) {
-        this.logger.error(`파일 객체에 path 속성이 포함되어 있지 않습니다.`);
-        throw new Error('유효한 파일 객체가 전달되지 않았습니다.');
-      }
-      const buffer = file.buffer;
-      await this.sftpService.uploadFileFromBuffer(buffer, `uploads/${file.originalname}`);
       // 4. 모든 작업이 성공하면 트랜잭션 커밋
       await queryRunner.commitTransaction();
-      this.logger.debug(JSON.stringify(user.user_email) + ' 님의 애완견정보 SFTP서버로 전송 완료');
       return {message:`${user_email}님의 애완견정보입력 완료`, data:dog, statusCode:200};
     } catch (error) {
       // 5. 오류 발생 시 트랜잭션 롤백

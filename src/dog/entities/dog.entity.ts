@@ -8,6 +8,7 @@ export class Dog extends BaseEntity {
     @PrimaryGeneratedColumn()
     dog_idx!: number;
 
+    // 강아지_이미지
     @Column({nullable: true})
     dog_image: string;
 

@@ -52,6 +52,19 @@ export class UserService {
     return {message:'회원가입완료', data:user, statusCode:200};
   }
 
+  // 이메일로 회원 정보 찾기
+  async findByEmail(email: string): Promise<User | undefined> {
+    const user = await this.userRepository.findOne({
+      relations: ['roles'],
+      select: ['user_idx', 'user_email', 'roles'],
+      where: {user_email: email}
+    });
+    if (user && user.roles) {
+      user.roles = user.roles.map(role => ({role_type: role.role_type}));
+    }
+    return user;
+  }
+
   // 현재 소셜로그인 방식의 차이로 쓰이지 않음.
   // 회원가입 추가 정보기입
   async inputUser(user_email: string, inputUserDto: InputUserDto): Promise<User> {
