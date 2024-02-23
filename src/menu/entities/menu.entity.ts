@@ -36,13 +36,13 @@ export class Menu extends BaseEntity {
     @DeleteDateColumn({type: 'timestamp', default: null, nullable: true})
     menu_deletedate: string;
 
-    // 스토어 고유키 (FK)
+    // 가맹주_이메일 (FK)
     @Column({nullable: true})
-    store_idx: number;
+    user_email: string;
 
     // 스토어 JOIN
     @ManyToOne(() => Store)
-    @JoinColumn({name: 'store_idx', referencedColumnName: 'store_idx'})
+    @JoinColumn({name: 'user_email', referencedColumnName: 'user_email'})
     store: Store;
 
 }

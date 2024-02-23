@@ -42,7 +42,7 @@ export class StoreController {
   })
   @ApiBearerAuth()
   @Patch('api/input/store')
-  @UseInterceptors(FileFieldsInterceptor([
+  @UseInterceptors(FileFieldsInterceptor([    // FileFieldsInterceptor 사용 ( FileInterceptor, FilesInterceptor 가 이님을 유의 )
     {name:'store_mainimg', maxCount:1},
     {name:'store_subimg', maxCount:10},
   ]))

@@ -5,9 +5,10 @@ import { DatabaseModule } from 'src/database/database.module';
 import { StoreModule } from 'src/store/store.module';
 import { menuRepository } from './menu.repository';
 import { UserModule } from 'src/user/user.module';
+import { SftpModule } from 'src/sftp/sftp.module';
 
 @Module({
-  imports: [DatabaseModule, StoreModule, UserModule],
+  imports: [DatabaseModule, StoreModule, UserModule, SftpModule],
   controllers: [MenuController],
   providers: [...menuRepository, MenuService],
   exports: [...menuRepository, MenuService],

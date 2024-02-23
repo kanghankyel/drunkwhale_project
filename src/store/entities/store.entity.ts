@@ -81,7 +81,7 @@ export class Store extends BaseEntity {
     store_deletedate: string;
 
     // 가맹주_이메일 (FK)
-    @Column({nullable: true})
+    @Column({unique: true})
     user_email: string;
 
     // 가맹주 JOIN

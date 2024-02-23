@@ -19,8 +19,8 @@ export class CreateMenuDto {
     @IsString()
     readonly menu_price: string | null;
 
-    @ApiProperty({description:'메뉴 스토어고유번호'})
-    @IsInt()
-    readonly store_idx: number | null;
+    @ApiProperty({description:'스토어 회원이메일(FK)'})
+    @IsString()
+    readonly user_email: string | null;
 
 }
