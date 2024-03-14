@@ -71,6 +71,6 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
-# doggo_ver01
-# doggo_ver01
-# doggo_project
+# durnkwhale_ver01
+# durnkwhale_ver01
+# durnkwhale_project
