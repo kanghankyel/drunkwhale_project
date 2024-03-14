@@ -81,6 +81,7 @@ export class AuthController {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
             });
+            // 400번오류 났을때 강제로 Exception일으켜서 로그인 안되게.
             const kakaoAccessToken = response.data.access_token;
             const kakaoRefreshToken = response.data.refresh_token;
             this.logger.log(`카카오 AccessToken: ${kakaoAccessToken}`);

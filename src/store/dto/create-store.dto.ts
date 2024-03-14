@@ -19,7 +19,7 @@ export class CreateStoreDto {
     @IsString()
     readonly store_phone: string | null;
 
-    @ApiProperty({description:'스토어 종류'})
+    @ApiProperty({description:'스토어 종류 ( A=카페, B=호텔 )'})
     @IsString()
     readonly store_type: string | null;
 

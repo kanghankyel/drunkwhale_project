@@ -5,15 +5,15 @@ export const databaseProviders = [
         provide: 'DATA_SOURCE',
         useFactory: async () => {
             const dataSource = new DataSource({
-                type: 'postgres',
+                type: 'mysql',
                 host: '118.67.133.203',
                 // host: 'localhost',
-                port: 5432,
-                username: 'postgres',
+                port: 33060,
+                username: 'gbsb',
                 password: '05290408jhjh@@',
                 // username: 'ganghangyeol',
                 // password: 'Gks@631401',
-                database: 'doggo',
+                database: 'drunkwhale',
                 entities: [__dirname + '/../**/*.entity{.ts,.js}'],
                 synchronize: true,      // 배포시에는 false
                 logging: "all",

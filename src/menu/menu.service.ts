@@ -19,16 +19,16 @@ export class MenuService {
   private logger = new Logger('menu.service.ts');
 
 
-  // 메뉴 상품등록
+  // 메뉴 상품등록 (카페)
   async createMenu(createMenuDto: CreateMenuDto, file: Express.Multer.File) {
     const queryRunner = this.menuRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
       const {menu_name, menu_info, menu_price, user_email} = createMenuDto;
-      const store = await this.storeRepository.findOne({where:{user_email:user_email, store_status:'A'}});
+      const store = await this.storeRepository.findOne({where:{user_email:user_email, store_type:'A', store_status:'A'}});
       if(!store) {
-        return {message:`해당하는 스토어가 없습니다. 입력된 스토어 : ${user_email}`, statusCode:404};
+        return {message:`해당하는 스토어가 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
       }
       const menu = new Menu();
       menu.menu_name = createMenuDto.menu_name;
