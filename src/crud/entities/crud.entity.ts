@@ -12,7 +12,7 @@ export class Crud extends BaseEntity {
     @Column()
     crud_info: string;
 
-    @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    @CreateDateColumn({type: 'timestamp', default: null, nullable: true})
     crud_createdate: string;
 
 }

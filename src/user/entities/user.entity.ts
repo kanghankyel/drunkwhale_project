@@ -1,4 +1,4 @@
-import { Dog } from "src/dog/entities/dog.entity";
+import { Alcohol } from "src/alcohol/entities/alcohol.entity";
 import { Role } from "src/role/entities/role.entity";
 import { Store } from "src/store/entities/store.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
@@ -51,7 +51,7 @@ export class User extends BaseEntity {
     user_status: string;
 
     // 회원_생성일
-    @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    @CreateDateColumn({type: 'timestamp', default: null, nullable: true})
     user_createdate!: string;
 
     // 회원_수정일
@@ -70,8 +70,8 @@ export class User extends BaseEntity {
     @OneToMany(() => Store, (store) => store.user)
     store: Store[];
 
-    // 강아지 JOIN
-    @OneToMany(() => Dog, (dog) => dog.user)
-    dogs: Dog[];
+    // 주류 JOIN
+    @OneToMany(() => Alcohol, (alcohol) => alcohol.user)
+    alcohols: Alcohol[];
 
 }

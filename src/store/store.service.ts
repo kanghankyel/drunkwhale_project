@@ -60,7 +60,6 @@ export class StoreService {
   async inputInfoStore(mainimg, subimg, inputStoreDto: InputStoreDto) {
     console.log(mainimg.originalname);
     console.log(subimg.map(file => file.originalname));
-    // console.log(subimg.map(file => file.buffer));
     console.log(inputStoreDto);
     // 1. 데이터베이스 트랜잭션을 관리하기 위한 QueryRunner 생성
     const queryRunner = this.storeRepository.manager.connection.createQueryRunner();

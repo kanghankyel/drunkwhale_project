@@ -127,41 +127,41 @@ export class AuthController {
     }
 
     // 순수 백엔드 카카오소셜로그인 로직. 현재는 프런트와 협의하에 사용하지 않음. (백엔드port:3000, 프론트엔드port:3001 기준)
-    @ApiOperation({summary:'소셜로그인(카카오) 백엔드 전용. ###현재사용X', description:'카카오소셜로그인. 회원유무검사 및 정보전송'})
-    @Get('login-callback')
-    @UseGuards(AuthGuard('kakao'))
-    async kakaoCallback(@Req() req, @Res() res) {
-        const kakaoProfile = req.user?.profile;
-        this.logger.debug('auth.controller.ts에서 보여주는 kakaoProfile')
-        console.log(kakaoProfile);
-    }
+    // @ApiOperation({summary:'소셜로그인(카카오) 백엔드 전용. ###현재사용X', description:'카카오소셜로그인. 회원유무검사 및 정보전송'})
+    // @Get('login-callback')
+    // @UseGuards(AuthGuard('kakao'))
+    // async kakaoCallback(@Req() req, @Res() res) {
+    //     const kakaoProfile = req.user?.profile;
+    //     this.logger.debug('auth.controller.ts에서 보여주는 kakaoProfile')
+    //     console.log(kakaoProfile);
+    // }
 
     // 순수 백엔드 구글소셜로그인 로직. 현재는 프런트와 협의하에 사용하지 않음. (백엔드port:3000 기준 = 구글 Redirect URL)
     // 포트 3001번인지 3000인지 확인하고 redirect url도 동일한지 확인.
     // OAuth 소셜로그인(구글) 입력창
-    @ApiOperation({summary:'소셜로그인(구글) 백엔드 전용. ###현재사용X', description:'소셜로그인(구글)'})
-    @Get('login/google')
-    @UseGuards(AuthGuard('google'))
-    async googleAuth(@Req() req, @Res() res) {
-        res.redirect('http://localhost:3000/auth/login/google/redirect');
-    }
+    // @ApiOperation({summary:'소셜로그인(구글) 백엔드 전용. ###현재사용X', description:'소셜로그인(구글)'})
+    // @Get('login/google')
+    // @UseGuards(AuthGuard('google'))
+    // async googleAuth(@Req() req, @Res() res) {
+    //     res.redirect('http://localhost:3000/auth/login/google/redirect');
+    // }
 
     // 순수 백엔드 소셜로그인 로직. 현재는 프런트와 협의하에 사용하지 않음. (백엔드port:3000 기준 = Redirect URL)
     // OAuth 소셜로그인 & 회원가입
-    @ApiOperation({summary:'소셜로그인 리다이렉트. 백엔드 전용. ###현재사용X', description:'소셜로그인 리다이렉트'})
-    @Get('login/google/redirect')
-    @UseGuards(AuthGuard('google'))
-    async googleRedirect(@Req() req, @Res() res) {
-        const clientIP = req.ip;        // 회원 Ip정보 추가로 받기
-        const user = await this.authService.oAuthLogin(req.user, clientIP);
-        const hasInfo = await this.authService.checkUserInfo(user);     // 회원 서브정보 체크
-        const token = this.authService.setRefreshToken(user, res);
-        this.logger.log(`소셜로그인 정보 :  ${user.user_email}`);
-        if(hasInfo) {
-            res.redirect('http://localhost:3000/');     // 서브정보가 있으면 localhost:3000/로 리다이렉트
-        } else {
-            res.redirect(`http://localhost:3000/user/moreinfo/${user.user_email}`);        // 서브정보가 없으면 localhost:3000/user/moreinfo로 리다이렉트
-        }
-    }
+    // @ApiOperation({summary:'소셜로그인 리다이렉트. 백엔드 전용. ###현재사용X', description:'소셜로그인 리다이렉트'})
+    // @Get('login/google/redirect')
+    // @UseGuards(AuthGuard('google'))
+    // async googleRedirect(@Req() req, @Res() res) {
+    //     const clientIP = req.ip;        // 회원 Ip정보 추가로 받기
+    //     const user = await this.authService.oAuthLogin(req.user, clientIP);
+    //     const hasInfo = await this.authService.checkUserInfo(user);     // 회원 서브정보 체크
+    //     const token = this.authService.setRefreshToken(user, res);
+    //     this.logger.log(`소셜로그인 정보 :  ${user.user_email}`);
+    //     if(hasInfo) {
+    //         res.redirect('http://localhost:3000/');     // 서브정보가 있으면 localhost:3000/로 리다이렉트
+    //     } else {
+    //         res.redirect(`http://localhost:3000/user/moreinfo/${user.user_email}`);        // 서브정보가 없으면 localhost:3000/user/moreinfo로 리다이렉트
+    //     }
+    // }
 
 }

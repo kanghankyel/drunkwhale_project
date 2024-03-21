@@ -1,60 +1,60 @@
 import { User } from "src/user/entities/user.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity('tb_dog')
-export class Dog extends BaseEntity {
+@Entity('tb_alcohol')
+export class Alcohol extends BaseEntity {
 
-    // 강아지_고유번호
+    // 주류_고유번호
     @PrimaryGeneratedColumn()
-    dog_idx!: number;
+    alcohol_idx!: number;
 
-    // 강아지_이미지
+    // 주류_이미지 (원본파일명)
     @Column({nullable: true})
-    dog_image: string;
+    alcohol_imgname: string;
 
-    // 강아지_이름
+    // 주류_이미지 (유니크명)
     @Column({nullable: true})
-    dog_name: string;
+    alcohol_imgkey: string;
 
-    // 강아지_성별
+    // 주류_이미지 (경로)
     @Column({nullable: true})
-    dog_gender: string;
+    alcohol_imgpath: string;
 
-    // 강아지_종
+    // 주류_이름
     @Column({nullable: true})
-    dog_species: string;
+    alcohol_name: string;
 
-    // 강아지_크기
+    // 주류_타입
     @Column({nullable: true})
-    dog_size: string;
+    alcohol_type: string;
 
-    // 강아지_생일
+    // 주류_분류
     @Column({nullable: true})
-    dog_birth: string;
+    alcohol_class: string;
 
-    // 강아지_성격
+    // 주류_국적
     @Column({nullable: true})
-    dog_personality: string;
+    alcohol_from: string;
 
-    // 강아지_간략소개
+    // 주류_도수
     @Column({nullable: true})
-    dog_info: string;
+    alcohol_percent: string;
 
-    // 강아지_상태
-    @Column({default: 'A'})     // 초기값 'A' = 활동중
-    dog_status: string;
+    // 주류_설명
+    @Column({nullable: true})
+    alcohol_info: string;
 
-    // 강아지_생성일
-    @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
-    dog_createdate: string;
+    // 주류_생성일
+    @CreateDateColumn({type: 'timestamp', default: null, nullable: true})
+    alcohol_createdate: string;
 
-    // 강아지_수정일
+    // 주류_수정일
     @UpdateDateColumn({type: 'timestamp', default: null, nullable: true})
-    dog_updatedate: string;
+    alcohol_updatedate: string;
 
-    // 강아지_삭제일
+    // 주류_삭제일
     @DeleteDateColumn({type: 'timestamp', default: null, nullable: true})
-    dog_deletedate: string;
+    alcohol_deletedate: string;
 
     // 회원_이메일(FK)
     @Column()
@@ -66,7 +66,7 @@ export class Dog extends BaseEntity {
     user: User;
 
     // 이 방식은 회원의 모든 정보까지 다 받아와서 게시하기 때문에 일단은 55줄~62줄로 대체
-    // @ManyToOne(() => User, (user) => user.dogs)
+    // @ManyToOne(() => User, (user) => user.alcohols)
     // @JoinColumn({name: 'user_idx', referencedColumnName: 'user_idx'})
     // user: User;
 

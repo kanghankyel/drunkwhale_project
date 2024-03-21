@@ -67,26 +67,26 @@ export class UserService {
 
   // 현재 소셜로그인 방식의 차이로 쓰이지 않음.
   // 회원가입 추가 정보기입
-  async inputUser(user_email: string, inputUserDto: InputUserDto): Promise<User> {
-    const user = await this.userRepository.findOne({where:{user_email}});
-    if(!user) {
-      throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_email}`);
-    }
-    const inputPhone = inputUserDto.user_phone;
-    const checkPhone = await this.userRepository.findOne({where:{user_phone:inputPhone}});
-    if(checkPhone) {
-      throw new ConflictException(`이미 등록된 전화번호 입니다. 입력된 전화번호 : ${inputPhone}`);
-    }
-    this.logger.debug('회원 추가정보 반영 전 : ' + JSON.stringify(user));
-    user.user_nickname = inputUserDto.user_nickname;
-    user.user_phone = inputUserDto.user_phone;
-    user.user_postcode = inputUserDto.user_postcode;
-    user.user_add = inputUserDto.user_add;
-    user.user_adddetail = inputUserDto.user_adddetail;
-    this.logger.debug('회원 추가정보 반영 후 : ' + JSON.stringify(user));
-    const updatedUser = await this.userRepository.save(user);
-    return updatedUser;
-  }
+  // async inputUser(user_email: string, inputUserDto: InputUserDto): Promise<User> {
+  //   const user = await this.userRepository.findOne({where:{user_email}});
+  //   if(!user) {
+  //     throw new NotFoundException(`해당 회원이 없습니다. 입력된 회원 : ${user_email}`);
+  //   }
+  //   const inputPhone = inputUserDto.user_phone;
+  //   const checkPhone = await this.userRepository.findOne({where:{user_phone:inputPhone}});
+  //   if(checkPhone) {
+  //     throw new ConflictException(`이미 등록된 전화번호 입니다. 입력된 전화번호 : ${inputPhone}`);
+  //   }
+  //   this.logger.debug('회원 추가정보 반영 전 : ' + JSON.stringify(user));
+  //   user.user_nickname = inputUserDto.user_nickname;
+  //   user.user_phone = inputUserDto.user_phone;
+  //   user.user_postcode = inputUserDto.user_postcode;
+  //   user.user_add = inputUserDto.user_add;
+  //   user.user_adddetail = inputUserDto.user_adddetail;
+  //   this.logger.debug('회원 추가정보 반영 후 : ' + JSON.stringify(user));
+  //   const updatedUser = await this.userRepository.save(user);
+  //   return updatedUser;
+  // }
 
   // #########################################################################################################
   // ######################################     아래는 가맹회원 로직    ###########################################

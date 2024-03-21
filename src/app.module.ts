@@ -3,7 +3,7 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { RoleModule } from './role/role.module';
-import { DogModule } from './dog/dog.module';
+import { AlcoholModule } from './alcohol/alcohol.module';
 import { StoreModule } from './store/store.module';
 import { AdminModule } from './admin/admin.module';
 import { CrudModule } from './crud/crud.module';
@@ -17,7 +17,7 @@ import { MulterModule } from '@nestjs/platform-express';
     UserModule,
     AuthModule,
     RoleModule,
-    DogModule,
+    AlcoholModule,
     StoreModule,
     AdminModule,
     CrudModule,

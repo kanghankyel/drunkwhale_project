@@ -9,7 +9,7 @@ async function bootstrap() {
 
   // swagger 설정
   const config = new DocumentBuilder()
-    .setTitle('강쥐야 가자')
+    .setTitle('드렁큰 고래')
     .setDescription('GBSB 합동 프로젝트 ver01')
     .setVersion('1.0')
     .addBearerAuth()    // swagger에서 Bearer토큰 입력창 사용할 수 있게 함.
@@ -29,6 +29,6 @@ async function bootstrap() {
     credentials: true,
   });
 
-  await app.listen(3001);
+  await app.listen(3002);
 }
 bootstrap();

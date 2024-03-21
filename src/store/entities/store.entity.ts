@@ -33,7 +33,7 @@ export class Store extends BaseEntity {
     store_mainimg: string;
 
     // 스토어_서브이미지
-    @Column('text', {array: true, nullable: true})      // 복수의 파일경로를 저장하기 위해 배열 형태로 지정
+    @Column({type: 'text', nullable: true})      // 복수의 파일경로를 저장하기 위해 배열 형태로 지정
     store_subimg: string[];
 
     // 스토어_우편번호
@@ -69,7 +69,7 @@ export class Store extends BaseEntity {
     store_status: string;
 
     // 스토어_생성일
-    @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    @CreateDateColumn({type: 'timestamp', default: null, nullable: true})
     store_createdate!: string;
 
     // 스토어_수정일

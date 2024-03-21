@@ -25,7 +25,7 @@ export class Menu extends BaseEntity {
     menu_price: string;
 
     // 메뉴 생성일
-    @CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    @CreateDateColumn({type: 'timestamp', default: null, nullable: true})
     menu_createdate: string;
 
     // 메뉴 수정일
