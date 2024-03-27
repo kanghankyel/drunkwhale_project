@@ -25,10 +25,10 @@ async function bootstrap() {
 
   // CORS 활성화
   app.enableCors({
-    origin: 'http://localhost:3000',
+    // origin: 'http://localhost:3000',
     credentials: true,
   });
 
-  await app.listen(3002);
+  await app.listen(3001);
 }
 bootstrap();

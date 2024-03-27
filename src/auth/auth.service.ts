@@ -21,7 +21,7 @@ export class AuthService {
     private logger = new Logger('auth.service.ts');
 
     // 로그인
-    async loginUser(user: User, res): Promise<{message: string, data: string, statusCode: number}> {     // Promise<많은 변수>로 Method 반환
+    async loginUser(user: User, res) {     // Promise<많은 변수>로 Method 반환
         const {user_email, user_pw} = user;
         try {
             if (!user_email || !user_pw) {
@@ -52,8 +52,9 @@ export class AuthService {
                 };
                 this.logger.debug('로그인 회원 payload : ', payload);
                 const accessToken = await this.jwtService.sign(payload, {expiresIn: '1h'});        // payload 변수 값을 보내 전자 서명이 이루어지게 하고, 이를 accessToken 상수형 변수에 넣어줌
-                res.header('Authorization', `Bearer ${accessToken}`);       // header로 accessToken 전송.
-                return {message: `로그인 성공`, data: null, statusCode: 200};
+                // res.header('Authorization', `Bearer ${accessToken}`);       // header로 accessToken 전송. 프론트엔드 작업 처리 과정에서 토큰을 body로 보내기로 함.
+                const refreshToken = await this.setRefreshToken(user, res);
+                return {message: `로그인 성공`, AccessToken: accessToken, RefreshToken: refreshToken, statusCode: 200};
             } else {
                 this.logger.log('로그인에 실패하였습니다.');
                 return {message: `로그인 실패`, data: null, statusCode: 404};

@@ -50,12 +50,12 @@ export class AlcoholService {
         const uniqueFileName = `${uuidv4()}.${fileExtension}`;    // 파일 유니크명 생성
         const alcohol_image_name = `${file.originalname}`;    // 이미지 파일 정보 (원본파일명)
         const alcohol_image_key = `${uniqueFileName}`;    // 이미지 파일 정보 (유니크명)
-        const alcohol_image_path = `uploads/alcohol/${uniqueFileName}`;    // 이미지 파일 정보 (경로)
+        const alcohol_image_path = `uploads/drunkwhale/alcohol/${uniqueFileName}`;    // 이미지 파일 정보 (경로)
         alcohol.alcohol_imgname = alcohol_image_name;   // 이미지 파일 정보 데이터베이스에 입력
         alcohol.alcohol_imgkey = alcohol_image_key;
         alcohol.alcohol_imgpath = alcohol_image_path;
         const buffer = file.buffer;
-        await this.sftpService.uploadFileFromBuffer(buffer, `uploads/alcohol/${uniqueFileName}`);
+        await this.sftpService.uploadFileFromBuffer(buffer, `uploads/drunkwhale/alcohol/${uniqueFileName}`);
         this.logger.debug(JSON.stringify(user.user_email) + ' 님의 애완견정보 SFTP서버로 전송 완료');
       }
       // 3. 강아지 정보 트랜잭션 저장. 기존 코드 변경. ( 기존코드 => await this.alcoholRepository.save(alcohol); )

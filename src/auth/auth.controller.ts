@@ -25,10 +25,10 @@ export class AuthController {
     @Post('login')
     async loginUser(@Body() user: User, @Res() res) {
         this.logger.log(`클라이언트에서 전달 된 값 (아이디만) : ${user.user_email}`);
-        const loginAuth: {message: string, data: string, statusCode: number} = await this.authService.loginUser(user, res);
-        if (loginAuth.statusCode === 200) {     // 로그인 성공시 RefreshToken도 함께 발급
-            this.authService.setRefreshToken(user, res);
-        }
+        const loginAuth = await this.authService.loginUser(user, res);
+        // if (loginAuth.statusCode === 200) {     // 로그인 성공시 RefreshToken도 함께 발급
+        //     this.authService.setRefreshToken(user, res);
+        // }
         return res.status(HttpStatus.OK).json(loginAuth);       // res.status()를 호출해서 200에 대한 내용 전달 + service단에서 만든 데이터를 JSON 형태도 전달
     }
 
@@ -108,9 +108,9 @@ export class AuthController {
                 const refreshToken = await this.authService.setRefreshToken(user, res);
                 this.logger.debug('카카오로그인 로직 후 발급하는 홈페이지 자체 accessToken : ', accessToken);
                 this.logger.debug('카카오로그인 로직 후 발급하는 홈페이지 자체 refreshToken : ', refreshToken);
-                res.header('Authorization', `Bearer ${accessToken}`);
-                res.cookie('refreshToken', refreshToken, {httpOnly: true});     // ####### 현재 refreshToken값 출력 잘되고, 쿠키로 전송이 되지만 크롬에서 확인하면 refreshToken의 value가 undefined가 되어있음. 원인 알 수 없음.
-                return res.status(200).json({data: accessToken});     // 해당 회원이 존재하면 프론트로 200코드 전송
+                // res.header('Authorization', `Bearer ${accessToken}`);       // 프론트엔드 작업 처리 과정에서 토큰을 body로 보내기로 함.
+                // res.cookie('refreshToken', refreshToken, {httpOnly: true});     // 현재 refreshToken값 출력 잘되고, 쿠키로 전송이 되지만 크롬에서 확인하면 refreshToken의 value가 undefined가 되어있음. 서로 포트가 다름을 유의.
+                return res.status(200).json({messgae: '카카오로그인 성공', AccessToken: accessToken, RefreshToken: refreshToken, statusCode: 200});     // 해당 회원이 존재하면 프론트로 200코드 전송
             } else {
                 this.logger.log(`등록되지 않은 회원입니다. 입력된 카카오회원 : ${kakaoEmail}`);
                 return res.status(404).json({name:kakaoName, email:kakaoEmail, phone:kakaoPhone});      // 해당 회원이 존재하지 않으면 프론트로 404코드와 회원 정보 전송
