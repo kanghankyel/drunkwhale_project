@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +29,15 @@ async function bootstrap() {
     // origin: 'http://localhost:3000',
     credentials: true,
   });
+
+  // 정적 파일 제공을 위해 Express 앱 생성
+  const expressApp = express();
+
+  // 정적 파일 미들웨어 추가
+  expressApp.use('/uploads', express.static('/root/uploads'));
+
+  // NestJS 앱을 Express 앱에 마운트
+  app.use(expressApp);
 
   await app.listen(3001);
 }

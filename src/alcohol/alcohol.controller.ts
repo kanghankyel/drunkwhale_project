@@ -50,6 +50,4 @@ export class AlcoholController {
     return this.alcoholService.getReadAlcohol();
   }
 
-  // 자신만의 시그니처 주류 등록 신청(일반회원, 가맹회원)
-
 }
