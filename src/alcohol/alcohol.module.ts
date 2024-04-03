@@ -10,6 +10,7 @@ import { SftpService } from 'src/sftp/sftp.service';
 @Module({
   imports: [DatabaseModule, UserModule, SftpModule],
   controllers: [AlcoholController],
-  providers: [...alcoholRepositroy, AlcoholService, SftpService]
+  providers: [...alcoholRepositroy, AlcoholService, SftpService],
+  exports: [...alcoholRepositroy],
 })
 export class AlcoholModule {}

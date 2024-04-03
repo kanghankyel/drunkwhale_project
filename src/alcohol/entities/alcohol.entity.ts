@@ -1,5 +1,6 @@
+import { Cabinet } from "src/cabinet/entities/cabinet.entity";
 import { User } from "src/user/entities/user.entity";
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('tb_alcohol')
 export class Alcohol extends BaseEntity {
@@ -21,7 +22,7 @@ export class Alcohol extends BaseEntity {
     alcohol_imgpath: string;
 
     // 주류_이름
-    @Column({nullable: true})
+    @Column({nullable: true, unique: true})
     alcohol_name: string;
 
     // 주류_타입
@@ -64,6 +65,9 @@ export class Alcohol extends BaseEntity {
     @ManyToOne(() => User)
     @JoinColumn({name: 'user_email', referencedColumnName: 'user_email'})
     user: User;
+
+    @OneToMany(() => Cabinet, cabinet => cabinet.alcohol)
+    cabinets: Cabinet[];
 
     // 이 방식은 회원의 모든 정보까지 다 받아와서 게시하기 때문에 일단은 55줄~62줄로 대체
     // @ManyToOne(() => User, (user) => user.alcohols)

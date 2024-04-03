@@ -1,4 +1,5 @@
 import { Alcohol } from "src/alcohol/entities/alcohol.entity";
+import { Cabinet } from "src/cabinet/entities/cabinet.entity";
 import { Role } from "src/role/entities/role.entity";
 import { Store } from "src/store/entities/store.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
@@ -73,5 +74,9 @@ export class User extends BaseEntity {
     // 주류 JOIN
     @OneToMany(() => Alcohol, (alcohol) => alcohol.user)
     alcohols: Alcohol[];
+
+    // 술장고 JOIN
+    @OneToMany(() => Cabinet, (cabinet) => cabinet.user)
+    cabinets:  Cabinet[];
 
 }
