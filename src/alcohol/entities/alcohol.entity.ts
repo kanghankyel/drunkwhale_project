@@ -1,4 +1,5 @@
 import { Cabinet } from "src/cabinet/entities/cabinet.entity";
+import { Subscribe } from "src/subscribe/entities/subscribe.entity";
 import { User } from "src/user/entities/user.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -66,8 +67,13 @@ export class Alcohol extends BaseEntity {
     @JoinColumn({name: 'user_email', referencedColumnName: 'user_email'})
     user: User;
 
+    // 술장고 JOIN
     @OneToMany(() => Cabinet, cabinet => cabinet.alcohol)
     cabinets: Cabinet[];
+
+    // 찜 JOIN
+    @OneToMany(() => Subscribe, subscribe => subscribe.alcohol)
+    subscribes: Subscribe[];
 
     // 이 방식은 회원의 모든 정보까지 다 받아와서 게시하기 때문에 일단은 55줄~62줄로 대체
     // @ManyToOne(() => User, (user) => user.alcohols)

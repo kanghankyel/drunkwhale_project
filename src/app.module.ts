@@ -11,6 +11,7 @@ import { MenuModule } from './menu/menu.module';
 import { SftpModule } from './sftp/sftp.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { CabinetModule } from './cabinet/cabinet.module';
+import { SubscribeModule } from './subscribe/subscribe.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { CabinetModule } from './cabinet/cabinet.module';
     MenuModule,
     SftpModule,
     MulterModule.register({dest:'./uploads'}),
-    CabinetModule,    // 업로드된 파일이 저장될 경로 (정적 구성)
+    CabinetModule,
+    SubscribeModule,    // 업로드된 파일이 저장될 경로 (정적 구성)
     // MulterModule.registerAsync({useFactory: () => ({dest:'./uploads'})}),    // 업로드된 파일이 저장될 경로 (비동기 구성)
   ],
   controllers: [],
