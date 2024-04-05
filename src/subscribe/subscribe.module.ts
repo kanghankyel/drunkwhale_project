@@ -10,5 +10,6 @@ import { subscribeRepository } from './subscribe.repository';
   imports: [DatabaseModule, UserModule, AlcoholModule],
   controllers: [SubscribeController],
   providers: [...subscribeRepository, SubscribeService],
+  exports: [...subscribeRepository],
 })
 export class SubscribeModule {}

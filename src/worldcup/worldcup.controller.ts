@@ -15,13 +15,21 @@ export class WorldcupController {
   private logger = new Logger('worldcup.controller.ts');
 
   // 주류월드컵(32강)
+  @ApiOperation({summary:'주류월드컵(32강)', description:'주류월드컵(32강) 주류 선정'})
+  @ApiBearerAuth()
+  @Get('api/get/worldcup')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
+  async getWorldcup() {
+    return this.worldcupService.getWorldcup();
+  }
 
   // 주류월드컵 결과 전송
   @ApiOperation({summary:'주류월드컵 결과 전송', description:'주류월드컵 결과 전송'})
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @Post('api/save/worldcup')
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(RoleEnum.ROLE_USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
   async saveWorldcup(@Body() createWorldcupDto: CreateWorldcupDto) {
     return this.worldcupService.saveWorldcup(createWorldcupDto);
   }

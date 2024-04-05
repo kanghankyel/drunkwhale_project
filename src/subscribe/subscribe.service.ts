@@ -28,7 +28,7 @@ export class SubscribeService {
       if(!alcohol) {
         return {message:`해당 주류가 없습니다. 입력된 주류 : ${alcohol_name}`, statusCode:404};
       }
-      const duplicate = await this.subscribeRepository.findOne({where:{alcohol_name:alcohol_name}});
+      const duplicate = await this.subscribeRepository.findOne({where:{user_email:user_email, alcohol_name:alcohol_name}});
       if(duplicate) {
         return {message:`이미 해당 주류를 찜했습니다. 입력된 주류 : ${alcohol_name}`, statusCode:400};
       }
