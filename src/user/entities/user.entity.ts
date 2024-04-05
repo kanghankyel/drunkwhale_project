@@ -3,6 +3,7 @@ import { Cabinet } from "src/cabinet/entities/cabinet.entity";
 import { Role } from "src/role/entities/role.entity";
 import { Store } from "src/store/entities/store.entity";
 import { Subscribe } from "src/subscribe/entities/subscribe.entity";
+import { Worldcup } from "src/worldcup/entities/worldcup.entity";
 import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('tb_user')
@@ -83,5 +84,9 @@ export class User extends BaseEntity {
     // 찜하기 JOIN
     @OneToMany(() => Subscribe, (subscribe) => subscribe.user)
     subscribes: Subscribe[];
+
+    // 주류월드컵 JOIN
+    @OneToMany(() => Worldcup, (worldcup) => worldcup.user)
+    worldcups: Worldcup[];
 
 }
