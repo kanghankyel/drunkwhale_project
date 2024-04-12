@@ -13,25 +13,17 @@ export class Cabinet extends BaseEntity {
     @Column()
     alcohol_name: string;
 
-    // 술장고_평가(맛)
+    // 술장고_평가(색상)
     @Column()
-    cabinet_flavor: string;
+    cabinet_color: string;
 
     // 술장고_평가(향)
     @Column()
     cabinet_aroma: string;
 
-    // 술장고_평가(외형)
+    // 술장고_평가(맛)
     @Column()
-    cabinet_look: string;
-
-    // 술장고_평가(품질)
-    @Column()
-    cabinet_quality: string;
-
-    // 술장고_평가(균형)
-    @Column()
-    cabinet_balance: string;
+    cabinet_flavor: string;
 
     // 술장고_개인평가
     @Column()

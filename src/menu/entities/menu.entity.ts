@@ -8,13 +8,25 @@ export class Menu extends BaseEntity {
     @PrimaryGeneratedColumn('increment')
     menu_idx!: number;
 
-    // 메뉴 상품사진
+    // 메뉴 상품이미지 (원본파일명))
     @Column({nullable: true})
-    menu_image: string;
+    menu_imgname: string;
+
+    // 메뉴 상품이미지 (유니크명)
+    @Column({nullable: true})
+    menu_imgkey: string;
+
+    // 메뉴 상품이미지 (경로)
+    @Column({nullable: true})
+    menu_imgpath: string;
 
     // 메뉴 상품명
     @Column({nullable: true})
     menu_name: string;
+
+    // 메뉴 상품타입
+    @Column({nullable: true})
+    menu_type: string;
 
     // 메뉴 상품소개
     @Column({nullable: true})

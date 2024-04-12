@@ -27,6 +27,18 @@ export class CreateAlcoholDto {
     @IsString()
     readonly alcohol_percent: string | null;
 
+    @ApiProperty({description:'주류 색상'})
+    @IsString()
+    readonly alcohol_color: string | null;
+
+    @ApiProperty({description:'주류 향'})
+    @IsString()
+    readonly alcohol_aroma: string | null;
+
+    @ApiProperty({description:'주류 맛'})
+    @IsString()
+    readonly alcohol_flavor: string | null;
+
     @ApiProperty({description:'주류 설명'})
     @IsString()
     readonly alcohol_info: string | null;

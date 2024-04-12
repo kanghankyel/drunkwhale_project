@@ -28,9 +28,6 @@ export class WorldcupService {
         'a.alcohol_imgpath',
         'a.alcohol_type',
         'a.alcohol_class',
-        'a.alcohol_from',
-        'a.alcohol_percent',
-        'a.alcohol_info',
         'COUNT(b.alcohol_name) AS subscribe_count'
       ])
       .leftJoin('tb_subscribe', 'b', 'a.alcohol_name = b.alcohol_name')

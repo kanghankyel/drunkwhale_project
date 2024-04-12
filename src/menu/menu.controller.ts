@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/role/role.guard';
 import { Roles } from 'src/role/role.decorator';
@@ -18,6 +18,20 @@ export class MenuController {
 
   // 메뉴 상품등록
   @ApiOperation({summary:'메뉴 상품등록', description:'메뉴 상품등록'})
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        menu_image: {type: 'string', format: 'binary'},
+        menu_name: {type: 'string'},
+        menu_type: {type: 'string'},
+        menu_info: {type: 'string'},
+        menu_price: {type: 'string'},
+        user_email: {type: 'string'},
+      },
+    }
+  })
   @ApiBearerAuth()
   @Post('api/create/menu')
   @UseInterceptors(FileInterceptor('menu_image'))

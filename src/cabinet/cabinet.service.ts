@@ -19,7 +19,7 @@ export class CabinetService {
   // 개인 술장고 입력
   async createCabinet(createCabinetDto: CreateCabinetDto) {
     try {
-      const {alcohol_name, cabinet_flavor, cabinet_aroma, cabinet_look, cabinet_quality, cabinet_balance, cabinet_review, user_email} = createCabinetDto;
+      const {alcohol_name, cabinet_color, cabinet_aroma, cabinet_flavor, cabinet_review, user_email} = createCabinetDto;
       const user = await this.userRepository.findOne({where:{user_email:user_email}});
       if(!user) {
         return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
@@ -30,11 +30,9 @@ export class CabinetService {
       }
       const cabinet = new Cabinet();
       cabinet.alcohol_name = alcohol.alcohol_name;
-      cabinet.cabinet_flavor = createCabinetDto.cabinet_flavor;
+      cabinet.cabinet_color = createCabinetDto.cabinet_color;
       cabinet.cabinet_aroma = createCabinetDto.cabinet_aroma;
-      cabinet.cabinet_look = createCabinetDto.cabinet_look;
-      cabinet.cabinet_quality = createCabinetDto.cabinet_quality;
-      cabinet.cabinet_balance = createCabinetDto.cabinet_balance;
+      cabinet.cabinet_flavor = createCabinetDto.cabinet_flavor;
       cabinet.cabinet_review = createCabinetDto.cabinet_review;
       cabinet.cabinet_updatedate = null;
       cabinet.user_email = user.user_email;

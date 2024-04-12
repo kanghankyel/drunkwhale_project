@@ -1,12 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards } from '@nestjs/common';
 import { SubscribeService } from './subscribe.service';
 import { CreateSubscribeDto } from './dto/create-subscribe.dto';
-import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/role/role.guard';
 import { RoleEnum } from 'src/role/role.enum';
 import { Roles } from 'src/role/role.decorator';
 
+@ApiTags('SUBSCRIBE 모듈')
 @Controller()
 export class SubscribeController {
 

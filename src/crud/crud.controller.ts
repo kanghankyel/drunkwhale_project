@@ -4,7 +4,7 @@ import { CreateCrudDto } from './dto/create-crud.dto';
 import { UpdateCrudDto } from './dto/update-crud.dto';
 import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('CRUD 모듈')
+@ApiTags('CRUD(test) 모듈')
 @Controller('crud')
 export class CrudController {
 

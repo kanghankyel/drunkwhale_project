@@ -42,6 +42,18 @@ export class Alcohol extends BaseEntity {
     @Column({nullable: true})
     alcohol_percent: string;
 
+    // 주류_색상
+    @Column({nullable: true})
+    alcohol_color: string;
+
+    // 주류_향
+    @Column({nullable: true})
+    alcohol_aroma: string;
+
+    // 주류_맛
+    @Column({nullable: true})
+    alcohol_flavor: string;
+
     // 주류_설명
     @Column({nullable: true})
     alcohol_info: string;

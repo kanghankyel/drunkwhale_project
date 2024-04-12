@@ -25,7 +25,7 @@ export class AlcoholService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const {alcohol_name, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_info, user_email} = createAlcoholDto;
+      const {alcohol_name, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_color, alcohol_aroma, alcohol_flavor, alcohol_info, user_email} = createAlcoholDto;
       const user = await this.userRepository.findOne({where:{user_email:user_email, user_status:'A'}});
       if(!user) {
         return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
@@ -36,6 +36,9 @@ export class AlcoholService {
       alcohol.alcohol_class = createAlcoholDto.alcohol_class;
       alcohol.alcohol_from = createAlcoholDto.alcohol_from;
       alcohol.alcohol_percent = createAlcoholDto.alcohol_percent;
+      alcohol.alcohol_color = createAlcoholDto.alcohol_color;
+      alcohol.alcohol_aroma = createAlcoholDto.alcohol_aroma;
+      alcohol.alcohol_flavor = createAlcoholDto.alcohol_flavor;
       alcohol.alcohol_info = createAlcoholDto.alcohol_info;
       alcohol.alcohol_updatedate = null;
       alcohol.user_email = user.user_email;
@@ -56,9 +59,9 @@ export class AlcoholService {
         alcohol.alcohol_imgpath = alcohol_image_path;
         const buffer = file.buffer;
         await this.sftpService.uploadFileFromBuffer(buffer, `uploads/drunkwhale/alcohol/${uniqueFileName}`);
-        this.logger.debug(JSON.stringify(user.user_email) + ' 님의 애완견정보 SFTP서버로 전송 완료');
+        this.logger.debug(JSON.stringify(user.user_email) + ' 님의 주류정보 SFTP서버로 전송 완료');
       }
-      // 3. 강아지 정보 트랜잭션 저장. 기존 코드 변경. ( 기존코드 => await this.alcoholRepository.save(alcohol); )
+      // 3. 주류 정보 트랜잭션 저장. 기존 코드 변경. ( 기존코드 => await this.alcoholRepository.save(alcohol); )
       await queryRunner.manager.save(alcohol);
       this.logger.debug(JSON.stringify(user.user_email) + ' 님의 주류 정보입력 완료');
       // 4. 모든 작업이 성공하면 트랜잭션 커밋

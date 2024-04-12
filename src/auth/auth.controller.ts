@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Inject, Logger, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from 'src/user/user.service';
@@ -7,6 +7,7 @@ import { User } from 'src/user/entities/user.entity';
 import axios from 'axios';
 import { userRepository } from 'src/user/user.repository';
 import { Repository } from 'typeorm';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @ApiTags('AUTH 모듈')
 @Controller()
@@ -22,6 +23,7 @@ export class AuthController {
 
     // 일반 로그인
     @ApiOperation({summary:'로그인', description:'로그인'})
+    @ApiBody({type: LoginUserDto})
     @Post('login')
     async loginUser(@Body() user: User, @Res() res) {
         this.logger.log(`클라이언트에서 전달 된 값 (아이디만) : ${user.user_email}`);

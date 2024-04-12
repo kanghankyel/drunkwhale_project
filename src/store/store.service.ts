@@ -20,7 +20,7 @@ export class StoreService {
   // 사업자 스토어 신청
   async requestStore(createStoreDto: CreateStoreDto) {
     try {
-      const {store_name, store_registnum, store_ownername, store_phone, store_type, store_postcode, store_add, store_adddetail, store_status, user_email} = createStoreDto;
+      const {store_name, store_registnum, store_ownername, store_phone, store_postcode, store_add, store_adddetail, store_status, user_email} = createStoreDto;
       const storeCheckInWithdrawn = await this.storeRepository.findOne({where:{store_registnum, store_status:'W'}});
       if(storeCheckInWithdrawn) {
         return {message:`이미 신청대기중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`, statusCode:409};
@@ -38,7 +38,6 @@ export class StoreService {
         store_registnum,
         store_ownername,
         store_phone,
-        store_type,
         store_postcode,
         store_add,
         store_adddetail,
