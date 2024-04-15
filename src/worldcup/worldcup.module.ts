@@ -11,5 +11,6 @@ import { SubscribeModule } from 'src/subscribe/subscribe.module';
   imports: [DatabaseModule, UserModule, AlcoholModule, SubscribeModule],
   controllers: [WorldcupController],
   providers: [...worldcupRepository, WorldcupService],
+  exports: [...worldcupRepository],
 })
 export class WorldcupModule {}
