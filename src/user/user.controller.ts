@@ -10,6 +10,7 @@ import { User } from './entities/user.entity';
 import { Roles } from 'src/role/role.decorator';
 import { InputUserDto } from './dto/input-user.dto';
 import { CreateOwnerDto } from './dto/create_owner.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('USER 모듈')
 @Controller()
@@ -21,7 +22,7 @@ export class UserController {
 
   // 회원 생성
   @ApiOperation({summary:'회원가입', description:'회원가입'})
-  @Post('user/signin')
+  @Post('api/user/signin')
   async createUser(@Body() createUserDto: CreateUserDto, @Req() req) {
     const saltOrRounds = 10;    // jwt Salt값
     const hashedPassword = await bcrypt.hash(createUserDto.user_pw, saltOrRounds);    // bcrypt 사용 비밀번호 암호화
@@ -45,7 +46,7 @@ export class UserController {
   // 로그인한 회원(ROLE_USER) 마이페이지
   @ApiOperation({summary:'마이페이지', description:'마이페이지 (나의정보)'})
   @ApiBearerAuth()
-  @Get('user/myinfo')
+  @Get('api/user/myinfo')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
   async myinfo(@Req() req) {
@@ -56,12 +57,25 @@ export class UserController {
   // 로그인한 회원(ROLE_ADMIN) 마이페이지
   @ApiOperation({summary:'마이페이지(관리자)', description:'마이페이지 (관리자정보)'})
   @ApiBearerAuth()
-  @Get('user/admininfo')
+  @Get('api/user/admininfo')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_ADMIN)
   async admininfo(@Req() req) {
     const userinfo: any = req.user;
     return userinfo;
+  }
+
+  // 회원정보 수정
+  @ApiOperation({summary:'회원정보수정', description:'회원정보 수정'})
+  @ApiBearerAuth()
+  @Patch('api/user/update')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
+  async userupdate(@Body() updateUserDto: UpdateUserDto) {
+    const saltOrRounds = 10;
+    const hashedPassword = await bcrypt.hash(updateUserDto.user_pw, saltOrRounds);
+    const user = {...updateUserDto, user_pw: hashedPassword};
+    return this.userService.updateUser(user);
   }
 
   // #########################################################################################################
@@ -70,7 +84,7 @@ export class UserController {
 
   // 가맹회원 가입신청
   @ApiOperation({summary:'가맹회원 가입신청', description:'가맹회원 가입신청'})
-  @Post('owner/signin')
+  @Post('api/owner/signin')
   async createOwner(@Body() createOwnerDto: CreateOwnerDto, @Req() req) {
     const saltOrRounds = 10;    // jwt Salt값
     const hashedPassword = await bcrypt.hash(createOwnerDto.user_pw, saltOrRounds);    // bcrypt 사용 비밀번호 암호화

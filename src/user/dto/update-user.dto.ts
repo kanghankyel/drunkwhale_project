@@ -1,33 +1,46 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create-user.dto';
 import { IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
-
-    @ApiProperty({description:'회원 아이디'})
-    @IsString()
-    @IsOptional()
-    user_id?: string;
-
-    @ApiProperty({description:'회원 비밀번호'})
-    @IsString()
-    @IsOptional()
-    user_pw?: string;
-
-    @ApiProperty({description:'회원 이름'})
-    @IsString()
-    @IsOptional()
-    user_name?: string;
-
-    @ApiProperty({description:'회원 전화번호'})
-    @IsString()
-    @IsOptional()
-    user_phone?: string;
+export class UpdateUserDto {
 
     @ApiProperty({description:'회원 이메일'})
     @IsString()
     @IsOptional()
-    user_email?: string;
+    readonly user_email?: string | null;
+
+    @ApiProperty({description:'회원 새로운 이메일'})
+    @IsString()
+    @IsOptional()
+    readonly user_newemail?: string | null;
+
+    @ApiProperty({description:'회원 비밀번호'})
+    @IsString()
+    @IsOptional()
+    readonly user_pw?: string | null;
+
+    @ApiProperty({description:'회원 닉네임'})
+    @IsString()
+    @IsOptional()
+    readonly user_nickname?: string | null;
+
+    @ApiProperty({description:'회원 전화번호'})
+    @IsString()
+    @IsOptional()
+    readonly user_phone?: string | null;
+
+    @ApiProperty({description:'회원 우편번호'})
+    @IsString()
+    @IsOptional()
+    readonly user_postcode?: string | null;
+
+    @ApiProperty({description:'회원 주소'})
+    @IsString()
+    @IsOptional()
+    readonly user_add?: string | null;
+
+    @ApiProperty({description:'회원 상세주소'})
+    @IsString()
+    @IsOptional()
+    readonly user_adddetail?: string | null;
 
 }

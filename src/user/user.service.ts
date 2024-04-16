@@ -88,6 +88,44 @@ export class UserService {
   //   return updatedUser;
   // }
 
+  // 회원정보 수정
+  async updateUser(updateUserDto: UpdateUserDto) {
+    try {
+      const {user_email, user_newemail, user_pw, user_nickname, user_phone, user_postcode, user_add, user_adddetail} = updateUserDto;
+      const user = await this.userRepository.findOne({where:{user_email: user_email}});
+      if (!user) {
+        throw new NotFoundException(`해당 회원이 존재하지 않습니다. 입력된 회원 : ${user_email}`);
+      }
+      if (user_newemail && user_newemail !== user.user_email) {
+        // 새로운 이메일이 기존 이메일과 다르고, 다른 회원의 이메일과 중복되는지 확인
+        const existEmail = await this.userRepository.findOne({where:{user_email: user_newemail}});
+        if (existEmail) {
+          throw new ConflictException(`이미 등록된 이메일입니다. 입력된 새로운 이메일 ${user_newemail}`)
+        }
+        // 중복되지 않는다면 새로운 이메일로 회원 정보 업데이트
+        user.user_email = user_newemail;
+      }
+      if (user_phone && user_phone !== user.user_phone) {
+        const existPhone = await this.userRepository.findOne({where:{user_phone: user_phone}});
+        if (existPhone) {
+          throw new ConflictException(`이미 등록된 전화번호입니다. 입력된 전화번호 : ${user_phone}`);
+        }
+      }
+      // 입력된 정보가 있으면 업데이트, 없으면 기존 비밀번호 유지
+      if (user_pw) user.user_pw = user_pw;
+      if (user_nickname) user.user_nickname = user_nickname;
+      if (user_postcode) user.user_postcode = user_postcode;
+      if (user_add) user.user_add = user_add;
+      if (user_adddetail) user.user_adddetail = user_adddetail;
+      const updatedUser = await this.userRepository.save(user);   // 업데이트된 회원 정보 저장
+      return {message: `회원정보수정완료`, data: updatedUser, statusCode: 200}
+    } catch (error) {
+      this.logger.error('회원정보 수정중 오류발생');
+      this.logger.error(error);
+      return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
+    }
+  }
+
   // #########################################################################################################
   // ######################################     아래는 가맹회원 로직    ###########################################
   // #########################################################################################################
