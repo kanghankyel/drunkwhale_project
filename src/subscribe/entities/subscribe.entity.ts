@@ -32,7 +32,7 @@ export class Subscribe extends BaseEntity {
 
     // 주류 JOIN
     @ManyToOne(() => Alcohol)
-    @JoinColumn({name: 'alcohol_name', referencedColumnName: 'alcohol_name'})
+    @JoinColumn({name: 'alcohol_idx', referencedColumnName: 'alcohol_idx'})
     alcohol: Alcohol;
 
 }

@@ -7,6 +7,7 @@ import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nes
 import { Roles } from 'src/role/role.decorator';
 import { RoleEnum } from 'src/role/role.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateAlcoholDto } from './dto/update-alcohol.dto';
 
 @ApiTags('Alcohol 모듈')
 @Controller()
@@ -48,6 +49,34 @@ export class AlcoholController {
   @Get('api/read/alcohol')
   async readAlcohol() {
     return this.alcoholService.getReadAlcohol();
+  }
+
+  // 주류 정보수정(관리자)
+  @ApiOperation({summary:'주류 정보수정', description:'주류 정보수정'})
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        alcohol_idx: {type: 'number'},
+        alcohol_image: {type: 'string', format: 'binary'},
+        alcohol_name: {type: 'string'},
+        alcohol_type: {type: 'string'},
+        alcohol_class: {type: 'string'},
+        alcohol_from: {type: 'string'},
+        alcohol_percent: {type: 'string'},
+        alcohol_info: {type: 'string'},
+        user_email: {type: 'string'},
+      },
+    },
+  })
+  @ApiBearerAuth()
+  @Patch('api/update/alcohol')
+  @UseInterceptors(FileInterceptor('alcohol_image'))
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_ADMIN)
+  async updateAlcohol(@UploadedFile() file, @Body() updateAlcoholDto: UpdateAlcoholDto) {
+    return this.alcoholService.updateAlcohol(updateAlcoholDto, file);
   }
 
 }

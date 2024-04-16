@@ -94,4 +94,24 @@ export class SftpService{
         }
     }
 
+    // SFTP 파일 삭제
+    async deleteFile(remotePath: string) {
+        try {
+            await this.connect();
+            const fileExist = await this.sftp.exists(remotePath);
+            if (fileExist) {
+                await this.sftp.delete(remotePath);
+                this.logger.debug(`파일 [${remotePath}] 삭제 완료`);
+            } else {
+                this.logger.debug(`파일 [${remotePath}] 존재하지 않습니다.`)
+            }
+        } catch (error) {
+            this.logger.error(`파일 [${remotePath}] 삭제 중 오류 발생`)
+            this.logger.error(error);
+            throw error;
+        } finally {
+            await this.disconnect();
+        }
+    }
+
 }
