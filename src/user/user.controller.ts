@@ -78,6 +78,16 @@ export class UserController {
     return this.userService.updateUser(user);
   }
 
+  // 회원탈퇴
+  @ApiOperation({summary:'회원탈퇴', description:'회원탈퇴'})
+  @ApiBearerAuth()
+  @Patch('api/user/signout')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
+  async signout(@Body() {user_email}) {
+    return this.userService.signout(user_email);
+  }
+
   // #########################################################################################################
   // ######################################     아래는 가맹회원 로직    ###########################################
   // #########################################################################################################

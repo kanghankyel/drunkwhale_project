@@ -126,6 +126,24 @@ export class UserService {
     }
   }
 
+  // 회원탈퇴
+  async signout(user_email) {
+    try {
+      this.logger.debug(`서버로 전송된 탈퇴요청 user_email : ` + user_email);
+      const user = await this.userRepository.findOne({where:{user_email: user_email}});
+      if (!user) {
+        throw new NotFoundException(`해당 회원이 존재하지 않습니다. 입력된 회원 : ${user_email}`);
+      }
+      user.user_status = 'C';
+      await this.userRepository.save(user);
+      return {message: `회원탈퇴처리가 완료되었습니다.`, data: user, statusCode: 200};
+    } catch (error) {
+      this.logger.error('회원탈퇴 중 오류발생');
+      this.logger.error(error);
+      return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
+    }
+  }
+
   // #########################################################################################################
   // ######################################     아래는 가맹회원 로직    ###########################################
   // #########################################################################################################
