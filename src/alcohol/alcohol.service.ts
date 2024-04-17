@@ -36,26 +36,10 @@ export class AlcoholService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const {
-        alcohol_name,
-        alcohol_type,
-        alcohol_class,
-        alcohol_from,
-        alcohol_percent,
-        alcohol_color,
-        alcohol_aroma,
-        alcohol_flavor,
-        alcohol_info,
-        user_email,
-      } = createAlcoholDto;
-      const user = await this.userRepository.findOne({
-        where: { user_email: user_email, user_status: 'A' },
-      });
+      const {alcohol_name, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_color, alcohol_aroma,alcohol_flavor, alcohol_info, user_email} = createAlcoholDto;
+      const user = await this.userRepository.findOne({where:{user_email: user_email, user_status: 'A' }});
       if (!user) {
-        return {
-          message: `해당 회원이 없습니다. 입력된 회원 : ${user_email}`,
-          statusCode: 404,
-        };
+        return {message: `해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode: 404};
       }
       const alcohol = new Alcohol();
       alcohol.alcohol_name = createAlcoholDto.alcohol_name;
@@ -74,9 +58,7 @@ export class AlcoholService {
         // 이미지가 있을 경우에만 작동되게 하기
         console.log(file);
         if (!file.buffer) {
-          this.logger.error(
-            `파일 객체에 buffer 속성이 포함되어 있지 않습니다.`,
-          );
+          this.logger.error(`파일 객체에 buffer 속성이 포함되어 있지 않습니다.`);
           throw new Error('유효한 파일 객체가 전달되지 않았습니다.');
         }
         const fileExtension = file.originalname.split('.').pop(); // 파일이름과 확장자 분리. pop를 사용하여 배열 마지막 요소인 파일확장자를 가져옴
@@ -88,44 +70,25 @@ export class AlcoholService {
         alcohol.alcohol_imgkey = alcohol_image_key;
         alcohol.alcohol_imgpath = alcohol_image_path;
         const buffer = file.buffer;
-        await this.sftpService.uploadFileFromBuffer(
-          buffer,
-          `uploads/drunkwhale/alcohol/${uniqueFileName}`,
-        );
-        this.logger.debug(
-          JSON.stringify(user.user_email) +
-            ' 님의 주류정보 SFTP서버로 전송 완료',
-        );
+        await this.sftpService.uploadFileFromBuffer(buffer, `uploads/drunkwhale/alcohol/${uniqueFileName}`);
+        this.logger.debug(JSON.stringify(user.user_email) + ' 님의 주류정보 SFTP서버로 전송 완료');
       }
       // 3. 주류 정보 트랜잭션 저장. 기존 코드 변경. ( 기존코드 => await this.alcoholRepository.save(alcohol); )
       await queryRunner.manager.save(alcohol);
-      this.logger.debug(
-        JSON.stringify(user.user_email) + ' 님의 주류 정보입력 완료',
-      );
+      this.logger.debug(JSON.stringify(user.user_email) + ' 님의 주류 정보입력 완료');
       // 4. 모든 작업이 성공하면 트랜잭션 커밋
       await queryRunner.commitTransaction();
-      return {
-        message: `${user_email}님의 주류 정보입력 완료`,
-        data: alcohol,
-        statusCode: 200,
-      };
+      return {message: `${user_email}님의 주류 정보입력 완료`, data: alcohol, statusCode: 200};
     } catch (error) {
       // 5. 오류 발생 시 트랜잭션 롤백
       await queryRunner.rollbackTransaction();
       if (error.message === 'SFTP 연결 실패.') {
-        return {
-          message: 'SFTP 연결 실패로 데이터베이스에 저장 실패하였습니다.',
-          statusCode: 500,
-        };
+        return {message: 'SFTP 연결 실패로 데이터베이스에 저장 실패하였습니다.', statusCode: 500};
       } else {
         this.logger.error('주류정보 등록 중 오류 발생');
         this.logger.error(error);
         console.log(error);
-        return {
-          message: `서버 오류 발생. 다시 시도해 주세요.`,
-          error: `${error}`,
-          statusCode: 500,
-        };
+        return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
       }
     } finally {
       // 6. QueryRunner 자원 해제

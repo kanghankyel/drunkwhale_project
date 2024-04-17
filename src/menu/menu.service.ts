@@ -6,6 +6,7 @@ import { Store } from 'src/store/entities/store.entity';
 import { User } from 'src/user/entities/user.entity';
 import { SftpService } from 'src/sftp/sftp.service';
 import { v4 as uuidv4 } from 'uuid';
+import { UpdateMenuDto } from './dto/update-menu.dto';
 
 @Injectable()
 export class MenuService {
@@ -20,7 +21,7 @@ export class MenuService {
   private logger = new Logger('menu.service.ts');
 
 
-  // 메뉴 상품등록 (카페)
+  // 메뉴 상품등록
   async createMenu(createMenuDto: CreateMenuDto, file: Express.Multer.File) {
     const queryRunner = this.menuRepository.manager.connection.createQueryRunner();
     await queryRunner.connect();
@@ -78,6 +79,62 @@ export class MenuService {
       this.logger.error('메뉴등록 중 오류 발생.');
       this.logger.error(`에러내용 : ${error}`);
       console.log(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  // 메뉴 상품수정
+  async updateMenu(updateMenuDto: UpdateMenuDto, file: Express.Multer.File) {
+    const queryRunner = this.menuRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const {menu_idx, menu_name, menu_type, menu_info, menu_price, user_email} = updateMenuDto;
+      let previousImgPath: string | undefined;    // 이전 이미지 경로를 저장할 변수 선언
+      const menu = await this.menuRepository.findOne({where:{menu_idx:menu_idx}});
+      if (!menu) {
+        return {message: `해당되는 메뉴는 없습니다. 입력된 메뉴번호 : [${menu_idx}]`, data: null,statusCode: 404};
+      }
+      // 이미지 파일 업로드 로직
+      if (file) {
+        if (!file.buffer) {
+          throw new Error('유효한 파일 객체가 전달되지 않았습니다.');
+        }
+        const fileExtension = file.originalname.split('.').pop();
+        const uniqueFileName = `${uuidv4()}.${fileExtension}`;
+        const menu_image_name = `${file.originalname}`;
+        const menu_image_key = `${uniqueFileName}`;
+        const menu_image_path = `uploads/drunkwhale/menu/${uniqueFileName}`;
+        const buffer = file.buffer;
+        // 이전 이미지 경로 저장
+        previousImgPath = menu.menu_imgpath;
+        this.logger.debug(`기존의 사진 파일 경로 : [${previousImgPath}]`);
+        // 이전 이미지 삭제
+        if (previousImgPath) {
+          await this.sftpService.deleteFile(previousImgPath);
+        }
+        // 새로운 이미지 업로드
+        await this.sftpService.uploadFileFromBuffer(buffer, menu_image_path);
+        // 메뉴 객체에 새로운 이미지 정보 할당
+        menu.menu_imgname = menu_image_name;
+        menu.menu_imgkey = menu_image_key;
+        menu.menu_imgpath = menu_image_path;
+        this.logger.debug(`${user_email} 님의 메뉴 이미지 업로드 완료`);
+      }
+      // 메뉴 정보 업데이트
+      menu.menu_name = menu_name || menu.menu_name;
+      menu.menu_type = menu_type || menu.menu_type;
+      menu.menu_info = menu_info || menu.menu_info;
+      menu.menu_price = menu_price || menu.menu_price;
+      await queryRunner.manager.save(menu);
+      await queryRunner.commitTransaction();
+      return {message: `[${user_email}]님의 메뉴 정보 수정 완료`, data: menu, statusCode: 200};
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.error('메뉴 정보 수정 중 오류 발생');
+      this.logger.error(error);
       throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
     } finally {
       await queryRunner.release();
