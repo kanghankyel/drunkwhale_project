@@ -1,10 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import {Inject, Injectable, InternalServerErrorException, Logger, NotFoundException} from '@nestjs/common';
 import { CreateAlcoholDto } from './dto/create-alcohol.dto';
 import { Alcohol } from './entities/alcohol.entity';
 import { Repository } from 'typeorm';
@@ -15,9 +9,9 @@ import { UpdateAlcoholDto } from './dto/update-alcohol.dto';
 
 @Injectable()
 export class AlcoholService {
+
   constructor(
-    @Inject('ALCOHOL_REPOSITORY')
-    private alcoholRepository: Repository<Alcohol>,
+    @Inject('ALCOHOL_REPOSITORY') private alcoholRepository: Repository<Alcohol>,
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
     private readonly sftpService: SftpService,
   ) {}
@@ -25,13 +19,9 @@ export class AlcoholService {
   private logger = new Logger('alcohol.service.ts');
 
   // 주류 정보입력(관리자)
-  async createAlcohol(
-    createAlcoholDto: CreateAlcoholDto,
-    file: Express.Multer.File,
-  ) {
+  async createAlcohol(createAlcoholDto: CreateAlcoholDto, file: Express.Multer.File) {
     // 1. 데이터베이스 트랜잭션을 관리하기 위한 QueryRunner 생성
-    const queryRunner =
-      this.alcoholRepository.manager.connection.createQueryRunner();
+    const queryRunner = this.alcoholRepository.manager.connection.createQueryRunner();
     // 2. QueryRunner 연결 및 트랜잭션 시작
     await queryRunner.connect();
     await queryRunner.startTransaction();

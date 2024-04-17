@@ -68,4 +68,14 @@ export class MenuController {
     return this.menuService.updateMenu(updateMenuDto, file);
   }
 
+  // 등록된 메뉴 삭제
+  @ApiOperation({summary:'메뉴 삭제', description:'메뉴 삭제'})
+  @ApiBearerAuth()
+  @Delete('api/delete/menu')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_OWNER)
+  async deleteMenu(@Body() {menu_idx}) {
+    return this.menuService.deleteMenu(menu_idx);
+  }
+
 }

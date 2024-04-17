@@ -141,5 +141,32 @@ export class MenuService {
     }
   }
 
+  // 등록된 메뉴 삭제
+  async deleteMenu(menu_idx: number) {
+    const queryRunner = this.menuRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const menu = await this.menuRepository.findOne({where:{menu_idx: menu_idx}});
+      if (!menu) {
+        return {message: `해당되는 메뉴는 없습니다. 입력된 메뉴번호 : [${menu_idx}]`, data: null,statusCode: 404};
+      }
+      // SFTP서버에 등록된 이미지파일 삭제
+      if (menu.menu_imgpath) {
+        await this.sftpService.deleteFile(menu.menu_imgpath);
+      }
+      // 데이터베이스 내에 해당 항목 삭제
+      await this.menuRepository.remove(menu);
+      await queryRunner.commitTransaction();
+      return {message: `주류 삭제 완료. 삭제된 주류번호 : [${menu_idx}]`, data: menu, statusCode: 200};
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.error('메뉴 삭제 중 오류 발생');
+      this.logger.error(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    } finally {
+      await queryRunner.release();
+    }
+  }
 
 }
