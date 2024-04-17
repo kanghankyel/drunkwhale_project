@@ -90,14 +90,11 @@ export class AlcoholService {
   async getReadAlcohol() {
     try {
       const alcohols = await this.alcoholRepository.find();
-      return { message: `등록된 주류 정보`, data: alcohols, statusCode: 200 };
+      return {message: `등록된 주류 정보`, data: alcohols, statusCode: 200};
     } catch (error) {
       this.logger.error('등록된 주류 정보 확인 중 오류 발생');
       this.logger.error(error);
-      console.log(error);
-      throw new InternalServerErrorException(
-        '서버 오류 발생. 다시 시도해 주세요.',
-      );
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
     }
   }
 

@@ -42,6 +42,20 @@ export class MenuController {
     return this.menuService.createMenu(createMenuDto, file);
   }
 
+  // 등록된 전체 메뉴 정보보기
+  @ApiOperation({summary:'등록된 메뉴 전체보기', description:'등록된 메뉴 전체보기'})
+  @Get('api/readall/menu')
+  async readAllMenu() {
+    return this.menuService.getAllMenu();
+  }
+
+  // 특정 스토어 메뉴 정보보기
+  @ApiOperation({summary:'특정 스토어 메뉴보기', description:'특정 스토어 메뉴보기'})
+  @Get('api/read/menu')
+  async readMenu(@Body() {store_idx}) {
+    return this.menuService.getMenu(store_idx);
+  }
+
   // 메뉴 상품수정
   @ApiOperation({summary:'메뉴 상품수정', description:'메뉴 상품수정'})
   @ApiConsumes('multipart/form-data')

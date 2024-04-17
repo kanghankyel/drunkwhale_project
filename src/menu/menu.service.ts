@@ -85,6 +85,35 @@ export class MenuService {
     }
   }
 
+  // 등록된 전체 메뉴 정보보기
+  async getAllMenu() {
+    try {
+      const menus = await this.menuRepository.find();
+      return {message: `등록된 메뉴 정보`, data: menus, statusCode: 200};
+    } catch (error) {
+      this.logger.error('등록된 전체 메뉴 정보 확인 중 오류 발생');
+      this.logger.error(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
+
+  // 특정 스토어 메뉴 정보보기
+  async getMenu(store_idx) {
+    try {
+      const store = await this.storeRepository.findOne({where:{store_idx:store_idx}});
+      if (!store) {
+        return {message: `해당하는 스토어가 없습니다. 입력된 스토어번호 : [${store_idx}]`, data: null, statusCode: 404};
+      }
+      const user = store.user_email;
+      const menu = await this.menuRepository.find({where:{user_email:user}});
+      return {message: `[${store_idx}] ${user}님의 스토어 메뉴`, data: menu, statusCode: 200};
+    } catch (error) {
+      this.logger.error('특정 스토어 메뉴 정보 확인 중 오류 발생');
+      this.logger.error(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
+
   // 메뉴 상품수정
   async updateMenu(updateMenuDto: UpdateMenuDto, file: Express.Multer.File) {
     const queryRunner = this.menuRepository.manager.connection.createQueryRunner();
