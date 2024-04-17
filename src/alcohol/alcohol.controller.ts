@@ -79,4 +79,14 @@ export class AlcoholController {
     return this.alcoholService.updateAlcohol(updateAlcoholDto, file);
   }
 
+  // 등록된 주류 삭제
+  @ApiOperation({summary:'주류 삭제', description:'주류 삭제'})
+  @ApiBearerAuth()
+  @Delete('api/delete/alcohol')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_ADMIN)
+  async deleteAlcohol(@Body() {alcohol_idx}) {
+    return this.alcoholService.deleteAlcohol(alcohol_idx);
+  }
+
 }

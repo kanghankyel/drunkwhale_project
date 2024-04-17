@@ -205,7 +205,34 @@ export class AlcoholService {
       await queryRunner.rollbackTransaction();
       this.logger.error('주류 정보 수정 중 오류 발생');
       this.logger.error(error);
-      console.log(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  // 등록된 주류 삭제
+  async deleteAlcohol(alcohol_idx: number) {
+    const queryRunner = this.alcoholRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const alcohol = await this.alcoholRepository.findOne({where:{alcohol_idx:alcohol_idx}});
+      if (!alcohol) {
+        return {message: `해당되는 주류는 없습니다. 입력된 주류번호 : ${alcohol_idx}`, data: null,statusCode: 404};
+      }
+      // SFTP서버에 등록된 이미지파일 삭제
+      if (alcohol.alcohol_imgpath) {
+        await this.sftpService.deleteFile(alcohol.alcohol_imgpath);
+      }
+      // 데이터베이스 내에 해당 항목 삭제
+      await this.alcoholRepository.remove(alcohol);
+      await queryRunner.commitTransaction();
+      return {message: `주류 삭제 완료. 삭제된 주류번호 : [${alcohol_idx}]`, data: alcohol, statusCode: 200};
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.error('주류 삭제 중 오류 발생');
+      this.logger.error(error);
       throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
     } finally {
       await queryRunner.release();
