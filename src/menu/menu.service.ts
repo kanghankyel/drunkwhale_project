@@ -105,8 +105,24 @@ export class MenuService {
         return {message: `해당하는 스토어가 없습니다. 입력된 스토어번호 : [${store_idx}]`, data: null, statusCode: 404};
       }
       const user = store.user_email;
-      const menu = await this.menuRepository.find({where:{user_email:user}});
-      return {message: `[${store_idx}] ${user}님의 스토어 메뉴`, data: menu, statusCode: 200};
+      const menus = await this.menuRepository.find({where:{user_email:user}});
+      // 메뉴를 종류별로 분류
+      const categoriMenus = {};
+      menus.forEach(menu => {
+        if (!categoriMenus[menu.menu_type]) {   // 메뉴 종류별로 객체를 생성하고, 해당 메뉴 종류에 해당하는 배열이 없으면 새로 생성
+          categoriMenus[menu.menu_type] = [];
+        }
+        categoriMenus[menu.menu_type].push(menu);   // 해당 메뉴 종류에 해당하는 배열에 메뉴를 추가
+      });
+      // 메뉴를 종류별로 정렬
+      const sortMenus = {};
+      Object.keys(categoriMenus).forEach(menuType => {
+        sortMenus[menuType] = categoriMenus[menuType].sort((a, b) => {    // 각 메뉴 종류에 해당하는 배열을 가져와서 정렬
+          const menuTypeOrder = ['시그니처', '주류', '음식'];   // 정렬 순서를 정의한 배열을 기준으로 정렬
+          return menuTypeOrder.indexOf(a.menu_type) - menuTypeOrder.indexOf(b.menu_type);
+        });
+      });
+      return {message: `[${store_idx}] ${user}님의 스토어 메뉴`, data: sortMenus, statusCode: 200};
     } catch (error) {
       this.logger.error('특정 스토어 메뉴 정보 확인 중 오류 발생');
       this.logger.error(error);
