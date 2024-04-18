@@ -26,6 +26,16 @@ export class CabinetController {
     return this.cabinetService.createCabinet(createCabinetDto);
   }
 
+  // 개인 술장고 읽기
+  @ApiOperation({summary:'개인 술장고 읽기', description:'개인 술장고 읽기'})
+  @ApiBearerAuth()
+  @Get('api/read/cabinet')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
+  async readCabinet(@Body() {user_email}) {
+    return this.cabinetService.readCabinet(user_email);
+  }
+
   // 개인 술장고 수정
   @ApiOperation({summary:'개인 술장고 수정', description:'개인 술장고 수정'})
   @ApiBearerAuth()

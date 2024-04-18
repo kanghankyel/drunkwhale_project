@@ -12,7 +12,7 @@ export class Friend extends BaseEntity {
     @Column()
     user_nickname: string;
     
-    // 회원_이메일(FK)
+    // 회원_이메일(FK) (메일보내는 사람)
     @Column()
     user_email: string;
 
@@ -20,7 +20,7 @@ export class Friend extends BaseEntity {
     @Column()
     friend_nickname: string;
 
-    // 술친구_친구이메일
+    // 술친구_친구이메일 (메일받는 사람)
     @Column()
     friend_email: string;
 
