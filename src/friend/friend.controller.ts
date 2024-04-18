@@ -47,9 +47,25 @@ export class FriendController {
     return this.friendService.replyFriendMail(replyFriendDto);
   }
 
-  // 술친구 메일확인 (본인이 전송한 것)
+  // 술친구 메일확인 (자신이 전송한 술친구요청)
+  @ApiOperation({summary:'술친구 메일확인 (자신이 전송한 술친구요청)', description:'술친구 메일확인 (자신이 전송한 술친구요청)'})
+  @ApiBearerAuth()
+  @Get('api/getsendmail/friend')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
+  async getSendMail(@Body() {user_email}) {
+    return this.friendService.getSendMail(user_email);
+  }
 
-  // 술친구 메일확인 (자신에게 온 것)
+  // 술친구 메일확인 (자신에게 온 술친구요청)
+  @ApiOperation({summary:'술친구 메일확인 (자신에게 온 술친구요청)', description:'술친구 메일확인 (자신에게 온 술친구요청)'})
+  @ApiBearerAuth()
+  @Get('api/getreadmail/friend')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
+  async getReadMail(@Body() {user_email}) {
+    return this.friendService.getReadMail(user_email);
+  }
 
   // 술친구 신고요청
   

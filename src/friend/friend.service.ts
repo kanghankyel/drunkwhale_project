@@ -1,5 +1,5 @@
 import { Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, In, Not, Repository } from 'typeorm';
 import { Friend } from './entities/friend.entity';
 import { Worldcup } from 'src/worldcup/entities/worldcup.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -120,9 +120,37 @@ export class FriendService {
     }
   }
 
-  // 술친구 메일확인 (본인이 전송한 것)
+  // 술친구 메일확인 (자신이 전송한 술친구요청)
+  async getSendMail(user_email) {
+    try {
+        const usercheck = await this.userRepository.findOne({where:{user_email: user_email}});
+        if (!usercheck) {
+            return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
+        }
+        const user = await this.friendRepository.find({where:{user_email: user_email}});
+        return {message: `[${user_email}]님이 전송한 술친구요청`, data: user, statusCode: 200};
+    } catch (error) {
+        this.logger.error('자신이 전송한 술친구 요청 확인 중 오류 발생');
+        this.logger.error(error);
+        throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
 
-  // 술친구 메일확인 (자신에게 온 것)
+  // 술친구 메일확인 (자신에게 온 술친구요청)
+  async getReadMail(user_email) {
+    try {
+        const usercheck = await this.userRepository.findOne({where:{user_email: user_email}});
+        if (!usercheck) {
+            return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
+        }
+        const user = await this.friendRepository.find({where:{friend_email: user_email, friend_status: null}});
+        return {message: `[${user_email}]님이 받은 술친구요청`, data: user, statusCode: 200};
+    } catch (error) {
+        this.logger.error('자신에게 온 술친구 요청 확인 중 오류 발생');
+        this.logger.error(error);
+        throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
 
   // 술친구 신고요청
 
