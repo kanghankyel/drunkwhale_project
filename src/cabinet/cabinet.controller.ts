@@ -37,6 +37,13 @@ export class CabinetController {
   }
 
   // 개인 술장고 삭제
-  
+  @ApiOperation({summary:'개인 술장고 삭제', description:'개인 술장고 삭제'})
+  @ApiBearerAuth()
+  @Delete('api/delete/cabinet')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
+  async deleteCabinet(@Body() {cabinet_idx}) {
+    return this.cabinetService.deleteCabinet(cabinet_idx);
+  }
 
 }

@@ -69,5 +69,19 @@ export class CabinetService {
   }
 
   // 개인 술장고 삭제
+  async deleteCabinet(cabinet_idx) {
+    try {
+      const cabinet = await this.cabinetRepository.findOne({where:{cabinet_idx:cabinet_idx}});
+      if (!cabinet) {
+        return {message: `해당되는 목록은 없습니다. 입력된 술장고번호 : ${cabinet_idx}`, data: null,statusCode: 404};
+      }
+      await this.cabinetRepository.remove(cabinet);
+      return {message: `술장고 삭제 완료. 삭제된 술장고번호 : [${cabinet_idx}]`, data: cabinet, statusCode: 200};
+    } catch (error) {
+      this.logger.error('개인 술장고 삭제중 서버 오류 발생');
+      this.logger.error(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
 
 }
