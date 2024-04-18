@@ -1,5 +1,6 @@
 import { Alcohol } from "src/alcohol/entities/alcohol.entity";
 import { Cabinet } from "src/cabinet/entities/cabinet.entity";
+import { Friend } from "src/friend/entities/friend.entity";
 import { Role } from "src/role/entities/role.entity";
 import { Store } from "src/store/entities/store.entity";
 import { Subscribe } from "src/subscribe/entities/subscribe.entity";
@@ -88,5 +89,8 @@ export class User extends BaseEntity {
     // 주류월드컵 JOIN
     @OneToMany(() => Worldcup, (worldcup) => worldcup.user)
     worldcups: Worldcup[];
+
+    @OneToMany(() => Friend, (friend) => friend.user)
+    friends: Friend[];
 
 }

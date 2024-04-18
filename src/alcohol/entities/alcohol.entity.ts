@@ -55,7 +55,7 @@ export class Alcohol extends BaseEntity {
     alcohol_flavor: string;
 
     // 주류_설명
-    @Column({nullable: true})
+    @Column({type: 'text', nullable: true})
     alcohol_info: string;
 
     // 주류_생성일

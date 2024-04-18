@@ -4,6 +4,7 @@ import { Friend } from './entities/friend.entity';
 import { Worldcup } from 'src/worldcup/entities/worldcup.entity';
 import { User } from 'src/user/entities/user.entity';
 import { SetFriendDto } from './dto/set-friend.dto';
+import { CreateFriendDto } from './dto/create-friend.dto';
 
 @Injectable()
 export class FriendService {
@@ -70,5 +71,33 @@ export class FriendService {
   }
 
   // 술친구 메일전송
+  async sendFriendMail(createFriendDto: CreateFriendDto) {
+    try {
+        const {friend_email, friend_text, user_email} = createFriendDto;
+        const user = await this.userRepository.findOne({where:{user_email:user_email}});
+        if (!user) {
+            return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
+        }
+        const friendNickname = await this.userRepository.findOne({where:{user_email:friend_email}});
+        if (!friendNickname) {
+            return {message:`해당 술친구 회원이 없습니다. 입력된 회원 : ${friend_email}`, statusCode:404};
+        } else if (friendNickname.user_email === user.user_email) {
+            return {message:`자신에게 전송할 수는 없습니다.. 입력된 회원 : ${friend_email}`, statusCode:404};
+        }
+        const friend = new Friend();
+        friend.user_nickname = user.user_nickname;
+        friend.friend_nickname = friendNickname.user_nickname;
+        friend.friend_email = createFriendDto.friend_email;
+        friend.friend_text = createFriendDto.friend_text;
+        friend.friend_match = 'W';
+        friend.user_email = user.user_email;
+        await this.friendRepository.save(friend);
+        return {message:`[${user.user_nickname}]님이 [${friendNickname.user_nickname}]님에게 술친구 메일전송 완료`, data:friend, statusCode:200};
+    } catch (error) {
+        this.logger.error('술친구 메일 전송 중 오류 발생');
+        this.logger.error(error);
+        throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
 
 }
