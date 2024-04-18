@@ -25,5 +25,14 @@ export class SubscribeController {
     return this.subscribeService.subscribeAlcohol(createSubscribeDto);
   }
 
+  // 주류 찜하기 삭제
+  @ApiOperation({summary:'주류 찜하기 삭제', description:'주류 찜하기 삭제'})
+  @ApiBearerAuth()
+  @Delete('api/delete/subscribe')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
+  async deleteSubscribe(@Body() {subscribe_idx}) {
+    return this.subscribeService.deleteSubscribe(subscribe_idx);
+  }
 
 }

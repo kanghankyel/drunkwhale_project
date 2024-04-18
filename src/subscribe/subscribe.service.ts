@@ -40,7 +40,22 @@ export class SubscribeService {
     } catch (error) {
       this.logger.error('찜하기 입력중 서버 오류 발생');
       this.logger.error(error);
-      console.log(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
+
+  // 주류 찜하기 삭제
+  async deleteSubscribe(subscribe_idx) {
+    try {
+      const subscribe = await this.subscribeRepository.findOne({where:{subscribe_idx:subscribe_idx}});
+      if (!subscribe) {
+        return {message: `해당되는 목록 없습니다. 입력된 찜하기번호 : [${subscribe_idx}]`, data: null,statusCode: 404};
+      }
+      await this.subscribeRepository.remove(subscribe);
+      return {message: `주류 삭제 완료. 삭제된 주류번호 : [${subscribe_idx}]`, data: subscribe, statusCode: 200}
+    } catch (error) {
+      this.logger.error('찜하기 삭제중 서버 오류 발생');
+      this.logger.error(error);
       throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
     }
   }
