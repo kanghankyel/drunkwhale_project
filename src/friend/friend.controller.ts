@@ -7,6 +7,7 @@ import { Roles } from 'src/role/role.decorator';
 import { RoleEnum } from 'src/role/role.enum';
 import { SetFriendDto } from './dto/set-friend.dto';
 import { CreateFriendDto } from './dto/create-friend.dto';
+import { ReplyFriendDto } from './dto/reply-friend.dto';
 
 @ApiTags('FRIEND 모듈')
 @Controller()
@@ -37,6 +38,14 @@ export class FriendController {
   }
 
   // 술친구 메일답장
+  @ApiOperation({summary:'술친구 메일답장', description:'술친구 메일 답장'})
+  @ApiBearerAuth()
+  @Patch('api/replymail/friend')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
+  async replyFriendMail(@Body() replyFriendDto: ReplyFriendDto) {
+    return this.friendService.replyFriendMail(replyFriendDto);
+  }
 
   // 술친구 메일확인 (본인이 전송한 것)
 

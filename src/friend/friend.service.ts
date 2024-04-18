@@ -5,6 +5,7 @@ import { Worldcup } from 'src/worldcup/entities/worldcup.entity';
 import { User } from 'src/user/entities/user.entity';
 import { SetFriendDto } from './dto/set-friend.dto';
 import { CreateFriendDto } from './dto/create-friend.dto';
+import { ReplyFriendDto } from './dto/reply-friend.dto';
 
 @Injectable()
 export class FriendService {
@@ -99,5 +100,30 @@ export class FriendService {
         throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
     }
   }
+
+  // 술친구 메일답장
+  async replyFriendMail(replyFriendDto: ReplyFriendDto) {
+    try {
+        const {friend_reply, friend_match, user_email} = replyFriendDto;
+        const friend = await this.friendRepository.findOne({where:{friend_email: user_email}});
+        if (!friend) {
+            return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
+        }
+        friend.friend_reply = friend_reply || friend.friend_reply;
+        friend.friend_match = friend_match || friend.friend_match;
+        const replyFriend = await this.friendRepository.save(friend);
+        return {message:`[${friend.friend_nickname}]님이 [${friend.user_nickname}]님에게 술친구 메일답장 완료`, data:replyFriend, statusCode:200};
+    } catch (error) {
+        this.logger.error('술친구 메일 답장 중 오류 발생');
+        this.logger.error(error);
+        throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
+
+  // 술친구 메일확인 (본인이 전송한 것)
+
+  // 술친구 메일확인 (자신에게 온 것)
+
+  // 술친구 신고요청
 
 }

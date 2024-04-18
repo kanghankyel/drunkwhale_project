@@ -11,6 +11,10 @@ export class Friend extends BaseEntity {
     // 술친구_회원닉네임
     @Column()
     user_nickname: string;
+    
+    // 회원_이메일(FK)
+    @Column()
+    user_email: string;
 
     // 술친구_친구닉네임
     @Column()
@@ -43,10 +47,6 @@ export class Friend extends BaseEntity {
     // 술친구_메일삭제일
     @DeleteDateColumn({type: 'timestamp', default: null, nullable: true})
     friend_deletedate: string;
-    
-    // 회원_이메일(FK)
-    @Column()
-    user_email: string;
 
     // 회원 JOIN
     @ManyToOne(() => User)
