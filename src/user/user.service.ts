@@ -111,14 +111,14 @@ export class UserService {
           throw new ConflictException(`이미 등록된 전화번호입니다. 입력된 전화번호 : ${user_phone}`);
         }
       }
-      // 입력된 정보가 있으면 업데이트, 없으면 기존 비밀번호 유지
+      // 입력된 정보가 있으면 업데이트, 없으면 기존 정보 유지
       if (user_pw) user.user_pw = user_pw;
       if (user_nickname) user.user_nickname = user_nickname;
       if (user_postcode) user.user_postcode = user_postcode;
       if (user_add) user.user_add = user_add;
       if (user_adddetail) user.user_adddetail = user_adddetail;
       const updatedUser = await this.userRepository.save(user);   // 업데이트된 회원 정보 저장
-      return {message: `회원정보수정완료`, data: updatedUser, statusCode: 200}
+      return {message: `회원정보수정완료`, data: updatedUser, statusCode: 200};
     } catch (error) {
       this.logger.error('회원정보 수정중 오류발생');
       this.logger.error(error);

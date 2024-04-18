@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Cabinet } from './entities/cabinet.entity';
 import { Alcohol } from 'src/alcohol/entities/alcohol.entity';
 import { User } from 'src/user/entities/user.entity';
+import { UpdateCabinetDto } from './dto/update-cabinet.dto';
 
 @Injectable()
 export class CabinetService {
@@ -41,9 +42,32 @@ export class CabinetService {
     } catch (error) {
       this.logger.error('개인 술장고 입력중 서버 오류 발생');
       this.logger.error(error);
-      console.log(error);
       throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
     }
   }
+
+  // 개인 술장고 수정
+  async updateCabinet(updateCabinetDto: UpdateCabinetDto) {
+    try {
+      const {cabinet_idx, cabinet_color, cabinet_aroma, cabinet_flavor, cabinet_review} = updateCabinetDto;
+      const cabinet = await this.cabinetRepository.findOne({where:{cabinet_idx:cabinet_idx}});
+      if (!cabinet) {
+        return {message: `해당되는 목록은 없습니다. 입력된 술장고번호 : ${cabinet_idx}`, data: null,statusCode: 404};
+      }
+      // 입력된 정보가 있으면 업데이트, 없으면 기존 정보 유지
+      cabinet.cabinet_color = cabinet_color || cabinet.cabinet_color;
+      cabinet.cabinet_aroma = cabinet_aroma || cabinet.cabinet_aroma;
+      cabinet.cabinet_flavor = cabinet_flavor || cabinet.cabinet_flavor;
+      cabinet.cabinet_review = cabinet_review || cabinet.cabinet_review;
+      const updateCabinet = await this.cabinetRepository.save(cabinet);
+      return {message: `술장고 수정완료`, data: updateCabinet, statusCode: 200};
+    } catch (error) {
+      this.logger.error('개인 술장고 수정중 서버 오류 발생');
+      this.logger.error(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
+
+  // 개인 술장고 삭제
 
 }
