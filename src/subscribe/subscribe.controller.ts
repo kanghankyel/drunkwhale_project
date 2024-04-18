@@ -25,6 +25,16 @@ export class SubscribeController {
     return this.subscribeService.subscribeAlcohol(createSubscribeDto);
   }
 
+  // 주류 찜하기 확인
+  @ApiOperation({summary:'찜한 주류 확인', description:'찜한 주류 확인'})
+  @ApiBearerAuth()
+  @Get('api/read/subscribe')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_USER)
+  async readSubscribe(@Body() {user_email}) {
+    return this.subscribeService.readSubscribe(user_email);
+  }
+
   // 주류 찜하기 삭제
   @ApiOperation({summary:'주류 찜하기 삭제', description:'주류 찜하기 삭제'})
   @ApiBearerAuth()

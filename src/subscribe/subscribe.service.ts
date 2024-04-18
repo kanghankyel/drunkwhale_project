@@ -44,6 +44,22 @@ export class SubscribeService {
     }
   }
 
+  // 주류 찜하기 확인
+  async readSubscribe(user_email) {
+    try {
+      const usercheck = await this.userRepository.findOne({where:{user_email: user_email}});
+      if (!usercheck) {
+        return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
+      }
+      const mySubscribe = await this.subscribeRepository.find({where:{user_email: user_email}});
+      return {message: `[${user_email}] 님의 찜한 정보`, data: mySubscribe, statusCode: 200};
+    } catch (error) {
+      this.logger.error('찜하기 읽기 중 서버 오류 발생');
+      this.logger.error(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
+
   // 주류 찜하기 삭제
   async deleteSubscribe(subscribe_idx) {
     try {
