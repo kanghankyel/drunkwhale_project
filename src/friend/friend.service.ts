@@ -153,5 +153,6 @@ export class FriendService {
   }
 
   // 술친구 신고요청
+
   
 }
