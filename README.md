@@ -67,6 +67,9 @@
 >> - SFTP를 통한 파일데이터 전송 로직을 사용해 서버의 효율성을 추구함.
 >> = ORM 사용을 통해 코드 재사용성과 데이터베이스 독립성을 유지.
 >> - 무중단 배포를 위해 PM2 프로세스 매니저를 사용.
+>>
+> ERD 구성
+>> ![drunkwhale_ERD](https://github.com/kanghankyel/KP/assets/100983731/0a0aadc2-c4f2-4dd5-9679-8d4c33dfb482)
 
 ## 설치 방법
 
