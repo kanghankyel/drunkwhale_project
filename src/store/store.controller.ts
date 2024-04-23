@@ -17,12 +17,12 @@ export class StoreController {
 
   private logger = new Logger('store.controller.ts');
 
-  // 사업자 스토어 신청
-  @ApiOperation({summary:'스토어 신청정보입력', description:'스토어 신청정보입력'})
-  @Post('api/create/store')
-  async requestStore(@Body() createStoreDto: CreateStoreDto) {
-    return this.storeService.requestStore(createStoreDto);
-  }
+  // 사업자 스토어 신청 (가맹회원 가입시 해당 정보를 입력하는 로직으로 통합함으로 현재는 사용되지 않음)
+  // @ApiOperation({summary:'스토어 신청정보입력', description:'스토어 신청정보입력'})
+  // @Post('api/create/store')
+  // async requestStore(@Body() createStoreDto: CreateStoreDto) {
+  //   return this.storeService.requestStore(createStoreDto);
+  // }
 
   // 가입허가된 가맹주 개인스토어 정보 기입
   @ApiOperation({summary:'스토어 정보기입', description:'스토어 정보기입'})

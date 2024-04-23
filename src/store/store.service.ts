@@ -17,43 +17,43 @@ export class StoreService {
 
   private logger = new Logger('store.service.ts');
 
-  // 사업자 스토어 신청
-  async requestStore(createStoreDto: CreateStoreDto) {
-    try {
-      const {store_name, store_registnum, store_ownername, store_phone, store_postcode, store_add, store_adddetail, store_status, user_email} = createStoreDto;
-      const storeCheckInWithdrawn = await this.storeRepository.findOne({where:{store_registnum, store_status:'W'}});
-      if(storeCheckInWithdrawn) {
-        return {message:`이미 신청대기중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`, statusCode:409};
-      }
-      const storeCheckInActive = await this.storeRepository.findOne({where:{store_registnum, store_status:'A'}});
-      if(storeCheckInActive) {
-        return {message:`이미 활동중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`, statusCode:409};
-      }
-      // const storeCheckUser = await this.storeRepository.findOne({where:{user_email}});
-      // if(!storeCheckUser) {
-      //   throw new NotFoundException(`해당 회원은 회원테이블에 등록되지 않은 회원입니다. 입력된 회원 : ${user_email}`);
-      // }
-      const store = this.storeRepository.create({
-        store_name,
-        store_registnum,
-        store_ownername,
-        store_phone,
-        store_postcode,
-        store_add,
-        store_adddetail,
-        store_status: 'W',   // 점포가입신청 시 기본 상태값 지정 ( W = 가맹회원 신청가입대기중 )
-        store_updatedate: null,    //  updateColumn 초기값으로 Null 지정
-        user_email,
-      });
-      await this.storeRepository.save(store);
-      return {message:'스토어 가입신청완료', data:store, statusCode:200};
-    } catch (error) {
-      this.logger.error('스토어 정보 입력 중 서버 문제 발생.');
-      this.logger.error(`에러내용 : ${error}`);
-      console.log(error);
-      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
-    }
-  }
+  // 사업자 스토어 신청 (가맹회원 가입시 해당 정보를 입력하는 로직으로 통합함으로 현재는 사용되지 않음)
+  // async requestStore(createStoreDto: CreateStoreDto) {
+  //   try {
+  //     const {store_name, store_registnum, store_ownername, store_phone, store_postcode, store_add, store_adddetail, store_status, user_email} = createStoreDto;
+  //     const storeCheckInWithdrawn = await this.storeRepository.findOne({where:{store_registnum, store_status:'W'}});
+  //     if(storeCheckInWithdrawn) {
+  //       return {message:`이미 신청대기중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`, statusCode:409};
+  //     }
+  //     const storeCheckInActive = await this.storeRepository.findOne({where:{store_registnum, store_status:'A'}});
+  //     if(storeCheckInActive) {
+  //       return {message:`이미 활동중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`, statusCode:409};
+  //     }
+  //     // const storeCheckUser = await this.storeRepository.findOne({where:{user_email}});
+  //     // if(!storeCheckUser) {
+  //     //   throw new NotFoundException(`해당 회원은 회원테이블에 등록되지 않은 회원입니다. 입력된 회원 : ${user_email}`);
+  //     // }
+  //     const store = this.storeRepository.create({
+  //       store_name,
+  //       store_registnum,
+  //       store_ownername,
+  //       store_phone,
+  //       store_postcode,
+  //       store_add,
+  //       store_adddetail,
+  //       store_status: 'W',   // 점포가입신청 시 기본 상태값 지정 ( W = 가맹회원 신청가입대기중 )
+  //       store_updatedate: null,    //  updateColumn 초기값으로 Null 지정
+  //       user_email,
+  //     });
+  //     await this.storeRepository.save(store);
+  //     return {message:'스토어 가입신청완료', data:store, statusCode:200};
+  //   } catch (error) {
+  //     this.logger.error('스토어 정보 입력 중 서버 문제 발생.');
+  //     this.logger.error(`에러내용 : ${error}`);
+  //     console.log(error);
+  //     throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+  //   }
+  // }
 
   // 가입허가된 가맹주 개인스토어 정보 기입
   async inputInfoStore(mainimg, subimg, inputStoreDto: InputStoreDto) {

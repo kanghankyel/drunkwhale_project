@@ -102,9 +102,9 @@ export class UserController {
     const owner = {
       ...createOwnerDto,
       user_pw: hashedPassword,
-      user_ip: clientIP,    // 입력된 정보와, 암호화된 비밀번호, ip를 전송
     };
-    return this.userService.createOwner(owner);
+    const userIp = {user_ip: clientIP};
+    return this.userService.createOwner(owner, userIp);   // 입력된 정보와, 암호화된 비밀번호, ip를 전송
   }
   
 }

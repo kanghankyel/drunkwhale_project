@@ -7,14 +7,18 @@ import { Role } from 'src/role/entities/role.entity';
 import { RoleService } from 'src/role/role.service';
 import { InputUserDto } from './dto/input-user.dto';
 import { CreateOwnerDto } from './dto/create_owner.dto';
+import { StoreService } from 'src/store/store.service';
+import { Store } from 'src/store/entities/store.entity';
 
 @Injectable()
 export class UserService {
 
   constructor(
-    @Inject('USER_REPOSITORY') private userRepository: Repository<User>, 
+    @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
     @Inject('ROLE_REPOSITORY') private roleRepository: Repository<Role>,
+    @Inject('STORE_REPOSITORY') private storeRepository: Repository<Store>,
     private roleService: RoleService,
+    // private readonly storeService: StoreService,
   ) {};
   
   private logger = new Logger('user.service.ts');
@@ -149,32 +153,57 @@ export class UserService {
   // #########################################################################################################
 
   // 가맹회원 가입신청
-  async createOwner(createOwnerDto: CreateOwnerDto) {
-    const {user_email, user_pw, user_name, user_nickname, user_phone, user_ip, user_status} = createOwnerDto;
-    const ownerEmailCheck = await this.userRepository.findOne({where:{user_email, user_status:In(['Z', 'Y', 'W'])}});
-    const ownerPhoneCheck = await this.userRepository.findOne({where:{user_phone, user_status:In(['Z', 'Y', 'W'])}});
-    const ownerEamilCheckUser = await this.userRepository.findOne({where:{user_email, user_status:In(['A', 'B'])}});
-    if(ownerEmailCheck) {
-      throw new ConflictException(`이미 등록된 회원입니다. 입력하신 계정 : ${user_email}`);    // 중복된 아이디 체크
+  async createOwner(createOwnerDto: CreateOwnerDto, userIp) {
+    try {
+      const {user_email, user_pw, user_name, user_phone, store_name, store_registnum, store_phone, store_postcode, store_add, store_adddetail} = createOwnerDto;
+      const ownerEmailCheck = await this.userRepository.findOne({where:{user_email, user_status:In(['Z', 'Y', 'W'])}});
+      const ownerPhoneCheck = await this.userRepository.findOne({where:{user_phone, user_status:In(['Z', 'Y', 'W', 'A', 'B'])}});
+      const ownerEamilCheckUser = await this.userRepository.findOne({where:{user_email, user_status:In(['A', 'B'])}});
+      const storeCheckWait = await this.storeRepository.findOne({where:{store_registnum, store_status:'W'}});
+      const storeCheckActive = await this.storeRepository.findOne({where:{store_registnum, store_status:'A'}});
+      if(ownerEmailCheck) {
+        return {message: `사용중인 회원입니다. 입력하신 계정 : ${user_email}`, data: null, statusCode: 409};   // 중복된 아이디 체크
+      }
+      if(ownerPhoneCheck) {
+        return {message: `사용중인 회원입니다. 입력하신 번호 : ${user_phone}`, data: null, statusCode: 409};   // 중복된 전화번호 체크
+      }
+      if(ownerEamilCheckUser) {
+        return {message: `사용중인 일반회원 계정이 있습니다. 일반회원탈퇴 후 다시 등록해주세요. 입력하신 계정 : ${user_email}`, data: null, statusCode: 409};    // 중복된 아이디 체크(일반회원중에 있는지도 검사)
+      }
+      if(storeCheckWait) {
+        return {message:`신청대기중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`, statusCode:409};
+      }
+      if(storeCheckActive) {
+        return {message:`활동중인 점포입니다. 입력하신 사업자번호 : ${store_registnum}`, statusCode:409};
+      }
+      this.logger.debug(`CreateOwnerDto => ${createOwnerDto}`);
+      const owner = new User();
+      owner.user_email = createOwnerDto.user_email;
+      owner.user_pw = createOwnerDto.user_pw;
+      owner.user_name = createOwnerDto.user_name;
+      owner.user_phone = createOwnerDto.user_phone;
+      owner.user_ip = userIp.user_ip;
+      owner.user_status = 'W';
+      owner.user_updatedate = null;
+      const store = new Store();
+      store.store_name = createOwnerDto.store_name;
+      store.store_registnum = createOwnerDto.store_registnum;
+      store.store_phone = createOwnerDto.store_phone;
+      store.store_postcode = createOwnerDto.store_postcode;
+      store.store_add = createOwnerDto.store_add;
+      store.store_adddetail = createOwnerDto.store_adddetail;
+      store.store_status = 'W';
+      store.store_updatedate = null;
+      store.user_email = createOwnerDto.user_email;
+      await this.userRepository.save(owner);
+      await this.storeRepository.save(store);
+      return {message: '가맹회원 가입신청완료', data: {owner, store}, statusCode: 200};
+    } catch (error) {
+      this.logger.error('가맹회원 가입신청 중 오류발생');
+      this.logger.error(error);
+      console.log(error);
+      return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
     }
-    if(ownerPhoneCheck) {
-      throw new ConflictException(`이미 등록된 회원입니다. 입력하신 번호 : ${user_phone}`);    // 중복된 전화번호 체크
-    }
-    if(ownerEamilCheckUser) {
-      throw new ConflictException(`이미 등록된 일반회원 계정이 있습니다. 일반회원탈퇴 후 다시 등록해주세요. 입력하신 계정 : ${user_email}`);    // 중복된 아이디 체크(일반회원중에 있는지도 검사)
-    }
-    const owner = this.userRepository.create({
-      user_email,
-      user_pw,
-      user_name,
-      user_nickname,
-      user_phone,
-      user_ip,
-      user_status: 'W',   // 가맹회원가입 시 기본 상태값 지정 ( W = 가맹회원 신청가입대기중 )
-      user_updatedate: null,    //  updateColumn 초기값으로 Null 지정
-    });
-    await this.userRepository.save(owner);
-    return {message:'가맹회원 신청가입완료', data:owner, statusCode:200};
   }
 
 }

@@ -15,24 +15,32 @@ export class CreateOwnerDto {
     @IsString()
     readonly user_name: string | null;
 
-    @ApiProperty({description:'가맹주 닉네임'})
-    @IsString()
-    readonly user_nickname: string | null;
-
-    @ApiProperty({description:'가맹주 개인전화번호'})
+    @ApiProperty({description:'가맹주 전화번호'})
     @IsString()
     readonly user_phone: string | null;
 
-    @ApiProperty({description:'가맹주 아이피'})
+    @ApiProperty({description:'스토어 상호명'})
     @IsString()
-    readonly user_ip: string | null;
+    readonly store_name: string | null;
 
-    @ApiProperty({description:'가맹주 상태 ( A=일반회원활동중, B=일반회원블락, C=일반회원탈퇴, Z=가맹회원활동중, Y=가맹회원블락, X=가맹회원탈퇴, W=가맹회원신청대기중 )'})
+    @ApiProperty({description:'스토어 사업자번호'})
     @IsString()
-    readonly user_status: string | null;
+    readonly store_registnum: string | null;
 
-    @ApiProperty({description:'가맹주 권한'})
-    @IsString({each: true})
-    readonly roles: string[] | null;
+    @ApiProperty({description:'스토어 전화번호'})
+    @IsString()
+    readonly store_phone: string | null;
+
+    @ApiProperty({description:'스토어 우편번호'})
+    @IsString()
+    readonly store_postcode: string | null;
+
+    @ApiProperty({description:'스토어 주소'})
+    @IsString()
+    readonly store_add: string | null;
+
+    @ApiProperty({description:'스토어 상세주소'})
+    @IsString()
+    readonly store_adddetail: string | null;
 
 }
