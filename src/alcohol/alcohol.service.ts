@@ -91,7 +91,7 @@ export class AlcoholService {
     try {
       const take = 10;
       const [alcohols, total] = await this.alcoholRepository.findAndCount({
-        select: ['alcohol_idx', 'alcohol_name'],
+        select: ['alcohol_idx', 'alcohol_name', 'alcohol_imgpath'],
         take,
         // skip: (page - 1) * take,
         skip: page<=0 ? page=0 : (page-1)*take,   // page값이 0이하의 값으로 요청되면 첫번째 페이지를 반환하도록 삼항연산자를 사용해서 구현.
@@ -112,6 +112,25 @@ export class AlcoholService {
       }
     } catch (error) {
       this.logger.error('주류정보 전체읽기 중 오류 발생');
+      this.logger.error(error);
+      return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
+    }
+  }
+
+  // 등록된 주류 상세보기
+  async getReadAlcoholDetail(id: number) {
+    try {
+      const alcohol = await this.alcoholRepository.findOne({
+        select: ['alcohol_idx', 'alcohol_name', 'alcohol_imgpath', 'alcohol_type', 'alcohol_class', 'alcohol_from', 'alcohol_percent', 'alcohol_color', 'alcohol_aroma', 'alcohol_flavor', 'alcohol_info'],
+        where: {alcohol_idx: id},
+      });
+      if (alcohol) {
+        return {message: `입력된 주류ID : [${id}]`, data: alcohol, statusCode: 200};
+      } else {
+        return {message: `해당 주류를 찾을 수 없습니다. 입력된 ID : [${id}]`, data: null, statusCode: 404};
+      }
+    } catch (error) {
+      this.logger.error('주류정보 상세읽기 중 오류 발생');
       this.logger.error(error);
       return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
     }
