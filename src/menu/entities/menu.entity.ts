@@ -52,6 +52,10 @@ export class Menu extends BaseEntity {
     @Column({nullable: true})
     user_email: string;
 
+    // 스토어_고유번호 (FK)
+    @Column({nullable: true})
+    store_idx: number;
+
     // 스토어 JOIN
     @ManyToOne(() => Store)
     @JoinColumn({name: 'user_email', referencedColumnName: 'user_email'})

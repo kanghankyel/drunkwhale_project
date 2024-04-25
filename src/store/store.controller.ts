@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Logger, Patch, UseGuards, UseInterceptors, UploadedFiles, UploadedFile, Req, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Logger, Patch, UseGuards, UseInterceptors, UploadedFiles, UploadedFile, Req, Get, Query, Param } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -64,5 +64,13 @@ export class StoreController {
   async getStores(@Query() query: PaginationStoreDto) {
     return this.storeService.getStores(query.page);
   }
+
+  // 스토어 상세보기
+  @ApiOperation({summary:'스토어 상세보기', description:'스토어 상세보기'})
+  @Get('api/get/store/detail/:idx')
+  async getStoreDetail(@Param('idx') idx: number) {
+    return this.storeService.getStoreDetail(idx);
+  }
+
 
 }

@@ -39,6 +39,7 @@ export class MenuService {
       menu.menu_price = createMenuDto.menu_price;
       menu.menu_updatedate = null;
       menu.user_email = createMenuDto.user_email;
+      menu.store_idx = store.store_idx;
       // SFTP서버에 파일 upload
       if (file) {   // 이미지가 있을 경우에만 작동되게 하기
         if (!file.buffer) {

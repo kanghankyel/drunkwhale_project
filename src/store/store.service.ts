@@ -7,6 +7,7 @@ import { InputStoreDto } from './dto/input-store.dto';
 import { SftpService } from 'src/sftp/sftp.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Subimg } from './entities/subimg.entity';
+import { Menu } from 'src/menu/entities/menu.entity';
 
 @Injectable()
 export class StoreService {
@@ -14,6 +15,7 @@ export class StoreService {
   constructor(
     @Inject('STORE_REPOSITORY') private storeRepository: Repository<Store>,
     @Inject('SUBIMG_REPOSITORY') private subimgRepository: Repository<Subimg>,
+    @Inject('MENU_REPOSITORY') private menuRepository: Repository<Menu>,
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
     private readonly sftpService: SftpService,
   ) {};
@@ -204,6 +206,33 @@ export class StoreService {
       }
     } catch (error) {
       this.logger.error('스토어 정보 전체읽기 중 오류 발생');
+      this.logger.error(error);
+      return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
+    }
+  }
+
+  // 스토어 상세보기
+  async getStoreDetail(idx: number) {
+    try {
+      const store = await this.storeRepository.findOne({
+        select: ['store_idx', 'store_name', 'store_ownername', 'store_phone', 'store_mainimgpath', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime', 'store_info', 'store_status', 'store_createdate', 'user_email'],
+        where: {store_idx: idx},
+      });
+      const subimg = await this.subimgRepository.find({
+        select: ['subimg_idx', 'store_subimgpath'],
+        where: {store_idx: idx},
+      })
+      const menu = await this.menuRepository.find({
+        select: ['menu_idx', 'menu_name', 'menu_imgpath', 'menu_type', 'menu_info', 'menu_price'],
+        where: {store_idx: idx},
+      })
+      if (store) {
+        return {message: `입력된 스토어IDX : [${idx}]`, store: [store,subimg], menu: [menu], statusCode: 200};
+      } else {
+        return {message: `해당 스토어를 찾을 수 없습니다. 입력된 스토어IDX : [${idx}]`, data: null, statusCode: 404};
+      }
+    } catch (error) {
+      this.logger.error('스토어정보 상세읽기 중 오류 발생');
       this.logger.error(error);
       return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
     }
