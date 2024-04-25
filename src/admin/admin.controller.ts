@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/role/role.guard';
 import { Roles } from 'src/role/role.decorator';
@@ -20,6 +20,7 @@ export class AdminController {
   @Patch('api/admin/approve')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_ADMIN)
+  @ApiBody({schema: {example: {user_email: 'test1234@test.com'}}})
   async approveOwnerStore(@Body() body: {user_email: string}) {
     return this.adminService.approveOwnerStore(body.user_email);
   }
