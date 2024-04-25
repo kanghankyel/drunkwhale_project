@@ -56,6 +56,15 @@ export class UserService {
     return {message:'회원가입완료', data:user, statusCode:200};
   }
 
+  // 로그인한 회원 마이페이지
+  async findOneUser(user_email) {
+    const user = await this.userRepository.findOne({
+      select: ['user_idx', 'user_email', 'user_name', 'user_nickname', 'user_phone', 'user_postcode', 'user_add', 'user_adddetail', 'user_createdate'],
+      where: {user_email: user_email},
+    })
+    return user;
+  }
+
   // 이메일로 회원 정보 찾기
   async findByEmail(email: string): Promise<User | undefined> {
     const user = await this.userRepository.findOne({

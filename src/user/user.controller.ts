@@ -43,25 +43,15 @@ export class UserController {
   //   return this.userService.inputUser(user_email, inputUserDto);
   // }
 
-  // 로그인한 회원(ROLE_USER) 마이페이지
+  // 로그인한 회원 마이페이지
   @ApiOperation({summary:'마이페이지', description:'마이페이지 (나의정보)'})
   @ApiBearerAuth()
   @Get('api/user/myinfo')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(RoleEnum.ROLE_USER)
+  @Roles(RoleEnum.ROLE_USER, RoleEnum.ROLE_OWNER)
   async myinfo(@Req() req) {
-    const userinfo: any = req.user;
-    return userinfo;
-  }
-
-  // 로그인한 회원(ROLE_ADMIN) 마이페이지
-  @ApiOperation({summary:'마이페이지(관리자)', description:'마이페이지 (관리자정보)'})
-  @ApiBearerAuth()
-  @Get('api/user/admininfo')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(RoleEnum.ROLE_ADMIN)
-  async admininfo(@Req() req) {
-    const userinfo: any = req.user;
+    const user_email = req.user.user_email;
+    const userinfo = await this.userService.findOneUser(user_email);
     return userinfo;
   }
 
