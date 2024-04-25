@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { AlcoholService } from './alcohol.service';
 import { CreateAlcoholDto } from './dto/create-alcohol.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/role/role.guard';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/role/role.decorator';
 import { RoleEnum } from 'src/role/role.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateAlcoholDto } from './dto/update-alcohol.dto';
+import { Alcohol } from './entities/alcohol.entity';
+import { PaginationAlcoholDto } from './dto/pagination-alcohol.dto';
 
 @ApiTags('Alcohol 모듈')
 @Controller()
@@ -47,8 +49,8 @@ export class AlcoholController {
   // 등록된 주류 정보보기
   @ApiOperation({summary:'주류 정보보기', description:'주류 정보보기'})
   @Get('api/read/alcohol')
-  async readAlcohol() {
-    return this.alcoholService.getReadAlcohol();
+  async readAlcohol(@Query() query: PaginationAlcoholDto) {
+    return this.alcoholService.getReadAlcohol(query.page);
   }
 
   // 주류 정보수정(관리자)

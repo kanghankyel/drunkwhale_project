@@ -6,6 +6,7 @@ import { User } from 'src/user/entities/user.entity';
 import { SftpService } from 'src/sftp/sftp.service';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateAlcoholDto } from './dto/update-alcohol.dto';
+import { PaginationAlcoholDto } from './dto/pagination-alcohol.dto';
 
 @Injectable()
 export class AlcoholService {
@@ -77,7 +78,6 @@ export class AlcoholService {
       } else {
         this.logger.error('주류정보 등록 중 오류 발생');
         this.logger.error(error);
-        console.log(error);
         return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
       }
     } finally {
@@ -87,14 +87,33 @@ export class AlcoholService {
   }
 
   // 등록된 주류 정보보기
-  async getReadAlcohol() {
+  async getReadAlcohol(page: number = 1) {
     try {
-      const alcohols = await this.alcoholRepository.find();
-      return {message: `등록된 주류 정보`, data: alcohols, statusCode: 200};
+      const take = 10;
+      const [alcohols, total] = await this.alcoholRepository.findAndCount({
+        select: ['alcohol_idx', 'alcohol_name'],
+        take,
+        // skip: (page - 1) * take,
+        skip: page<=0 ? page=0 : (page-1)*take,   // page값이 0이하의 값으로 요청되면 첫번째 페이지를 반환하도록 삼항연산자를 사용해서 구현.
+        order: {alcohol_idx: 'DESC'},
+      });
+      const lastPage = Math.ceil(total / take);
+      if (lastPage >= page) {
+        return {
+          data: alcohols,
+          meta: {
+            total,
+            page: page<=0 ? page=1 : page,     // page가 0이하일 경우 page=1를 가지도록 한다.
+            lastPage: lastPage,
+          }
+        };
+      } else {
+        return {message: `해당 페이지는 존재하지 않습니다. 입력된 페이지 : [${page}]`, data: null, statusCode: 404};
+      }
     } catch (error) {
-      this.logger.error('등록된 주류 정보 확인 중 오류 발생');
+      this.logger.error('주류정보 전체읽기 중 오류 발생');
       this.logger.error(error);
-      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+      return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
     }
   }
 

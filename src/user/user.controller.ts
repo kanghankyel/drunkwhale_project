@@ -2,14 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Res,
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { ApiBearerAuth, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/role/role.guard';
 import { RoleEnum } from 'src/role/role.enum';
 import { User } from './entities/user.entity';
 import { Roles } from 'src/role/role.decorator';
 import { InputUserDto } from './dto/input-user.dto';
-import { CreateOwnerDto } from './dto/create_owner.dto';
+import { CreateOwnerDto } from './dto/create-owner.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('USER 모듈')

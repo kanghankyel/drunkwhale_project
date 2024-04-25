@@ -6,7 +6,7 @@ import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { RoleService } from 'src/role/role.service';
 import { InputUserDto } from './dto/input-user.dto';
-import { CreateOwnerDto } from './dto/create_owner.dto';
+import { CreateOwnerDto } from './dto/create-owner.dto';
 import { StoreService } from 'src/store/store.service';
 import { Store } from 'src/store/entities/store.entity';
 
