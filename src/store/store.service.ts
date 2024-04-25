@@ -178,4 +178,35 @@ export class StoreService {
     }
   }
 
+
+  // 스토어 전체보기
+  async getStores(page: number = 1) {
+    try {
+      const take = 10;
+      const [stores, total] = await this.storeRepository.findAndCount({
+        select: ['store_idx', 'store_mainimgpath', 'store_name', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime'],
+        take,
+        skip: page<=0 ? page=0 : (page-1)*take,
+        order: {store_idx: 'DESC'},
+      });
+      const lastPage = Math.ceil(total / take);
+      if (lastPage >= page) {
+        return {
+          data: stores,
+          meta: {
+            total,
+            page: page<=0 ? page=1 : page,
+            lastPage: lastPage,
+          }
+        };
+      } else {
+        return {message: `해당 페이지는 존재하지 않습니다. 입력된 페이지 : [${page}]`, data: null, statusCode: 404};
+      }
+    } catch (error) {
+      this.logger.error('스토어 정보 전체읽기 중 오류 발생');
+      this.logger.error(error);
+      return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
+    }
+  }
+
 }

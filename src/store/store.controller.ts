@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Logger, Patch, UseGuards, UseInterceptors, UploadedFiles, UploadedFile, Req } from '@nestjs/common';
+import { Controller, Post, Body, Logger, Patch, UseGuards, UseInterceptors, UploadedFiles, UploadedFile, Req, Get, Query } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -8,6 +8,7 @@ import { RolesGuard } from 'src/role/role.guard';
 import { Roles } from 'src/role/role.decorator';
 import { RoleEnum } from 'src/role/role.enum';
 import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { PaginationStoreDto } from './dto/pagination-store.dto';
 
 @ApiTags('Store 모듈')
 @Controller()
@@ -57,5 +58,11 @@ export class StoreController {
     return this.storeService.inputInfoStore(mainimg, subimg, inputStoreDto);
   }
 
+  // 스토어 전체보기
+  @ApiOperation({summary:'스토어 전체보기', description:'스토어 전체보기'})
+  @Get('api/get/store')
+  async getStores(@Query() query: PaginationStoreDto) {
+    return this.storeService.getStores(query.page);
+  }
 
 }
