@@ -30,9 +30,10 @@ export class UserController {
     const user = {
       ...createUserDto,
       user_pw: hashedPassword,
-      user_ip: clientIP,    // 입력된 정보와, 암호화된 비밀번호, ip를 전송
+      // user_ip: clientIP,    // 입력된 정보와, 암호화된 비밀번호, ip를 전송
     };
-    return this.userService.createUser(user);
+    const userIp = {user_ip: clientIP};
+    return this.userService.createUser(user, userIp);
   }
 
   // 현재 소셜로그인 방식의 차이로 쓰이지 않음.
@@ -74,6 +75,7 @@ export class UserController {
   @Patch('api/user/signout')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
+  @ApiBody({schema: {example: {user_email: 'test1234@test.com'}}})
   async signout(@Body() {user_email}) {
     return this.userService.signout(user_email);
   }

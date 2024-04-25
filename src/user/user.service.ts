@@ -24,8 +24,8 @@ export class UserService {
   private logger = new Logger('user.service.ts');
 
   // 회원 생성
-  async createUser(createUserDto: CreateUserDto) {
-    const {user_email, user_pw, user_name, user_nickname, user_phone, user_postcode, user_add, user_adddetail, user_ip, user_status} = createUserDto;
+  async createUser(createUserDto: CreateUserDto, userIp) {
+    const {user_email, user_pw, user_name, user_nickname, user_phone, user_postcode, user_add, user_adddetail} = createUserDto;
     const userEmailCheck = await this.userRepository.findOne({where:{user_email, user_status:In(['A', 'B'])}});
     const userPhoneCheck = await this.userRepository.findOne({where:{user_phone, user_status:In(['A', 'B'])}});
     const userEamilCheckOwner = await this.userRepository.findOne({where:{user_email, user_status:In(['Z', 'Y', 'W'])}});
@@ -47,7 +47,7 @@ export class UserService {
         user_postcode,
         user_add,
         user_adddetail,
-        user_ip,
+        user_ip: userIp.user_ip,
         user_status: 'A',   // 회원가입 시 기본 상태값 지정 ( A = 일반회원 활동중 )
         user_updatedate: null,    //  updateColumn 초기값으로 Null 지정
     });
