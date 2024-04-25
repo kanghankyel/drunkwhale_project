@@ -90,6 +90,7 @@ export class User extends BaseEntity {
     @OneToMany(() => Worldcup, (worldcup) => worldcup.user)
     worldcups: Worldcup[];
 
+    // 술친구 JOIN
     @OneToMany(() => Friend, (friend) => friend.user)
     friends: Friend[];
 

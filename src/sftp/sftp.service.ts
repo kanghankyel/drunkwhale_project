@@ -71,26 +71,25 @@ export class SftpService{
     }
 
     // SFTP 복수 파일업로드
-    async uploadFilesFromBuffer(files: {buffer: Buffer, originalname: string}[]): Promise<void> {
+    async uploadFilesFromBuffer(files: {buffer: Buffer, destination: string}[]): Promise<void> {
         try {
-            await this.connect();
+            await this.connect(); // 파일 업로드 전에 연결을 열기
             // 전달받은 파일들을 순회하며 각 파일을 SFTP서버에 업로드
             for (const file of files) {
-                const {buffer, originalname} = file;        // 파일의 버퍼와 원본 파일 이름을 가져옴
-                const destination = `uploads/${originalname}`;      // 파일이 업로드될 목적지 경로 설정
+                const {buffer, destination} = file;     // 파일의 버퍼와 원본 파일 이름을 가져옴
                 const dirExists = await this.checkDirectory(destination);       // 목적지 디렉토리가 존재하는지 확인
                 if (!dirExists) {
                     throw new Error('해당 디렉토리가 존재하지 않습니다.');
                 }
                 await this.sftp.put(buffer, destination);       // SFTP 클라이언트를 사용하여 파일을 목적지에 업로드
-                this.logger.log(`파일 [${originalname}] 업로드 완료`);
+                this.logger.log(`파일 [${destination}] 업로드 완료`);
             }
         } catch (error) {
             this.logger.error('파일 업로드 중 오류 발생');
             this.logger.error(error);
             throw error;
         } finally {
-            await this.disconnect();
+            await this.disconnect(); // 모든 파일 업로드가 완료되면 연결을 닫기
         }
     }
 

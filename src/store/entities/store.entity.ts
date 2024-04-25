@@ -1,5 +1,6 @@
 import { User } from "src/user/entities/user.entity";
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Subimg } from "./subimg.entity";
 
 @Entity('tb_store')
 export class Store extends BaseEntity {
@@ -28,13 +29,24 @@ export class Store extends BaseEntity {
     @Column({nullable: true})
     store_type: string;
 
-    // 스토어_대표이미지
+    // 스토어_대표이미지 (원본파일명)
     @Column({nullable: true})
-    store_mainimg: string;
+    store_mainimgname: string;
+
+    // 스토어_대표이미지 (유니크명)
+    @Column({nullable: true})
+    store_mainimgkey: string;
+
+    // 스토어_대표이미지 (경로)
+    @Column({nullable: true})
+    store_mainimgpath: string;
 
     // 스토어_서브이미지
-    @Column({type: 'text', nullable: true})      // 복수의 파일경로를 저장하기 위해 배열 형태로 지정
-    store_subimg: string[];
+    // @Column({type: 'text', nullable: true})      // 복수의 파일경로를 저장하기 위해 배열 형태로 지정
+    // store_subimg: string[];
+    // 스토어_서브이미지 JOIN
+    @OneToMany(() => Subimg, (subimg) => subimg.store)
+    subimg: Subimg[];
 
     // 스토어_우편번호
     @Column({nullable: true})

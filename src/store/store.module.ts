@@ -6,11 +6,12 @@ import { UserModule } from 'src/user/user.module';
 import { storeRepository } from './store.repository';
 import { SftpModule } from 'src/sftp/sftp.module';
 import { SftpService } from 'src/sftp/sftp.service';
+import { subimgRepository } from './subimg.repository';
 
 @Module({
   imports: [DatabaseModule, UserModule, SftpModule],
   controllers: [StoreController],
-  providers: [...storeRepository, StoreService],
-  exports: [...storeRepository, StoreService],
+  providers: [...storeRepository, ...subimgRepository, StoreService],
+  exports: [...storeRepository, ...subimgRepository, StoreService],
 })
 export class StoreModule {}

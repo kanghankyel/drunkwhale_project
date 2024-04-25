@@ -54,9 +54,9 @@ export class AlcoholController {
 
   // 등록된 주류 상세보기
   @ApiOperation({summary:'주류 상세보기', description:'주류 상세보기'})
-  @Get('api/read/alcohol/:id')
-  async readAlcoholDetail(@Param('id') id: number) {
-    return this.alcoholService.getReadAlcoholDetail(id);
+  @Get('api/read/alcohol/:idx')
+  async readAlcoholDetail(@Param('idx') idx: number) {
+    return this.alcoholService.getReadAlcoholDetail(idx);
   }
 
   // 주류 정보수정(관리자)

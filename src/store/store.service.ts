@@ -5,12 +5,15 @@ import { Store } from './entities/store.entity';
 import { User } from 'src/user/entities/user.entity';
 import { InputStoreDto } from './dto/input-store.dto';
 import { SftpService } from 'src/sftp/sftp.service';
+import { v4 as uuidv4 } from 'uuid';
+import { Subimg } from './entities/subimg.entity';
 
 @Injectable()
 export class StoreService {
 
   constructor(
     @Inject('STORE_REPOSITORY') private storeRepository: Repository<Store>,
+    @Inject('SUBIMG_REPOSITORY') private subimgRepository: Repository<Subimg>,
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
     private readonly sftpService: SftpService,
   ) {};
@@ -64,48 +67,101 @@ export class StoreService {
     const queryRunner = this.storeRepository.manager.connection.createQueryRunner();
     // 2. QueryRunner 연결 및 트랜잭션 시작
     await queryRunner.connect();
-    await queryRunner.startTransaction();
+    // await queryRunner.startTransaction();
+    const isTransactionActive = queryRunner.isTransactionActive;
+    if (!isTransactionActive) {
+        await queryRunner.startTransaction();
+    }
     try {
       const {store_opentime, store_closetime, store_info, user_email} = inputStoreDto;
       const store = await this.storeRepository.findOne({where:{user_email, store_status:'A'}});
       if(!store) {
         return {message:`일치하는 스토어가 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
       }
+
       // 메인이미지 (0~1장) 파일 업로드 로직
       if (mainimg) {    // 메인이미지가 첨부된 경우에만 처리
-        const store_mainimg_path: string = `uploads/${mainimg.originalname}`;   // 메인이미지 파일의 경로
-        store.store_mainimg = store_mainimg_path;
-        // 메인이미지 파일의 Buffer를 SFTP에 업로드
-        const mainImgBuffer = mainimg.buffer;
-        await this.sftpService.uploadFileFromBuffer(mainImgBuffer, `uploads/${mainimg.originalname}`);
+        if (!mainimg.buffer) {
+          this.logger.error(`파일 객체에 buffer 속성이 포함되어 있지 않습니다. (MainIMG)`);
+          throw new Error('유효한 파일 객체가 전달되지 않았습니다.');
+        }
+        const fileExtension = mainimg.originalname.split('.').pop();    // 파일이름과 확장자 분리. pop를 사용하여 배열 마지막 요소인 파일확장자를 가져옴
+        const uniqueFileName = `${uuidv4()}.${fileExtension}`;    // 파일 유니크명 생성
+        const store_mainimg_name = `${mainimg.originalname}`;   // 이미지 파일 정보 (원본파일명)
+        const store_mainimg_key = `${uniqueFileName}`;    // 이미지 파일 정보 (유니크명)
+        const store_mainimg_path = `uploads/drunkwhale/store/mainimg/${uniqueFileName}`;    // 이미지 파일 정보 (경로)
+          // 이전 이미지 경로 저장
+          const previousMainImgPath = store.store_mainimgpath;
+          this.logger.debug(`기존의 메인 사진 파일 경로 : [${previousMainImgPath}]`);
+          // 새로운 이미지 업로드
+          const buffer = mainimg.buffer;
+          await this.sftpService.uploadFileFromBuffer(buffer, `uploads/drunkwhale/store/mainimg/${uniqueFileName}`);
+          // 이전 메인 이미지 삭제
+          if (previousMainImgPath) {
+            await this.sftpService.deleteFile(previousMainImgPath);
+          }
+        // 주류 객체에 새로운 이미지 정보 할당
+        store.store_mainimgname = store_mainimg_name;   // 이미지 파일 정보 데이터베이스에 입력
+        store.store_mainimgkey = store_mainimg_key;
+        store.store_mainimgpath = store_mainimg_path;
+        this.logger.debug(`[${store.user_email}]님의 스토어 메인이미지 SFTP서버로 전송 완료`);
       }
+
       // 서브이미지 (0~10장) 파일 업로드 로직
       if (subimg && subimg.length > 0) {    // 서브이미지가 첨부된 경우에만 처리
-        const store_subimg_path: string[] = subimg.map(image => `uploads/${image.originalname}`);   // 서브이미지 파일의 경로
-        store.store_subimg = store_subimg_path;
-        // 서브이미지 파일들을 순회하면서 각 이미지 파일의 Buffer를 SFTP에 업로드
-        for (const subImage of subimg) {
-          const subImgBuffer = subImage.buffer;   // 현재 순회 중인 서브 이미지 파일의 Buffer를 가져옴
-          await this.sftpService.uploadFilesFromBuffer([{buffer: subImgBuffer, originalname: subImage.originalname}]);    // 배열로 전송
+          const storeIdx = store.store_idx;  // 스토어 고유번호 저장
+          // 이전 서브이미지가 있는지 확인
+          const previousSubImages = await this.subimgRepository.find({where:{store_idx: storeIdx}});
+          if (previousSubImages.length > 0) {
+            // 이전 서브이미지들 삭제
+            for (const previousSubImage of previousSubImages) {
+                await this.sftpService.deleteFile(previousSubImage.store_subimgpath);
+                await this.subimgRepository.remove(previousSubImage);
+            }
+          }
+        // 새로운 서브이미지 업로드 및 저장
+        for (const subImage of subimg) {    // 반복문 사용해서 한개씩 처리
+            if (!subImage.buffer) {
+              this.logger.error(`파일 객체에 buffer 속성이 포함되어 있지 않습니다. (SubIMG)`);
+              throw new Error('유효한 파일 객체가 전달되지 않았습니다.');
+            }
+            const subFileExtension = subImage.originalname.split('.').pop();
+            const subUniqueFileName = `${uuidv4()}.${subFileExtension}`;
+            const store_subimg_name = `${subImage.originalname}`;
+            const store_subimg_key = `${subUniqueFileName}`;
+            const store_subimg_path = `uploads/drunkwhale/store/subimg/${subUniqueFileName}`;
+            // Sub Image 저장 처리
+            const buffer = subImage.buffer;
+            await this.sftpService.uploadFileFromBuffer(buffer, store_subimg_path);
+            // Subimg 객체 생성 및 저장
+            const newSubimg = new Subimg();
+            newSubimg.store = store;
+            newSubimg.store_subimgname = store_subimg_name;
+            newSubimg.store_subimgkey = store_subimg_key;
+            newSubimg.store_subimgpath = store_subimg_path;
+            await queryRunner.manager.save(newSubimg);
         }
       }
+
+      // 파일 제외 나머지 정보 저장
       store.store_opentime = inputStoreDto.store_opentime;
       store.store_closetime = inputStoreDto.store_closetime;
       store.store_info = inputStoreDto.store_info;
       // 3. 스토어 정보 트랜잭션 저장. 기존 코드 변경. ( 기존코드 => const inputStore = await this.storeRepository.save(store); )
-      const inputStore = await queryRunner.manager.save(store);
+      await queryRunner.manager.save(store);
       this.logger.debug(JSON.stringify(store.user_email) + ' 님의 스토어정보입력 완료');
       // 4. 모든 작업이 성공하면 트랜잭션 커밋
       await queryRunner.commitTransaction();
       return {
         message:'스토어 정보 입력이 완료되었습니다.',
         data:{
-          store_mainimg:inputStore.store_mainimg,
-          store_subimg:inputStore.store_subimg,
-          store_name:inputStore.store_name,
-          store_opentime:inputStore.store_opentime,
-          store_closetime:inputStore.store_closetime,
-          store_info:inputStore.store_info
+          store_mainimg: store.store_mainimgname,
+          // store_subimg: subimg.map(subimg => subimg.store_subimgpath),
+          store_subimg: subimg.map(subimg => subimg.originalname),
+          store_name: store.store_name,
+          store_opentime: store.store_opentime,
+          store_closetime: store.store_closetime,
+          store_info: store.store_info
         },
         statusCode:200
       };

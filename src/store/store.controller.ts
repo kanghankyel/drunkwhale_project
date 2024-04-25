@@ -50,8 +50,10 @@ export class StoreController {
   @Roles(RoleEnum.ROLE_OWNER)
   async inputTest(@UploadedFiles() files, @Body() inputStoreDto: InputStoreDto) {
     const {store_mainimg, store_subimg} = files;
-    const mainimg = store_mainimg[0];
-    const subimg = store_subimg.map(file => file);
+    // const mainimg = store_mainimg[0];
+    // const subimg = store_subimg.map(file => file);
+    const mainimg = store_mainimg ? store_mainimg[0] : undefined;   // mainimg가 전송되지 않았을때 undefined처리
+    const subimg = store_subimg ? store_subimg.map(file => file) : [];    // subimg가 전송되지 않았을때 undefined처리
     return this.storeService.inputInfoStore(mainimg, subimg, inputStoreDto);
   }
 

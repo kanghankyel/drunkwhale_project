@@ -6,7 +6,6 @@ import { RoleModule } from './role/role.module';
 import { AlcoholModule } from './alcohol/alcohol.module';
 import { StoreModule } from './store/store.module';
 import { AdminModule } from './admin/admin.module';
-import { CrudModule } from './crud/crud.module';
 import { MenuModule } from './menu/menu.module';
 import { SftpModule } from './sftp/sftp.module';
 import { MulterModule } from '@nestjs/platform-express';
@@ -24,7 +23,6 @@ import { FriendModule } from './friend/friend.module';
     AlcoholModule,
     StoreModule,
     AdminModule,
-    CrudModule,
     MenuModule,
     SftpModule,
     MulterModule.register({dest:'./uploads'}),

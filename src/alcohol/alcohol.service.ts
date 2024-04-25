@@ -113,16 +113,16 @@ export class AlcoholService {
   }
 
   // 등록된 주류 상세보기
-  async getReadAlcoholDetail(id: number) {
+  async getReadAlcoholDetail(idx: number) {
     try {
       const alcohol = await this.alcoholRepository.findOne({
         select: ['alcohol_idx', 'alcohol_name', 'alcohol_imgpath', 'alcohol_type', 'alcohol_class', 'alcohol_from', 'alcohol_percent', 'alcohol_color', 'alcohol_aroma', 'alcohol_flavor', 'alcohol_info'],
-        where: {alcohol_idx: id},
+        where: {alcohol_idx: idx},
       });
       if (alcohol) {
-        return {message: `입력된 주류ID : [${id}]`, data: alcohol, statusCode: 200};
+        return {message: `입력된 주류ID : [${idx}]`, data: alcohol, statusCode: 200};
       } else {
-        return {message: `해당 주류를 찾을 수 없습니다. 입력된 ID : [${id}]`, data: null, statusCode: 404};
+        return {message: `해당 주류를 찾을 수 없습니다. 입력된 ID : [${idx}]`, data: null, statusCode: 404};
       }
     } catch (error) {
       this.logger.error('주류정보 상세읽기 중 오류 발생');
