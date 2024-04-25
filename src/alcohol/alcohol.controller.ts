@@ -33,7 +33,6 @@ export class AlcoholController {
         alcohol_from: {type: 'string'},
         alcohol_percent: {type: 'string'},
         alcohol_info: {type: 'string'},
-        user_email: {type: 'string'},
       },
     },
   })
@@ -75,7 +74,6 @@ export class AlcoholController {
         alcohol_from: {type: 'string'},
         alcohol_percent: {type: 'string'},
         alcohol_info: {type: 'string'},
-        user_email: {type: 'string'},
       },
     },
   })

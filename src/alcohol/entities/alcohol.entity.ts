@@ -70,14 +70,14 @@ export class Alcohol extends BaseEntity {
     @DeleteDateColumn({type: 'timestamp', default: null, nullable: true})
     alcohol_deletedate: string;
 
-    // 회원_이메일(FK)
-    @Column()
-    user_email: string;
+    // // 회원_이메일(FK)
+    // @Column()
+    // user_email: string;
 
-    // 회원 JOIN
-    @ManyToOne(() => User)
-    @JoinColumn({name: 'user_email', referencedColumnName: 'user_email'})
-    user: User;
+    // // 회원 JOIN
+    // @ManyToOne(() => User)
+    // @JoinColumn({name: 'user_email', referencedColumnName: 'user_email'})
+    // user: User;
 
     // 술장고 JOIN
     @OneToMany(() => Cabinet, cabinet => cabinet.alcohol)

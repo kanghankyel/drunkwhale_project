@@ -74,9 +74,9 @@ export class User extends BaseEntity {
     @OneToMany(() => Store, (store) => store.user)
     store: Store[];
 
-    // 주류 JOIN
-    @OneToMany(() => Alcohol, (alcohol) => alcohol.user)
-    alcohols: Alcohol[];
+    // // 주류 JOIN
+    // @OneToMany(() => Alcohol, (alcohol) => alcohol.user)
+    // alcohols: Alcohol[];
 
     // 술장고 JOIN
     @OneToMany(() => Cabinet, (cabinet) => cabinet.user)

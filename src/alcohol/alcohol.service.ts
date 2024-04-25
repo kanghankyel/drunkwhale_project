@@ -27,11 +27,7 @@ export class AlcoholService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const {alcohol_name, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_color, alcohol_aroma,alcohol_flavor, alcohol_info, user_email} = createAlcoholDto;
-      const user = await this.userRepository.findOne({where:{user_email: user_email, user_status: 'A' }});
-      if (!user) {
-        return {message: `해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode: 404};
-      }
+      const {alcohol_name, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_color, alcohol_aroma,alcohol_flavor, alcohol_info} = createAlcoholDto;
       const alcohol = new Alcohol();
       alcohol.alcohol_name = createAlcoholDto.alcohol_name;
       alcohol.alcohol_type = createAlcoholDto.alcohol_type;
@@ -43,7 +39,6 @@ export class AlcoholService {
       alcohol.alcohol_flavor = createAlcoholDto.alcohol_flavor;
       alcohol.alcohol_info = createAlcoholDto.alcohol_info;
       alcohol.alcohol_updatedate = null;
-      alcohol.user_email = user.user_email;
       // SFTP서버에 파일 upload
       if (file) {
         // 이미지가 있을 경우에만 작동되게 하기
@@ -62,14 +57,14 @@ export class AlcoholService {
         alcohol.alcohol_imgpath = alcohol_image_path;
         const buffer = file.buffer;
         await this.sftpService.uploadFileFromBuffer(buffer, `uploads/drunkwhale/alcohol/${uniqueFileName}`);
-        this.logger.debug(JSON.stringify(user.user_email) + ' 님의 주류정보 SFTP서버로 전송 완료');
+        this.logger.debug('주류정보 SFTP서버로 전송 완료');
       }
       // 3. 주류 정보 트랜잭션 저장. 기존 코드 변경. ( 기존코드 => await this.alcoholRepository.save(alcohol); )
       await queryRunner.manager.save(alcohol);
-      this.logger.debug(JSON.stringify(user.user_email) + ' 님의 주류 정보입력 완료');
+      this.logger.debug('주류 정보입력 완료');
       // 4. 모든 작업이 성공하면 트랜잭션 커밋
       await queryRunner.commitTransaction();
-      return {message: `${user_email}님의 주류 정보입력 완료`, data: alcohol, statusCode: 200};
+      return {message: `주류 정보입력 완료`, data: alcohol, statusCode: 200};
     } catch (error) {
       // 5. 오류 발생 시 트랜잭션 롤백
       await queryRunner.rollbackTransaction();
@@ -142,7 +137,7 @@ export class AlcoholService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const {alcohol_idx, alcohol_name, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_color, alcohol_aroma, alcohol_flavor, alcohol_info, user_email} = updateAlcoholDto;
+      const {alcohol_idx, alcohol_name, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_color, alcohol_aroma, alcohol_flavor, alcohol_info} = updateAlcoholDto;
       // 이전 이미지 경로를 저장할 변수 선언
       let previousImgPath: string | undefined;
       // 주류 객체 조회
@@ -174,7 +169,7 @@ export class AlcoholService {
         alcohol.alcohol_imgname = alcohol_image_name;
         alcohol.alcohol_imgkey = alcohol_image_key;
         alcohol.alcohol_imgpath = alcohol_image_path;
-        this.logger.debug(`${user_email} 님의 주류 이미지 업로드 완료`);
+        this.logger.debug(`주류 이미지 업로드 완료`);
       }
       // 주류 정보 업데이트
       alcohol.alcohol_name = alcohol_name || alcohol.alcohol_name; // 새로운 값이 제공되지 않았을 경우 이전 정보적용
@@ -188,7 +183,7 @@ export class AlcoholService {
       alcohol.alcohol_info = alcohol_info || alcohol.alcohol_info;
       await queryRunner.manager.save(alcohol);
       await queryRunner.commitTransaction();
-      return {message: `${user_email}님의 주류 정보 수정 완료`, data: alcohol, statusCode: 200};
+      return {message: `주류 정보 수정 완료`, data: alcohol, statusCode: 200};
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.error('주류 정보 수정 중 오류 발생');

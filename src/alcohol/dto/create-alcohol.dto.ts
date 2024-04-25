@@ -43,8 +43,8 @@ export class CreateAlcoholDto {
     @IsString()
     readonly alcohol_info: string | null;
 
-    @ApiProperty({description:'회원 이메일(FK)'})
-    @IsString()
-    readonly user_email: string | null;
+    // @ApiProperty({description:'회원 이메일(FK)'})
+    // @IsString()
+    // readonly user_email: string | null;
 
 }
