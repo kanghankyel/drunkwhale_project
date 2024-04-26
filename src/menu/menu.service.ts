@@ -87,10 +87,28 @@ export class MenuService {
   }
 
   // 등록된 전체 메뉴 정보보기
-  async getAllMenu() {
+  async getAllMenu(page: number = 1) {
     try {
-      const menus = await this.menuRepository.find();
-      return {message: `등록된 메뉴 정보`, data: menus, statusCode: 200};
+      const take = 10;
+      const [menus, total] = await this.menuRepository.findAndCount({
+        select: ['menu_idx', 'menu_name', 'menu_imgpath', 'menu_type', 'store_idx'],
+        take,
+        skip: page<=0 ? page=0 : (page-1)*take,
+        order: {menu_idx: 'DESC'},
+      });
+      const lastPage = Math.ceil(total / take);
+      if (lastPage >= page) {
+        return {
+          data: menus,
+          meta: {
+            total,
+            page: page<=0 ? page=1 : page,
+            lastPage: lastPage,
+          }
+        };
+      } else {
+        return {message: `해당 페이지는 존재하지 않습니다. 입력된 페이지 : [${page}]`, data: null, statusCode: 404};
+      }
     } catch (error) {
       this.logger.error('등록된 전체 메뉴 정보 확인 중 오류 발생');
       this.logger.error(error);
@@ -99,14 +117,17 @@ export class MenuService {
   }
 
   // 특정 스토어 메뉴 정보보기
-  async getMenu(store_idx) {
+  async getMenu(store_idx: number) {
     try {
-      const store = await this.storeRepository.findOne({where:{store_idx:store_idx}});
+      const store = await this.storeRepository.findOne({where:{store_idx: store_idx, store_status: 'A'}});
       if (!store) {
-        return {message: `해당하는 스토어가 없습니다. 입력된 스토어번호 : [${store_idx}]`, data: null, statusCode: 404};
+        return {message: `해당하는 스토어가 없거나 허가되지 않은 스토어입니다. 입력된 스토어번호 : [${store_idx}]`, data: null, statusCode: 404};
       }
       const user = store.user_email;
-      const menus = await this.menuRepository.find({where:{user_email:user}});
+      const menus = await this.menuRepository.find({
+        select: ['menu_idx', 'menu_name', 'menu_imgpath', 'menu_type', 'menu_price', 'menu_info', 'store_idx'],
+        where: {user_email:user}
+      });
       // 메뉴를 종류별로 분류
       const categoriMenus = {};
       menus.forEach(menu => {

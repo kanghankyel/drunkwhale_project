@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -8,6 +8,7 @@ import { Roles } from 'src/role/role.decorator';
 import { RoleEnum } from 'src/role/role.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateMenuDto } from './dto/update-menu.dto';
+import { PaginationMenuDto } from './dto/pagination-store.dto';
 
 @ApiTags('Menu 모듈')
 @Controller()
@@ -45,14 +46,14 @@ export class MenuController {
   // 등록된 전체 메뉴 정보보기
   @ApiOperation({summary:'등록된 메뉴 전체보기', description:'등록된 메뉴 전체보기'})
   @Get('api/readall/menu')
-  async readAllMenu() {
-    return this.menuService.getAllMenu();
+  async readAllMenu(@Query() query: PaginationMenuDto) {
+    return this.menuService.getAllMenu(query.page);
   }
 
   // 특정 스토어 메뉴 정보보기
   @ApiOperation({summary:'특정 스토어 메뉴보기', description:'특정 스토어 메뉴보기'})
-  @Get('api/read/menu')
-  async readMenu(@Body() {store_idx}) {
+  @Get('api/read/menu/:idx')
+  async readMenu(@Param('idx') store_idx: number) {
     return this.menuService.getMenu(store_idx);
   }
 
@@ -88,7 +89,7 @@ export class MenuController {
   @Delete('api/delete/menu')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_OWNER)
-  async deleteMenu(@Body() {menu_idx}) {
+  async deleteMenu(@Param('idx') menu_idx: number) {
     return this.menuService.deleteMenu(menu_idx);
   }
 

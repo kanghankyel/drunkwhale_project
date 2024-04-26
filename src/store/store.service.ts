@@ -216,7 +216,7 @@ export class StoreService {
     try {
       const store = await this.storeRepository.findOne({
         select: ['store_idx', 'store_name', 'store_ownername', 'store_phone', 'store_mainimgpath', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime', 'store_info', 'store_status', 'store_createdate', 'user_email'],
-        where: {store_idx: idx},
+        where: {store_idx: idx, store_status: 'A'},
       });
       const subimg = await this.subimgRepository.find({
         select: ['subimg_idx', 'store_subimgpath'],
@@ -229,7 +229,7 @@ export class StoreService {
       if (store) {
         return {message: `입력된 스토어IDX : [${idx}]`, store: [store,subimg], menu: [menu], statusCode: 200};
       } else {
-        return {message: `해당 스토어를 찾을 수 없습니다. 입력된 스토어IDX : [${idx}]`, data: null, statusCode: 404};
+        return {message: `해당 스토어를 찾을 수 없거나, 허가 받지 못한 스토어입니다. 입력된 스토어IDX : [${idx}]`, data: null, statusCode: 404};
       }
     } catch (error) {
       this.logger.error('스토어정보 상세읽기 중 오류 발생');
