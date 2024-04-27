@@ -92,7 +92,7 @@ export class AlcoholController {
   @Delete('api/delete/alcohol')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_ADMIN)
-  async deleteAlcohol(@Body() {alcohol_idx}) {
+  async deleteAlcohol(@Param('idx') alcohol_idx: number) {
     return this.alcoholService.deleteAlcohol(alcohol_idx);
   }
 
