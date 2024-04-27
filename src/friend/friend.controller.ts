@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Logger, Req } from '@nestjs/common';
 import { FriendService } from './friend.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -20,11 +20,12 @@ export class FriendController {
   // 술친구 추천
   @ApiOperation({summary:'술친구 추천', description:'주류월드컵 + 지역 기반 술친구 추천'})
   @ApiBearerAuth()
-  @Post('api/set/friend')
+  @Get('api/get/friend')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async setFriends(@Body() setFriendDto: SetFriendDto) {
-    return this.friendService.setFriends(setFriendDto);
+  async setFriends(@Req() req) {
+    const userEmail = req.user.user_email;
+    return this.friendService.setFriends(userEmail);
   }
 
   // 술친구 메일전송
@@ -53,7 +54,8 @@ export class FriendController {
   @Get('api/getsendmail/friend')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async getSendMail(@Body() {user_email}) {
+  async getSendMail(@Req() req) {
+    const user_email = req.user.user_email;
     return this.friendService.getSendMail(user_email);
   }
 
@@ -63,7 +65,8 @@ export class FriendController {
   @Get('api/getreadmail/friend')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async getReadMail(@Body() {user_email}) {
+  async getReadMail(@Req() req) {
+    const user_email = req.user.user_email;
     return this.friendService.getReadMail(user_email);
   }
 

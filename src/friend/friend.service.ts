@@ -19,17 +19,17 @@ export class FriendService {
   private logger = new Logger('friend.service.ts');
 
   // 술친구 추천
-  async setFriends(setFriendDto: SetFriendDto) {
+  async setFriends(userEmail) {
     try {
         // 1. 프론트에서 전송한 해당회원정보(user_email)를 받아옴.
-        const {user_email} = setFriendDto;
-        const user = await this.userRepository.findOne({where:{user_email:user_email}});
-        const worldcup = await this.worldcupRepository.findOne({where:{user_email:user_email}});
+        // const {user_email} = setFriendDto;
+        const user = await this.userRepository.findOne({where:{user_email: userEmail}});
+        const worldcup = await this.worldcupRepository.findOne({where:{user_email: userEmail}});
         if (!user) {
-            return {message: `해당 회원이 존재하지 않습니다. 입력된 회원 : ${user_email}`, data:null, statuscode:404};
+            return {message: `해당 회원이 존재하지 않습니다. 입력된 회원 : ${userEmail}`, data:null, statuscode:404};
         }
         if (!worldcup) {
-            return {message: `주류월드컵 정보가 없는 회원입니다. 입력된 회원 : ${user_email}`, data:null, statuscode:404};
+            return {message: `주류월드컵 정보가 없는 회원입니다. 입력된 회원 : ${userEmail}`, data:null, statuscode:404};
         }
         const {user_add} = user;
         const {worldcup_result} = worldcup;
@@ -47,7 +47,7 @@ export class FriendService {
                 'b.worldcup_result'
             ])
             .innerJoin('tb_worldcup', 'b', 'a.user_email = b.user_email')       // 'tb_user'와 'tb_worldcup'의 JOIN
-            .where('a.user_email != :email', {email: user_email})       // 해당 회원을 제외한 나머지 회원정보들을 추출
+            .where('a.user_email != :email', {email: userEmail})       // 해당 회원을 제외한 나머지 회원정보들을 추출
             .andWhere('a.user_add LIKE :address', {address: `${userCity}%`})        // 첫번째조건 = 회원의 사는 지역과 동일한 회원들만 추출
             .andWhere(new Brackets(qb => {      // 두번째조건 = 반복문을 통해 입력된 회원의 주류월드컵 결과와 유사한 회원들만 추출
                 worldcupResults.forEach((result, index) => {
@@ -61,7 +61,7 @@ export class FriendService {
             .getMany();
         // 4. 추천로직 결과가 없을때(같은 지역구 인원이 없을때) 예외 처리.
         if (friends.length === 0) {
-            return {message: '매칭된 인원이 없습니다.', data: null, statusCode: 200};
+            return {message: '매칭된 인원이 없습니다. 회원님 근처에 사용자가 업습니다.', data: null, statusCode: 200};
         }
         return friends;
     } catch (error) {
@@ -127,7 +127,10 @@ export class FriendService {
         if (!usercheck) {
             return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
         }
-        const user = await this.friendRepository.find({where:{user_email: user_email}});
+        const user = await this.friendRepository.find({
+            select: ['friend_idx', 'user_email', 'user_nickname', 'friend_email', 'friend_nickname', 'friend_match'],
+            where:{user_email: user_email}
+        });
         return {message: `[${user_email}]님이 전송한 술친구요청`, data: user, statusCode: 200};
     } catch (error) {
         this.logger.error('자신이 전송한 술친구 요청 확인 중 오류 발생');
@@ -143,7 +146,10 @@ export class FriendService {
         if (!usercheck) {
             return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
         }
-        const user = await this.friendRepository.find({where:{friend_email: user_email, friend_status: null}});
+        const user = await this.friendRepository.find({
+            select: ['friend_idx', 'user_email', 'user_nickname', 'friend_email', 'friend_nickname', 'friend_match'],
+            where:{friend_email: user_email, friend_status: null}
+        });
         return {message: `[${user_email}]님이 받은 술친구요청`, data: user, statusCode: 200};
     } catch (error) {
         this.logger.error('자신에게 온 술친구 요청 확인 중 오류 발생');
