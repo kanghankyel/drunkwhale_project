@@ -3,11 +3,11 @@ import { IsString } from "class-validator";
 
 export class CreateSubscribeDto {
 
-    @ApiProperty({description:'주류_이름(FK)'})
+    @ApiProperty({example:'주류이름', description:'주류_이름(FK)'})
     @IsString()
     readonly alcohol_name: string | null;
 
-    @ApiProperty({description:'회원 이메일(FK)'})
+    @ApiProperty({example:'test1234@test.com', description:'회원 이메일(FK)'})
     @IsString()
     readonly user_email: string | null;
 
