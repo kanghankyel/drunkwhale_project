@@ -61,7 +61,7 @@ export class CabinetService {
         skip: page<=0 ? page=0 : (page-1)*take,
         order: {cabinet_idx: 'DESC'},
       });
-      if (!cabinets || cabinets.length === 0) {
+      if (total === 0) {
         return {message: `아직 등록된 정보가 없습니다.`, data: null, statusCode: 404};
       }
       const lastPage = Math.ceil(total / take);

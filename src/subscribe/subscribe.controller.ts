@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards, Query, Req } from '@nestjs/common';
 import { SubscribeService } from './subscribe.service';
 import { CreateSubscribeDto } from './dto/create-subscribe.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -6,6 +6,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/role/role.guard';
 import { RoleEnum } from 'src/role/role.enum';
 import { Roles } from 'src/role/role.decorator';
+import { PaginationSubscribeDto } from './dto/pagination-subscribe.dto';
 
 @ApiTags('SUBSCRIBE 모듈')
 @Controller()
@@ -31,8 +32,9 @@ export class SubscribeController {
   @Get('api/read/subscribe')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async readSubscribe(@Body() {user_email}) {
-    return this.subscribeService.readSubscribe(user_email);
+  async readSubscribe(@Req() req, @Query() query: PaginationSubscribeDto) {
+    const userEmail = req.user.user_email;
+    return this.subscribeService.readSubscribe(userEmail, query.page);
   }
 
   // 주류 찜하기 삭제
@@ -41,7 +43,7 @@ export class SubscribeController {
   @Delete('api/delete/subscribe')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async deleteSubscribe(@Body() {subscribe_idx}) {
+  async deleteSubscribe(@Param('idx') subscribe_idx: number) {
     return this.subscribeService.deleteSubscribe(subscribe_idx);
   }
 

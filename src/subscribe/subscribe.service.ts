@@ -45,14 +45,37 @@ export class SubscribeService {
   }
 
   // 주류 찜하기 확인
-  async readSubscribe(user_email) {
+  async readSubscribe(userEmail, page: number = 1) {
     try {
-      const usercheck = await this.userRepository.findOne({where:{user_email: user_email}});
+      const take = 10;
+      const usercheck = await this.userRepository.findOne({where:{user_email: userEmail}});
       if (!usercheck) {
-        return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
+        return {message:`해당 회원이 없습니다. 입력된 회원 : ${userEmail}`, statusCode:404};
       }
-      const mySubscribe = await this.subscribeRepository.find({where:{user_email: user_email}});
-      return {message: `[${user_email}] 님의 찜한 정보`, data: mySubscribe, statusCode: 200};
+      const [subscribes, total] = await this.subscribeRepository.findAndCount({
+        select: ['subscribe_idx', 'alcohol_name', 'user_email'],
+        where: {user_email: userEmail},
+        take,
+        skip: page<=0 ? page=0 : (page-1)*take,
+        order: {subscribe_idx: 'DESC'},
+      });
+      if (total === 0) {
+        return {message: `아직 등록된 정보가 없습니다.`, data: null, statusCode: 404};
+      }
+      const lastPage = Math.ceil(total / take);
+      if (lastPage >= page) {
+        return {
+          message: `[${userEmail}]님의 술장고 정보`,
+          data: subscribes,
+          meta: {
+            total,
+            page: page<=0 ? page=1 : page,
+            lastPage: lastPage,
+          }
+        };
+      } else {
+        return {message: `해당 페이지는 존재하지 않습니다. 입력된 페이지 : [${page}]`, data: null, statusCode: 404};
+      }
     } catch (error) {
       this.logger.error('찜하기 읽기 중 서버 오류 발생');
       this.logger.error(error);
@@ -61,7 +84,7 @@ export class SubscribeService {
   }
 
   // 주류 찜하기 삭제
-  async deleteSubscribe(subscribe_idx) {
+  async deleteSubscribe(subscribe_idx: number) {
     try {
       const subscribe = await this.subscribeRepository.findOne({where:{subscribe_idx:subscribe_idx}});
       if (!subscribe) {
