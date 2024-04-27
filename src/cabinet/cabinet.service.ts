@@ -47,14 +47,37 @@ export class CabinetService {
   }
 
   // 개인 술장고 읽기
-  async readCabinet(user_email) {
+  async readCabinet(userEmail, page: number = 1) {
     try {
-      const usercheck = await this.userRepository.findOne({where:{user_email: user_email}});
+      const take = 10;
+      const usercheck = await this.userRepository.findOne({where:{user_email: userEmail}});
       if (!usercheck) {
-        return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
+        return {message:`해당 회원이 없습니다. 입력된 회원 : ${userEmail}`, statusCode:404};
       }
-      const myCabinet = await this.cabinetRepository.find({where:{user_email: user_email}});
-      return {message:`[${user_email}] 님의 술장고 정보`, data:myCabinet, statusCode:200};
+      const [cabinets, total] = await this.cabinetRepository.findAndCount({
+        select: ['cabinet_idx', 'alcohol_name', 'cabinet_color', 'cabinet_aroma', 'cabinet_flavor', 'cabinet_review'],
+        where: {user_email: userEmail},
+        take,
+        skip: page<=0 ? page=0 : (page-1)*take,
+        order: {cabinet_idx: 'DESC'},
+      });
+      if (!cabinets || cabinets.length === 0) {
+        return {message: `아직 등록된 정보가 없습니다.`, data: null, statusCode: 404};
+      }
+      const lastPage = Math.ceil(total / take);
+      if (lastPage >= page) {
+        return {
+          message: `[${userEmail}]님의 술장고 정보`,
+          data: cabinets,
+          meta: {
+            total,
+            page: page<=0 ? page=1 : page,
+            lastPage: lastPage,
+          }
+        };
+      } else {
+        return {message: `해당 페이지는 존재하지 않습니다. 입력된 페이지 : [${page}]`, data: null, statusCode: 404};
+      }
     } catch (error) {
       this.logger.error('개인 술장고 읽기중 서버 오류 발생');
       this.logger.error(error);
@@ -85,9 +108,9 @@ export class CabinetService {
   }
 
   // 개인 술장고 삭제
-  async deleteCabinet(cabinet_idx) {
+  async deleteCabinet(cabinet_idx: number) {
     try {
-      const cabinet = await this.cabinetRepository.findOne({where:{cabinet_idx:cabinet_idx}});
+      const cabinet = await this.cabinetRepository.findOne({where:{cabinet_idx: cabinet_idx}});
       if (!cabinet) {
         return {message: `해당되는 목록은 없습니다. 입력된 술장고번호 : ${cabinet_idx}`, data: null,statusCode: 404};
       }

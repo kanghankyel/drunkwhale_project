@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards, Req, Query } from '@nestjs/common';
 import { CabinetService } from './cabinet.service';
 import { CreateCabinetDto } from './dto/create-cabinet.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -7,6 +7,7 @@ import { RolesGuard } from 'src/role/role.guard';
 import { Roles } from 'src/role/role.decorator';
 import { RoleEnum } from 'src/role/role.enum';
 import { UpdateCabinetDto } from './dto/update-cabinet.dto';
+import { PaginationCabinetDto } from './dto/pagination-cabinet.dto';
 
 @ApiTags('CABINET 모듈')
 @Controller()
@@ -32,8 +33,9 @@ export class CabinetController {
   @Get('api/read/cabinet')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async readCabinet(@Body() {user_email}) {
-    return this.cabinetService.readCabinet(user_email);
+  async readCabinet(@Req() req, @Query() query: PaginationCabinetDto) {
+    const userEmail = req.user.user_email;
+    return this.cabinetService.readCabinet(userEmail, query.page);
   }
 
   // 개인 술장고 수정
@@ -52,7 +54,7 @@ export class CabinetController {
   @Delete('api/delete/cabinet')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(RoleEnum.ROLE_USER)
-  async deleteCabinet(@Body() {cabinet_idx}) {
+  async deleteCabinet(@Param('idx') cabinet_idx: number) {
     return this.cabinetService.deleteCabinet(cabinet_idx);
   }
 
