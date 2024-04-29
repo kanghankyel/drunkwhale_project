@@ -1,7 +1,7 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:B993D6,100:8CA6DB&height=200&section=header&text=Drunk%20Whale&fontColor=f7f5f5&fontSize=55&fontAlign=71&fontAlignY=40&desc=Backend.%20madeBy%20강한결&descSize=18&descAlign=78" />
 
 <p align="center">
-  <a href="#" target="blank"><img src="https://i.namu.wiki/i/GP340LROqlXMM4Q4rFPfd5O2Bgon0azdciSt1jZm_eheWVCVNp77L9T6XOSyASgFD0qx10Me9IWyXO3UYDKC4ffR8IYytz-0YfkMUABkUjIzmJi8yUn-g_daVo7BnjRgWlj9X7s1b9U6ukPVpE4fyA.svg" width="150" alt="DrunkWhale Logo" /></a>
+  <a href="#" target="blank"><img src="https://github.com/kanghankyel/drunkwhale_project/assets/100983731/cccc5d96-122b-4fad-bae7-936c9d9d787e" width="150" alt="drunkwhale_logo" /></a>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="http://118.67.133.203:3001/swagger" target="blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Swagger-logo.png" width="150" alt="Swagger Logo" /></a>
 </p>
@@ -69,7 +69,7 @@
 >> - 무중단 배포를 위해 PM2 프로세스 매니저를 사용.
 >>
 > ERD 구성
->> ![drunkwhale_ERD](https://github.com/kanghankyel/KP/assets/100983731/0a0aadc2-c4f2-4dd5-9679-8d4c33dfb482)
+>> ![DrunkWhaleERD](https://github.com/kanghankyel/drunkwhale_project/assets/100983731/816889ec-e1e6-4736-b83b-cc769d9e7b55)
 
 ## 설치 방법
 
