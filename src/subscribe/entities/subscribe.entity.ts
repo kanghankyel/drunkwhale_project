@@ -9,9 +9,9 @@ export class Subscribe extends BaseEntity {
     @PrimaryGeneratedColumn()
     subscribe_idx!: number;
 
-    // 주류_이름(FK)
-    @Column()
-    alcohol_name: string;
+    // 주류_고유번호(FK)
+    @Column({nullable: true})
+    alcohol_idx: number;
 
     // 찜_생성일
     @CreateDateColumn({type: 'timestamp', default: null, nullable: true})

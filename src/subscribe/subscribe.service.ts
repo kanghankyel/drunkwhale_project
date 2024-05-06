@@ -19,21 +19,21 @@ export class SubscribeService {
   // 주류 찜하기
   async subscribeAlcohol(createSubscribeDto: CreateSubscribeDto) {
     try {
-      const {alcohol_name, user_email} = createSubscribeDto;
+      const {alcohol_idx, user_email} = createSubscribeDto;
       const user = await this.userRepository.findOne({where:{user_email:user_email}});
       if(!user) {
         return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
       }
-      const alcohol = await this.alcoholRepository.findOne({where:{alcohol_name:alcohol_name}});
+      const alcohol = await this.alcoholRepository.findOne({where:{alcohol_idx: alcohol_idx}});
       if(!alcohol) {
-        return {message:`해당 주류가 없습니다. 입력된 주류 : ${alcohol_name}`, statusCode:404};
+        return {message:`해당 주류가 없습니다. 입력된 주류 : ${alcohol_idx}`, statusCode:404};
       }
-      const duplicate = await this.subscribeRepository.findOne({where:{user_email:user_email, alcohol_name:alcohol_name}});
+      const duplicate = await this.subscribeRepository.findOne({where:{user_email:user_email, alcohol_idx:alcohol_idx}});
       if(duplicate) {
-        return {message:`이미 해당 주류를 찜했습니다. 입력된 주류 : ${alcohol_name}`, statusCode:400};
+        return {message:`이미 해당 주류를 찜했습니다. 입력된 주류 : ${alcohol_idx}`, statusCode:400};
       }
       const subscribe = new Subscribe();
-      subscribe.alcohol_name = alcohol.alcohol_name;
+      subscribe.alcohol_idx = alcohol.alcohol_idx;
       subscribe.user_email = user.user_email;
       await this.subscribeRepository.save(subscribe);
       return {message:'찜하기 완료', data:subscribe, statusCode:200};
@@ -53,7 +53,7 @@ export class SubscribeService {
         return {message:`해당 회원이 없습니다. 입력된 회원 : ${userEmail}`, statusCode:404};
       }
       const [subscribes, total] = await this.subscribeRepository.findAndCount({
-        select: ['subscribe_idx', 'alcohol_name', 'user_email'],
+        select: ['subscribe_idx', 'alcohol_idx', 'user_email'],
         where: {user_email: userEmail},
         take,
         skip: page<=0 ? page=0 : (page-1)*take,
