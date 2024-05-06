@@ -52,13 +52,22 @@ export class SubscribeService {
       if (!usercheck) {
         return {message:`해당 회원이 없습니다. 입력된 회원 : ${userEmail}`, statusCode:404};
       }
-      const [subscribes, total] = await this.subscribeRepository.findAndCount({
-        select: ['subscribe_idx', 'alcohol_idx', 'user_email'],
-        where: {user_email: userEmail},
-        take,
-        skip: page<=0 ? page=0 : (page-1)*take,
-        order: {subscribe_idx: 'DESC'},
-      });
+      // const [subscribes, total] = await this.subscribeRepository.findAndCount({
+      //   select: ['subscribe_idx', 'alcohol_idx', 'user_email'],
+      //   where: {user_email: userEmail},
+      //   take,
+      //   skip: page<=0 ? page=0 : (page-1)*take,
+      //   order: {subscribe_idx: 'DESC'},
+      // });
+      const [subscribes, total] = await this.subscribeRepository
+        .createQueryBuilder('a')
+        .select(['a.subscribe_idx', 'a.alcohol_idx', 'b.alcohol_name', 'a.user_email'])
+        .innerJoin('a.alcohol', 'b')
+        .where('a.user_email = :email', {email: userEmail})
+        .take(take)
+        .skip(page<=0 ? page=0 : (page-1)*take)
+        .orderBy('a.subscribe_idx', 'DESC')
+        .getManyAndCount();
       if (total === 0) {
         return {message: `아직 등록된 정보가 없습니다.`, data: null, statusCode: 404};
       }
