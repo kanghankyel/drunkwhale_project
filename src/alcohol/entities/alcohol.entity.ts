@@ -26,6 +26,10 @@ export class Alcohol extends BaseEntity {
     @Column({nullable: true, unique: true})
     alcohol_name: string;
 
+    // 주류_이름(영문)
+    @Column({nullable: true})
+    alcohol_ename: string;
+
     // 주류_타입
     @Column({nullable: true})
     alcohol_type: string;
@@ -42,17 +46,49 @@ export class Alcohol extends BaseEntity {
     @Column({nullable: true})
     alcohol_percent: string;
 
+    // 주류_제조사
+    @Column({nullable: true})
+    alcohol_manufacturer: string;
+
+    // 주류_수입사
+    @Column({nullable: true})
+    alcohol_importer: string;
+
     // 주류_색상
     @Column({nullable: true})
     alcohol_color: string;
 
-    // 주류_향
+    // 주류_우디
     @Column({nullable: true})
-    alcohol_aroma: string;
+    alcohol_woody: string;
 
-    // 주류_맛
+    // 주류_씨리얼
     @Column({nullable: true})
-    alcohol_flavor: string;
+    alcohol_cereal: string;
+
+    // 주류_페인티
+    @Column({nullable: true})
+    alcohol_painty: string;
+
+    // 주류_플로럴
+    @Column({nullable: true})
+    alcohol_floral: string;
+
+    // 주류_와이니
+    @Column({nullable: true})
+    alcohol_winy: string;
+
+    // 주류_피티
+    @Column({nullable: true})
+    alcohol_pitty: string;
+
+    // 주류_설퍼
+    @Column({nullable: true})
+    alcohol_sulper: string;
+
+    // 주류_프루티
+    @Column({nullable: true})
+    alcohol_fruity: string;
 
     // 주류_설명
     @Column({type: 'text', nullable: true})

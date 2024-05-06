@@ -27,16 +27,25 @@ export class AlcoholService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const {alcohol_name, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_color, alcohol_aroma,alcohol_flavor, alcohol_info} = createAlcoholDto;
+      const {alcohol_name, alcohol_ename, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_manufacturer, alcohol_importer, alcohol_color, alcohol_woody, alcohol_cereal, alcohol_painty, alcohol_floral, alcohol_winy, alcohol_pitty, alcohol_sulper, alcohol_fruity, alcohol_info} = createAlcoholDto;
       const alcohol = new Alcohol();
       alcohol.alcohol_name = createAlcoholDto.alcohol_name;
+      alcohol.alcohol_ename = createAlcoholDto.alcohol_ename;
       alcohol.alcohol_type = createAlcoholDto.alcohol_type;
       alcohol.alcohol_class = createAlcoholDto.alcohol_class;
       alcohol.alcohol_from = createAlcoholDto.alcohol_from;
       alcohol.alcohol_percent = createAlcoholDto.alcohol_percent;
+      alcohol.alcohol_manufacturer = createAlcoholDto.alcohol_manufacturer;
+      alcohol.alcohol_importer = createAlcoholDto.alcohol_importer;
       alcohol.alcohol_color = createAlcoholDto.alcohol_color;
-      alcohol.alcohol_aroma = createAlcoholDto.alcohol_aroma;
-      alcohol.alcohol_flavor = createAlcoholDto.alcohol_flavor;
+      alcohol.alcohol_woody = createAlcoholDto.alcohol_woody;
+      alcohol.alcohol_cereal = createAlcoholDto.alcohol_cereal;
+      alcohol.alcohol_painty = createAlcoholDto.alcohol_painty;
+      alcohol.alcohol_floral = createAlcoholDto.alcohol_floral;
+      alcohol.alcohol_winy = createAlcoholDto.alcohol_winy;
+      alcohol.alcohol_pitty = createAlcoholDto.alcohol_pitty;
+      alcohol.alcohol_sulper = createAlcoholDto.alcohol_sulper;
+      alcohol.alcohol_fruity = createAlcoholDto.alcohol_fruity;
       alcohol.alcohol_info = createAlcoholDto.alcohol_info;
       alcohol.alcohol_updatedate = null;
       // SFTP서버에 파일 upload
@@ -86,7 +95,7 @@ export class AlcoholService {
     try {
       const take = 10;
       const [alcohols, total] = await this.alcoholRepository.findAndCount({
-        select: ['alcohol_idx', 'alcohol_name', 'alcohol_imgpath'],
+        select: ['alcohol_idx', 'alcohol_name', 'alcohol_ename', 'alcohol_imgpath', 'alcohol_class', 'alcohol_from', 'alcohol_percent'],
         take,
         // skip: (page - 1) * take,
         skip: page<=0 ? page=0 : (page-1)*take,   // page값이 0이하의 값으로 요청되면 첫번째 페이지를 반환하도록 삼항연산자를 사용해서 구현.
@@ -116,7 +125,27 @@ export class AlcoholService {
   async getReadAlcoholDetail(idx: number) {
     try {
       const alcohol = await this.alcoholRepository.findOne({
-        select: ['alcohol_idx', 'alcohol_name', 'alcohol_imgpath', 'alcohol_type', 'alcohol_class', 'alcohol_from', 'alcohol_percent', 'alcohol_color', 'alcohol_aroma', 'alcohol_flavor', 'alcohol_info'],
+        select: [
+          'alcohol_idx',
+          'alcohol_name',
+          'alcohol_ename',
+          'alcohol_imgpath',
+          'alcohol_type',
+          'alcohol_class',
+          'alcohol_from',
+          'alcohol_percent',
+          'alcohol_manufacturer',
+          'alcohol_importer',
+          'alcohol_color',
+          'alcohol_woody',
+          'alcohol_cereal',
+          'alcohol_painty',
+          'alcohol_floral',
+          'alcohol_winy',
+          'alcohol_pitty',
+          'alcohol_sulper',
+          'alcohol_fruity',
+          'alcohol_info'],
         where: {alcohol_idx: idx},
       });
       if (alcohol) {
@@ -137,13 +166,13 @@ export class AlcoholService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const {alcohol_idx, alcohol_name, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_color, alcohol_aroma, alcohol_flavor, alcohol_info} = updateAlcoholDto;
+      const {alcohol_idx, alcohol_name, alcohol_ename, alcohol_type, alcohol_class, alcohol_from, alcohol_percent, alcohol_manufacturer, alcohol_importer, alcohol_color, alcohol_woody, alcohol_cereal, alcohol_painty, alcohol_floral, alcohol_winy, alcohol_pitty, alcohol_sulper, alcohol_fruity, alcohol_info} = updateAlcoholDto;
       // 이전 이미지 경로를 저장할 변수 선언
       let previousImgPath: string | undefined;
       // 주류 객체 조회
       const alcohol = await this.alcoholRepository.findOne({where:{alcohol_idx: alcohol_idx}});
       if (!alcohol) {
-        return {message: `해당되는 주류는 없습니다. 입력된 주류번호 : ${alcohol_idx}`, data: null,statusCode: 404};
+        return {message: `해당되는 주류는 없습니다. 입력된 주류번호 : ${alcohol_idx}`, data: null, statusCode: 404};
       }
       // 이미지 파일 업로드 로직
       if (file) {
@@ -173,13 +202,22 @@ export class AlcoholService {
       }
       // 주류 정보 업데이트
       alcohol.alcohol_name = alcohol_name || alcohol.alcohol_name; // 새로운 값이 제공되지 않았을 경우 이전 정보적용
+      alcohol.alcohol_ename = alcohol_ename || alcohol.alcohol_ename;
       alcohol.alcohol_type = alcohol_type || alcohol.alcohol_type;
       alcohol.alcohol_class = alcohol_class || alcohol.alcohol_class;
       alcohol.alcohol_from = alcohol_from || alcohol.alcohol_from;
       alcohol.alcohol_percent = alcohol_percent || alcohol.alcohol_percent;
+      alcohol.alcohol_manufacturer = alcohol_manufacturer || alcohol.alcohol_manufacturer;
+      alcohol.alcohol_importer = alcohol_importer || alcohol.alcohol_importer;
       alcohol.alcohol_color = alcohol_color || alcohol.alcohol_color;
-      alcohol.alcohol_aroma = alcohol_aroma || alcohol.alcohol_aroma;
-      alcohol.alcohol_flavor = alcohol_flavor || alcohol.alcohol_flavor;
+      alcohol.alcohol_woody = alcohol_woody || alcohol.alcohol_woody
+      alcohol.alcohol_cereal = alcohol_cereal || alcohol.alcohol_cereal
+      alcohol.alcohol_painty = alcohol_painty || alcohol.alcohol_painty
+      alcohol.alcohol_floral = alcohol_floral || alcohol.alcohol_floral
+      alcohol.alcohol_winy = alcohol_winy || alcohol.alcohol_winy
+      alcohol.alcohol_pitty = alcohol_pitty || alcohol.alcohol_pitty
+      alcohol.alcohol_sulper = alcohol_sulper || alcohol.alcohol_sulper
+      alcohol.alcohol_fruity = alcohol_fruity || alcohol.alcohol_fruity
       alcohol.alcohol_info = alcohol_info || alcohol.alcohol_info;
       await queryRunner.manager.save(alcohol);
       await queryRunner.commitTransaction();
