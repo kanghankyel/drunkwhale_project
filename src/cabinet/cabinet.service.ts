@@ -60,25 +60,48 @@ export class CabinetService {
       if (!usercheck) {
         return {message:`해당 회원이 없습니다. 입력된 회원 : ${userEmail}`, statusCode:404};
       }
-      const [cabinets, total] = await this.cabinetRepository.findAndCount({
-        select: [
-          'cabinet_idx',
-          'alcohol_idx',
-          'cabinet_color',
-          'cabinet_woody',
-          'cabinet_cereal',
-          'cabinet_painty',
-          'cabinet_floral',
-          'cabinet_winy',
-          'cabinet_pitty',
-          'cabinet_sulper',
-          'cabinet_fruity',
-          'cabinet_review'],
-        where: {user_email: userEmail},
-        take,
-        skip: page<=0 ? page=0 : (page-1)*take,
-        order: {cabinet_idx: 'DESC'},
-      });
+      // const [cabinets, total] = await this.cabinetRepository.findAndCount({
+      //   select: [
+      //     'cabinet_idx',
+      //     'alcohol_idx',
+      //     'cabinet_color',
+      //     'cabinet_woody',
+      //     'cabinet_cereal',
+      //     'cabinet_painty',
+      //     'cabinet_floral',
+      //     'cabinet_winy',
+      //     'cabinet_pitty',
+      //     'cabinet_sulper',
+      //     'cabinet_fruity',
+      //     'cabinet_review'],
+      //   where: {user_email: userEmail},
+      //   take,
+      //   skip: page<=0 ? page=0 : (page-1)*take,
+      //   order: {cabinet_idx: 'DESC'},
+      // });
+      const [cabinets, total] = await this.cabinetRepository
+        .createQueryBuilder('a')
+        .select([
+          'a.cabinet_idx',
+          'a.alcohol_idx',
+          'b.alcohol_name',
+          'b.alcohol_imgpath',
+          'a.cabinet_color',
+          'a.cabinet_woody',
+          'a.cabinet_cereal',
+          'a.cabinet_painty',
+          'a.cabinet_floral',
+          'a.cabinet_winy',
+          'a.cabinet_pitty',
+          'a.cabinet_sulper',
+          'a.cabinet_fruity',
+          'a.cabinet_review'])
+        .innerJoin('a.alcohol', 'b')
+        .where('a.user_email = :email', {email: userEmail})
+        .take(take)
+        .skip(page<=0 ? page=0 : (page-1)*take)
+        .orderBy('a.cabinet_idx', 'DESC')
+        .getManyAndCount();
       if (total === 0) {
         return {message: `아직 등록된 정보가 없습니다.`, data: null, statusCode: 404};
       }
