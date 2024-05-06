@@ -9,21 +9,45 @@ export class Cabinet extends BaseEntity {
     @PrimaryGeneratedColumn()
     cabinet_idx!: number;
 
-    // 주류_이름(FK)
+    // 주류_고유번호(FK)
     @Column()
-    alcohol_name: string;
+    alcohol_idx: number;
 
     // 술장고_평가(색상)
-    @Column()
+    @Column({nullable: true})
     cabinet_color: string;
 
-    // 술장고_평가(향)
-    @Column()
-    cabinet_aroma: string;
+    // 술장고_평가(우디)
+    @Column({nullable: true})
+    cabinet_woody: string;
 
-    // 술장고_평가(맛)
-    @Column()
-    cabinet_flavor: string;
+    // 술장고_평가(씨리얼)
+    @Column({nullable: true})
+    cabinet_cereal: string;
+
+    // 술장고_평가(페인티)
+    @Column({nullable: true})
+    cabinet_painty: string;
+
+    // 술장고_평가(플로럴)
+    @Column({nullable: true})
+    cabinet_floral: string;
+
+    // 술장고_평가(와이니)
+    @Column({nullable: true})
+    cabinet_winy: string;
+
+    // 술장고_평가(피티)
+    @Column({nullable: true})
+    cabinet_pitty: string;
+
+    // 술장고_평가(설퍼)
+    @Column({nullable: true})
+    cabinet_sulper: string;
+
+    // 술장고_평가(프루티)
+    @Column({nullable: true})
+    cabinet_fruity: string;
 
     // 술장고_개인평가
     @Column()

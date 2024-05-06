@@ -20,20 +20,26 @@ export class CabinetService {
   // 개인 술장고 입력
   async createCabinet(createCabinetDto: CreateCabinetDto) {
     try {
-      const {alcohol_name, cabinet_color, cabinet_aroma, cabinet_flavor, cabinet_review, user_email} = createCabinetDto;
+      const {alcohol_idx, cabinet_color, cabinet_woody, cabinet_cereal, cabinet_painty, cabinet_floral, cabinet_winy, cabinet_pitty, cabinet_sulper, cabinet_fruity, cabinet_review, user_email} = createCabinetDto;
       const user = await this.userRepository.findOne({where:{user_email:user_email}});
       if(!user) {
         return {message:`해당 회원이 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
       }
-      const alcohol = await this.alcoholRepository.findOne({where:{alcohol_name:alcohol_name}});
+      const alcohol = await this.alcoholRepository.findOne({where:{alcohol_idx:alcohol_idx}});
       if(!alcohol) {
-        return {message:`해당 주류가 없습니다. 입력된 주류 : ${alcohol_name}`, statusCode:404};
+        return {message:`해당 주류가 없습니다. 입력된 주류 : ${alcohol_idx}`, statusCode:404};
       }
       const cabinet = new Cabinet();
-      cabinet.alcohol_name = alcohol.alcohol_name;
+      cabinet.alcohol_idx = alcohol.alcohol_idx;
       cabinet.cabinet_color = createCabinetDto.cabinet_color;
-      cabinet.cabinet_aroma = createCabinetDto.cabinet_aroma;
-      cabinet.cabinet_flavor = createCabinetDto.cabinet_flavor;
+      cabinet.cabinet_woody = createCabinetDto.cabinet_woody;
+      cabinet.cabinet_cereal = createCabinetDto.cabinet_cereal;
+      cabinet.cabinet_painty = createCabinetDto.cabinet_painty;
+      cabinet.cabinet_floral = createCabinetDto.cabinet_floral;
+      cabinet.cabinet_winy = createCabinetDto.cabinet_winy;
+      cabinet.cabinet_pitty = createCabinetDto.cabinet_pitty;
+      cabinet.cabinet_sulper = createCabinetDto.cabinet_sulper;
+      cabinet.cabinet_fruity = createCabinetDto.cabinet_fruity;
       cabinet.cabinet_review = createCabinetDto.cabinet_review;
       cabinet.cabinet_updatedate = null;
       cabinet.user_email = user.user_email;
@@ -55,7 +61,19 @@ export class CabinetService {
         return {message:`해당 회원이 없습니다. 입력된 회원 : ${userEmail}`, statusCode:404};
       }
       const [cabinets, total] = await this.cabinetRepository.findAndCount({
-        select: ['cabinet_idx', 'alcohol_name', 'cabinet_color', 'cabinet_aroma', 'cabinet_flavor', 'cabinet_review'],
+        select: [
+          'cabinet_idx',
+          'alcohol_idx',
+          'cabinet_color',
+          'cabinet_woody',
+          'cabinet_cereal',
+          'cabinet_painty',
+          'cabinet_floral',
+          'cabinet_winy',
+          'cabinet_pitty',
+          'cabinet_sulper',
+          'cabinet_fruity',
+          'cabinet_review'],
         where: {user_email: userEmail},
         take,
         skip: page<=0 ? page=0 : (page-1)*take,
@@ -88,15 +106,21 @@ export class CabinetService {
   // 개인 술장고 수정
   async updateCabinet(updateCabinetDto: UpdateCabinetDto) {
     try {
-      const {cabinet_idx, cabinet_color, cabinet_aroma, cabinet_flavor, cabinet_review} = updateCabinetDto;
+      const {cabinet_idx, cabinet_color, cabinet_woody, cabinet_cereal, cabinet_painty, cabinet_floral, cabinet_winy, cabinet_pitty, cabinet_sulper, cabinet_fruity, cabinet_review} = updateCabinetDto;
       const cabinet = await this.cabinetRepository.findOne({where:{cabinet_idx:cabinet_idx}});
       if (!cabinet) {
         return {message: `해당되는 목록은 없습니다. 입력된 술장고번호 : ${cabinet_idx}`, data: null,statusCode: 404};
       }
       // 입력된 정보가 있으면 업데이트, 없으면 기존 정보 유지
       cabinet.cabinet_color = cabinet_color || cabinet.cabinet_color;
-      cabinet.cabinet_aroma = cabinet_aroma || cabinet.cabinet_aroma;
-      cabinet.cabinet_flavor = cabinet_flavor || cabinet.cabinet_flavor;
+      cabinet.cabinet_woody = cabinet_woody || cabinet.cabinet_woody;
+      cabinet.cabinet_cereal = cabinet_cereal || cabinet.cabinet_cereal;
+      cabinet.cabinet_painty = cabinet_painty || cabinet.cabinet_painty;
+      cabinet.cabinet_floral = cabinet_floral || cabinet.cabinet_floral;
+      cabinet.cabinet_winy = cabinet_winy || cabinet.cabinet_winy;
+      cabinet.cabinet_pitty = cabinet_pitty || cabinet.cabinet_pitty;
+      cabinet.cabinet_sulper = cabinet_sulper || cabinet.cabinet_sulper;
+      cabinet.cabinet_fruity = cabinet_fruity || cabinet.cabinet_fruity;
       cabinet.cabinet_review = cabinet_review || cabinet.cabinet_review;
       const updateCabinet = await this.cabinetRepository.save(cabinet);
       return {message: `술장고 수정완료`, data: updateCabinet, statusCode: 200};

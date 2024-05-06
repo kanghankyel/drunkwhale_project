@@ -7,20 +7,50 @@ export class UpdateCabinetDto {
     @IsString()
     readonly cabinet_idx: number;
 
-    @ApiProperty({example:'색상', description:'술장고_평가(색상)'})
+    @ApiProperty({example:'2', description:'술장고_평가(색상)'})
     @IsString()
     @IsOptional()
     readonly cabinet_color?: string | null;
 
-    @ApiProperty({example:'향', description:'술장고_평가(향)'})
+    @ApiProperty({example:'2', description:'술장고_평가(우디)'})
     @IsString()
     @IsOptional()
-    readonly cabinet_aroma?: string | null;
+    readonly cabinet_woody?: string | null;
 
-    @ApiProperty({example:'맛', description:'술장고_평가(맛)'})
+    @ApiProperty({example:'2', description:'술장고_평가(씨리얼)'})
     @IsString()
     @IsOptional()
-    readonly cabinet_flavor?: string | null;
+    readonly cabinet_cereal?: string | null;
+
+    @ApiProperty({example:'2', description:'술장고_평가(페인티)'})
+    @IsString()
+    @IsOptional()
+    readonly cabinet_painty?: string | null;
+
+    @ApiProperty({example:'2', description:'술장고_평가(플로럴)'})
+    @IsString()
+    @IsOptional()
+    readonly cabinet_floral?: string | null;
+
+    @ApiProperty({example:'2', description:'술장고_평가(와이니)'})
+    @IsString()
+    @IsOptional()
+    readonly cabinet_winy?: string | null;
+
+    @ApiProperty({example:'2', description:'술장고_평가(피티)'})
+    @IsString()
+    @IsOptional()
+    readonly cabinet_pitty?: string | null;
+
+    @ApiProperty({example:'2', description:'술장고_평가(설퍼)'})
+    @IsString()
+    @IsOptional()
+    readonly cabinet_sulper?: string | null;
+
+    @ApiProperty({example:'2', description:'술장고_평가(프루티)'})
+    @IsString()
+    @IsOptional()
+    readonly cabinet_fruity?: string | null;
 
     @ApiProperty({example:'술장고평가 텍스트', description:'술장고_평가(개인평가)'})
     @IsString()
