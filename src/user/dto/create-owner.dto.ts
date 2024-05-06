@@ -43,4 +43,12 @@ export class CreateOwnerDto {
     @IsString()
     readonly store_adddetail: string | null;
 
+    @ApiProperty({example:'스토어위도', description:'스토어 위도'})
+    @IsString()
+    readonly store_latitude: string | null;
+
+    @ApiProperty({example:'스토어경도', description:'스토어 경도'})
+    @IsString()
+    readonly store_longitude: string | null;
+
 }

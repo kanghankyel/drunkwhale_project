@@ -57,6 +57,14 @@ export class Store extends BaseEntity {
     @Column({nullable: true})
     store_adddetail: string;
 
+    // 스토어_위도
+    @Column({nullable: true})
+    store_latitude: string;
+
+    // 스토어_경도
+    @Column({nullable: true})
+    store_longitude: string;
+
     // 스토어_개장시간
     @Column({nullable: true})
     store_opentime: string;

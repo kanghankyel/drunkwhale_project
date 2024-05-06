@@ -201,6 +201,8 @@ export class UserService {
       store.store_postcode = createOwnerDto.store_postcode;
       store.store_add = createOwnerDto.store_add;
       store.store_adddetail = createOwnerDto.store_adddetail;
+      store.store_latitude = createOwnerDto.store_latitude;
+      store.store_longitude = createOwnerDto.store_longitude;
       store.store_status = 'W';
       store.store_updatedate = null;
       store.user_email = createOwnerDto.user_email;

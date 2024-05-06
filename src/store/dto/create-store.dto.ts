@@ -31,6 +31,14 @@ export class CreateStoreDto {
     @IsString()
     readonly store_adddetail: string | null;
 
+    @ApiProperty({description:'스토어 위도'})
+    @IsString()
+    readonly store_latitude: string | null;
+
+    @ApiProperty({description:'스토어 경도'})
+    @IsString()
+    readonly store_longitude: string | null;
+
     @ApiProperty({description:'스토어 상태 ( A=스토어활동중, B=스토어블락, C=스토어탈퇴, W=스토어신청대기중 )'})
     @IsString()
     readonly store_status: string | null;
