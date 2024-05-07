@@ -6,11 +6,12 @@ import { alcoholRepositroy } from './alcohol.repository';
 import { UserModule } from 'src/user/user.module';
 import { SftpModule } from 'src/sftp/sftp.module';
 import { SftpService } from 'src/sftp/sftp.service';
+import { weekbottleRepository } from './weekbottle.repository';
 
 @Module({
   imports: [DatabaseModule, UserModule, SftpModule],
   controllers: [AlcoholController],
-  providers: [...alcoholRepositroy, AlcoholService, SftpService],
-  exports: [...alcoholRepositroy],
+  providers: [...alcoholRepositroy, ...weekbottleRepository, AlcoholService, SftpService],
+  exports: [...alcoholRepositroy, ...weekbottleRepository],
 })
 export class AlcoholModule {}

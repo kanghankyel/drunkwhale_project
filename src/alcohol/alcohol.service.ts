@@ -7,12 +7,15 @@ import { SftpService } from 'src/sftp/sftp.service';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateAlcoholDto } from './dto/update-alcohol.dto';
 import { PaginationAlcoholDto } from './dto/pagination-alcohol.dto';
+import { Weekbottle } from './entities/weekbottle.entity';
+import { CreateWeekbottleDto } from './dto/create-weekbottle.dto';
 
 @Injectable()
 export class AlcoholService {
 
   constructor(
     @Inject('ALCOHOL_REPOSITORY') private alcoholRepository: Repository<Alcohol>,
+    @Inject('WEEKBOTTLE_REPOSITORY') private weekbottleRepository: Repository<Weekbottle>,
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
     private readonly sftpService: SftpService,
   ) {}
@@ -257,6 +260,48 @@ export class AlcoholService {
       throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  // 주간보틀 생성
+  async setWeekBottle(createWeekBottleDto: CreateWeekbottleDto) {
+    try {
+      const {alcohol_idx} = createWeekBottleDto;
+      const alcohol = await this.alcoholRepository.findOne({where:{alcohol_idx: alcohol_idx}});
+      if (!alcohol) {
+        return {message: `해당되는 주류는 없습니다. 입력된 주류번호 : ${alcohol_idx}`, data: null,statusCode: 404};
+      }
+      const previousWeekBottle = await this.weekbottleRepository.find();
+      if (previousWeekBottle) {
+        await this.weekbottleRepository.remove(previousWeekBottle);
+        this.logger.log('기존의 WeekBottle 데이터가 삭제되었습니다.')
+      }
+      const weekbottle = new Weekbottle();
+      weekbottle.alcohol_idx = alcohol.alcohol_idx;
+      weekbottle.weekbottle_updatedate = null;
+      await this.weekbottleRepository.save(weekbottle);
+      return {message: `주간보틀 등록 완료. 등록된 주류번호 : [${alcohol_idx}]`, data: weekbottle, statusCode: 200};
+    } catch (error) {
+      this.logger.error('주간보틀 등록 중 오류 발생');
+      this.logger.error(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
+    }
+  }
+
+  // 주간보틀 홈화면
+  async getWeekBottle() {
+    try {
+      const weekbottle = await this.weekbottleRepository.find();
+      const bottleidx = weekbottle.map(item => item.alcohol_idx)[0];
+      const alcohol = await this.alcoholRepository.findOne({
+        where: {alcohol_idx: bottleidx},
+        select: ['alcohol_imgpath', 'alcohol_name', 'alcohol_ename', 'alcohol_type', 'alcohol_class', 'alcohol_from', 'alcohol_percent', 'alcohol_manufacturer', 'alcohol_importer', 'alcohol_color', 'alcohol_woody', 'alcohol_cereal', 'alcohol_painty', 'alcohol_floral', 'alcohol_winy', 'alcohol_pitty', 'alcohol_sulper', 'alcohol_fruity', 'alcohol_info'],
+      });
+      return {message: `주간보틀(홈화면)`, data: alcohol, statusCode: 200};
+    } catch (error) {
+      this.logger.error('주간보틀 로드 중 오류 발생');
+      this.logger.error(error);
+      throw new InternalServerErrorException('서버 오류 발생. 다시 시도해 주세요.');
     }
   }
 

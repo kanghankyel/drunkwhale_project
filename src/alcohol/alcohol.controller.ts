@@ -10,6 +10,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateAlcoholDto } from './dto/update-alcohol.dto';
 import { Alcohol } from './entities/alcohol.entity';
 import { PaginationAlcoholDto } from './dto/pagination-alcohol.dto';
+import { CreateWeekbottleDto } from './dto/create-weekbottle.dto';
 
 @ApiTags('Alcohol 모듈')
 @Controller()
@@ -118,6 +119,23 @@ export class AlcoholController {
   @Roles(RoleEnum.ROLE_ADMIN)
   async deleteAlcohol(@Param('idx') alcohol_idx: number) {
     return this.alcoholService.deleteAlcohol(alcohol_idx);
+  }
+
+  // 주간보틀 생성
+  @ApiOperation({summary:'주간보틀 생성', description:'주간보틀 생성'})
+  @ApiBearerAuth()
+  @Post('api/create/weekbottle')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleEnum.ROLE_ADMIN)
+  async setWeekBottle(@Body() createWeekBottleDto: CreateWeekbottleDto) {
+    return this.alcoholService.setWeekBottle(createWeekBottleDto);
+  }
+
+  // 주간보틀 홈화면
+  @ApiOperation({summary:'주간보틀 홈화면', description:'주간보틀 홈화면'})
+  @Get('api/get/weekbottle')
+  async getWeekBottle() {
+    return this.alcoholService.getWeekBottle();
   }
 
 }
