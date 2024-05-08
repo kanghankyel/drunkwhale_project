@@ -72,5 +72,11 @@ export class StoreController {
     return this.storeService.getStoreDetail(idx);
   }
 
+  // 신규스토어소개 홈화면
+  @ApiOperation({summary:'신규스토어소개 홈화면', description:'신규스토어소개 홈화면'})
+  @Get('api/get/newstore')
+  async getNewStore() {
+    return this.storeService.getNewStore();
+  }
 
 }

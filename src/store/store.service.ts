@@ -187,6 +187,7 @@ export class StoreService {
       const take = 10;
       const [stores, total] = await this.storeRepository.findAndCount({
         select: ['store_idx', 'store_mainimgpath', 'store_name', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime'],
+        where: {store_status: 'A'},
         take,
         skip: page<=0 ? page=0 : (page-1)*take,
         order: {store_idx: 'DESC'},
@@ -233,6 +234,23 @@ export class StoreService {
       }
     } catch (error) {
       this.logger.error('스토어정보 상세읽기 중 오류 발생');
+      this.logger.error(error);
+      return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
+    }
+  }
+
+  // 신규스토어소개 홈화면
+  async getNewStore() {
+    try {
+      const store = await this.storeRepository.find({
+        select: ['store_idx', 'store_name', 'store_ownername', 'store_phone', 'store_mainimgpath', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime', 'store_info'],
+        where: {store_status:'A'},
+        order: {store_idx: 'DESC'},
+        take: 3,
+      });
+      return {message: `신생가게(홈화면)`, data: store, statusCode: 200};
+    } catch (error) {
+      this.logger.error('홈화면 신규스토어소개 정보 로드 중 오류 발생');
       this.logger.error(error);
       return {message: `서버 오류 발생. 다시 시도해 주세요.`, error: `${error}`, statusCode: 500};
     }
