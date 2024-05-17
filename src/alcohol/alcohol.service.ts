@@ -9,6 +9,7 @@ import { UpdateAlcoholDto } from './dto/update-alcohol.dto';
 import { PaginationAlcoholDto } from './dto/pagination-alcohol.dto';
 import { Weekbottle } from './entities/weekbottle.entity';
 import { CreateWeekbottleDto } from './dto/create-weekbottle.dto';
+import { skip } from 'node:test';
 
 @Injectable()
 export class AlcoholService {
@@ -94,17 +95,68 @@ export class AlcoholService {
   }
 
   // 등록된 주류 정보보기
-  async getReadAlcohol(page: number = 1) {
+  async getReadAlcohol(query: PaginationAlcoholDto) {
     try {
-      const take = 10;
-      const [alcohols, total] = await this.alcoholRepository.findAndCount({
-        select: ['alcohol_idx', 'alcohol_name', 'alcohol_ename', 'alcohol_imgpath', 'alcohol_class', 'alcohol_from', 'alcohol_percent'],
-        take,
-        // skip: (page - 1) * take,
-        skip: page<=0 ? page=0 : (page-1)*take,   // page값이 0이하의 값으로 요청되면 첫번째 페이지를 반환하도록 삼항연산자를 사용해서 구현.
-        order: {alcohol_idx: 'DESC'},
-      });
+      let page = query.page || 1;   // 페이지 기본값 '1' 설정
+      let sort = query.sort || 'A';   // 정렬기준 기본값 'A' 설정
+      let sortclass = query.sortclass || '싱글 몰트 위스키';    // 검색기준 기본값 '싱글 몰트 위스키' 설정
+      const take = 10;    // 가져오는 데이터 개수 설정
+      const skip = page<=0 ? 0 : (page-1)*take;   // 페이지네이션을 위한 skip 설정
+      let order = 'alcohol.alcohol_idx';    // 정렬 기준 설정
+      let orderDirection: 'ASC' | 'DESC' = 'DESC';    // 정렬기준 방향 설정   // let orderDirection = 'DESC'; <- 정렬 기준 설정 (리터럴 타입으로 변환해야 사용가능. 아래코드로 변경)
+      // sort 정렬조건에 따른 order와 orderDirection 설정
+      if (sort === 'A') {           // 최신순 정렬
+        order = 'alcohol.alcohol_idx';
+        orderDirection = 'DESC';
+      } else if (sort === 'B') {    // 등록순 정렬
+        order = 'alcohol.alcohol_idx';
+        orderDirection = 'ASC';
+      } else if (sort === 'C') {    // 한글이름 오름차순 정렬
+        order = 'alcohol.alcohol_name';
+        orderDirection = 'ASC';
+      } else if (sort === 'D') {    // 한글이름 내림차순 정렬
+        order = 'alcohol.alcohol_name';
+        orderDirection = 'DESC';
+      } else if (sort === 'E') {    // 주류도수 높은 순 정렬
+        order = `CAST(alcohol.alcohol_percent AS DECIMAL(5,2))`;
+        orderDirection = 'DESC';
+      } else if (sort === 'F') {    // 주류도수 낮은 순 정렬
+        order = `CAST(alcohol.alcohol_percent AS DECIMAL(5,2))`;
+        orderDirection = 'ASC';
+      }
+      // 쿼리빌더를 사용하여 데이터 조회
+      const queryBuilder = this.alcoholRepository.createQueryBuilder('alcohol')
+        .select([
+          'alcohol.alcohol_idx',
+          'alcohol.alcohol_name',
+          'alcohol.alcohol_ename',
+          'alcohol.alcohol_imgpath',
+          'alcohol.alcohol_class',
+          'alcohol.alcohol_from',
+          'alcohol.alcohol_percent',
+        ])
+        .take(take)
+        .skip(skip);
+      // 주류도수로 정렬하는 경우 추가 정렬
+      if (sort === 'E' || sort === 'F') {
+        queryBuilder.orderBy(`CAST(alcohol.alcohol_percent AS DECIMAL(5,2))`, orderDirection);
+      } else {
+        queryBuilder.orderBy(order, orderDirection);
+      }
+      // alcohol_class 값이 전송된 경우 해당하는 주류만 필터링
+      if (sortclass) {
+        queryBuilder.andWhere('alcohol.alcohol_class = :sortclass', {sortclass});
+      }
+      // 데이터 조회 및 반환
+      const [alcohols, total] = await queryBuilder.getManyAndCount();
       const lastPage = Math.ceil(total / take);
+      // 기존 페이지네이션코드
+      // const [alcohols, total] = await this.alcoholRepository.findAndCount({
+      //   select: ['alcohol_idx', 'alcohol_name', 'alcohol_ename', 'alcohol_imgpath', 'alcohol_class', 'alcohol_from', 'alcohol_percent'],
+      //   take,
+      //   skip: page<=0 ? page=0 : (page-1)*take,   // page값이 0이하의 값으로 요청되면 첫번째 페이지를 반환하도록 삼항연산자를 사용해서 구현.
+      //   order: {alcohol_idx: 'DESC'},
+      // });
       if (lastPage >= page) {
         return {
           data: alcohols,

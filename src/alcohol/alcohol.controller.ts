@@ -62,7 +62,7 @@ export class AlcoholController {
   @ApiOperation({summary:'주류 정보보기', description:'주류 정보보기'})
   @Get('api/read/alcohol')
   async readAlcohol(@Query() query: PaginationAlcoholDto) {
-    return this.alcoholService.getReadAlcohol(query.page);
+    return this.alcoholService.getReadAlcohol(query);
   }
 
   // 등록된 주류 상세보기
