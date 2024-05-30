@@ -137,16 +137,16 @@ export class AlcoholService {
         ])
         .take(take)
         .skip(skip);
-      // 주류도수로 정렬하는 경우 추가 정렬
-      if (sort === 'E' || sort === 'F') {
-        queryBuilder.orderBy(`CAST(alcohol.alcohol_percent AS DECIMAL(5,2))`, orderDirection);
-      } else {
-        queryBuilder.orderBy(order, orderDirection);
-      }
-      // alcohol_class 값이 전송된 경우 해당하는 주류만 필터링
-      if (sortclass) {
-        queryBuilder.andWhere('alcohol.alcohol_class = :sortclass', {sortclass});
-      }
+        // 주류도수로 정렬하는 경우 추가 정렬
+        if (sort === 'E' || sort === 'F') {
+          queryBuilder.orderBy(`CAST(alcohol.alcohol_percent AS DECIMAL(5,2))`, orderDirection);
+        } else {
+          queryBuilder.orderBy(order, orderDirection);
+        }
+        // alcohol_class 값이 전송된 경우 해당하는 주류만 필터링
+        if (sortclass) {
+          queryBuilder.andWhere('alcohol.alcohol_class = :sortclass', {sortclass});
+        }
       // 데이터 조회 및 반환
       const [alcohols, total] = await queryBuilder.getManyAndCount();
       const lastPage = Math.ceil(total / take);

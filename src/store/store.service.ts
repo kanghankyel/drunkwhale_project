@@ -8,6 +8,7 @@ import { SftpService } from 'src/sftp/sftp.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Subimg } from './entities/subimg.entity';
 import { Menu } from 'src/menu/entities/menu.entity';
+import { PaginationStoreDto } from './dto/pagination-store.dto';
 
 @Injectable()
 export class StoreService {
@@ -182,17 +183,49 @@ export class StoreService {
 
 
   // 스토어 전체보기
-  async getStores(page: number = 1) {
+  async getStores(query: PaginationStoreDto) {
     try {
-      const take = 10;
-      const [stores, total] = await this.storeRepository.findAndCount({
-        select: ['store_idx', 'store_mainimgpath', 'store_name', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime', 'store_offday'],
-        where: {store_status: 'A'},
-        take,
-        skip: page<=0 ? page=0 : (page-1)*take,
-        order: {store_idx: 'DESC'},
-      });
+      let page = query.page || 1;   // 페이지 기본값 '1' 설정
+      let sort = query.sort || 'A';   // 정렬기준 기본값 'A' 설정
+      const take = 10;    // 가져오는 데이터 개수 설정
+      const skip = page<=0 ? 0 : (page-1)*take;   // 페이지네이션을 위한 skip 설정
+      let order = 'store.store_idx';    // 정렬기준 설정
+      let orderDirection: 'ASC' | 'DESC' = 'DESC';    // 정렬기준 방향 설정
+      // 정렬 기준에 따라 order와 orderDirection 설정
+      if (sort === 'A') {
+        order = 'store.store_name';
+        orderDirection = 'ASC'; // 한글이름 오름차순으로 정렬
+      } else if (sort === 'B') {
+        order = 'store.store_name';
+        orderDirection = 'DESC'; // 한글이름 내림차순으로 정렬
+      }
+      // 쿼리 빌더를 사용하여 데이터 조회
+      const queryBuilder = this.storeRepository.createQueryBuilder('store')
+        .select([
+          'store.store_idx',
+          'store.store_mainimgpath',
+          'store.store_name',
+          'store.store_add',
+          'store.store_adddetail',
+          'store.store_opentime',
+          'store.store_closetime',
+          'store.store_offday',
+        ])
+        .where('store.store_status = :status', { status: 'A' })
+        .take(take)
+        .skip(skip)
+        .orderBy(order, orderDirection);
+      // 데이터 조회 및 반환
+      const [stores, total] = await queryBuilder.getManyAndCount();
       const lastPage = Math.ceil(total / take);
+      // const [stores, total] = await this.storeRepository.findAndCount({
+      //   select: ['store_idx', 'store_mainimgpath', 'store_name', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime', 'store_offday'],
+      //   where: {store_status: 'A'},
+      //   take,
+      //   skip: skip,
+      //   order: {store_idx: 'DESC'},
+      // });
+      // const lastPage = Math.ceil(total / take);
       if (lastPage >= page) {
         return {
           data: stores,

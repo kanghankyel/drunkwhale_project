@@ -62,7 +62,7 @@ export class StoreController {
   @ApiOperation({summary:'스토어 전체보기', description:'스토어 전체보기'})
   @Get('api/get/store')
   async getStores(@Query() query: PaginationStoreDto) {
-    return this.storeService.getStores(query.page);
+    return this.storeService.getStores(query);
   }
 
   // 스토어 상세보기

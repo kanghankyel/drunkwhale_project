@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsOptional, Min } from "class-validator";
+import { IsInt, IsOptional, IsString, Min } from "class-validator";
 
 export class PaginationStoreDto {
 
@@ -13,5 +13,10 @@ export class PaginationStoreDto {
     @IsInt()
     @Min(1)
     take?: number = 10;
+
+    @ApiProperty({description:'정렬기준 ( A=이름오름차순, B=이름내림차순 )', required: false})
+    @IsOptional()
+    @IsString()
+    sort?: string;
 
 }
