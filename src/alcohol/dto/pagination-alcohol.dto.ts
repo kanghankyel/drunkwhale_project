@@ -19,7 +19,7 @@ export class PaginationAlcoholDto {
     @IsString()
     sort?: string;
 
-    @ApiProperty({description:'주류분류 검색기준 (싱글 몰트 위스키, 블렌디드 몰트 위스키, 그레인 위스키, 블렌디드 위스키, 아이리쉬 위스키, 버번 위스키, 콘 위스키, 라이 위스키, 테네시 위스키)', required: false})
+    @ApiProperty({description:'주류분류 검색기준 (싱글 몰트 위스키, 블렌디드 몰트 위스키, 그레인 위스키, 블렌디드 위스키, 아이리쉬 위스키, 버번 위스키, 콘 위스키, 라이 위스키, 테네시 위스키, 기타)', required: false})
     @IsOptional()
     @IsString()
     readonly sortclass?: string;

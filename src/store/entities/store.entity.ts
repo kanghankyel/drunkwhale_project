@@ -73,9 +73,17 @@ export class Store extends BaseEntity {
     @Column({nullable: true})
     store_closetime: string;
 
+    // 스토어_휴무일
+    @Column({nullable: true})
+    store_offday: string;
+
     // 스토어_소개정보
     @Column({nullable: true})
     store_info: string;
+
+    // 스토어_키워드
+    @Column({nullable: true})
+    store_keyword: string;
 
     // 스토어_점수
     @Column({nullable: true, default: 0})

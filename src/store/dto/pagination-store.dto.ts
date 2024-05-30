@@ -3,7 +3,7 @@ import { IsInt, IsOptional, Min } from "class-validator";
 
 export class PaginationStoreDto {
 
-    @ApiProperty({description:'페이지번호'})
+    @ApiProperty({description:'페이지번호', required: false})
     @IsOptional()
     @IsInt()
     @Min(1)

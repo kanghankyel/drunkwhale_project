@@ -186,7 +186,7 @@ export class StoreService {
     try {
       const take = 10;
       const [stores, total] = await this.storeRepository.findAndCount({
-        select: ['store_idx', 'store_mainimgpath', 'store_name', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime'],
+        select: ['store_idx', 'store_mainimgpath', 'store_name', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime', 'store_offday'],
         where: {store_status: 'A'},
         take,
         skip: page<=0 ? page=0 : (page-1)*take,
@@ -216,7 +216,7 @@ export class StoreService {
   async getStoreDetail(idx: number) {
     try {
       const store = await this.storeRepository.findOne({
-        select: ['store_idx', 'store_name', 'store_ownername', 'store_phone', 'store_mainimgpath', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime', 'store_info', 'store_status', 'store_createdate', 'user_email'],
+        select: ['store_idx', 'store_name', 'store_ownername', 'store_phone', 'store_mainimgpath', 'store_add', 'store_adddetail', 'store_latitude', 'store_longitude', 'store_opentime', 'store_closetime', 'store_offday', 'store_info', 'store_keyword', 'store_status', 'store_createdate'],
         where: {store_idx: idx, store_status: 'A'},
       });
       const subimg = await this.subimgRepository.find({
@@ -228,7 +228,7 @@ export class StoreService {
         where: {store_idx: idx},
       })
       if (store) {
-        return {message: `입력된 스토어IDX : [${idx}]`, store: [store,subimg], menu: [menu], statusCode: 200};
+        return {message: `입력된 스토어IDX : [${idx}]`, store: [store,subimg], menu: menu, statusCode: 200};
       } else {
         return {message: `해당 스토어를 찾을 수 없거나, 허가 받지 못한 스토어입니다. 입력된 스토어IDX : [${idx}]`, data: null, statusCode: 404};
       }
@@ -243,7 +243,7 @@ export class StoreService {
   async getNewStore() {
     try {
       const store = await this.storeRepository.find({
-        select: ['store_idx', 'store_name', 'store_ownername', 'store_phone', 'store_mainimgpath', 'store_add', 'store_adddetail', 'store_opentime', 'store_closetime', 'store_info'],
+        select: ['store_idx', 'store_name', 'store_ownername', 'store_phone', 'store_mainimgpath', 'store_add', 'store_adddetail', 'store_latitude', 'store_longitude', 'store_opentime', 'store_closetime', 'store_info'],
         where: {store_status:'A'},
         order: {store_idx: 'DESC'},
         take: 3,

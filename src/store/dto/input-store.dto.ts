@@ -20,9 +20,17 @@ export class InputStoreDto {
     @IsString()
     readonly store_closetime: string | null;
 
+    @ApiProperty({description:'스토어 휴무일정'})
+    @IsString()
+    readonly store_offday: string | null;
+
     @ApiProperty({description:'스토어 소개정보'})
     @IsString()
     readonly store_info: string | null;
+
+    @ApiProperty({description:'스토어 키워드'})
+    @IsString()
+    readonly stroe_keyword: string | null;
 
     @ApiProperty({description:'스토어 회원이메일'})
     @IsString()

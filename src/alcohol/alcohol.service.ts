@@ -99,7 +99,7 @@ export class AlcoholService {
     try {
       let page = query.page || 1;   // 페이지 기본값 '1' 설정
       let sort = query.sort || 'A';   // 정렬기준 기본값 'A' 설정
-      let sortclass = query.sortclass || '';    // 검색기준 기본값 '싱글 몰트 위스키' 설정
+      let sortclass = query.sortclass || '';    // 검색기준 기본값 '싱글 몰트 위스키' 설정 -> 전체보기로 변경
       const take = 10;    // 가져오는 데이터 개수 설정
       const skip = page<=0 ? 0 : (page-1)*take;   // 페이지네이션을 위한 skip 설정
       let order = 'alcohol.alcohol_idx';    // 정렬 기준 설정
