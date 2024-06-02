@@ -347,7 +347,7 @@ export class AlcoholService {
       const bottleidx = weekbottle.map(item => item.alcohol_idx)[0];
       const alcohol = await this.alcoholRepository.findOne({
         where: {alcohol_idx: bottleidx},
-        select: ['alcohol_imgpath', 'alcohol_name', 'alcohol_ename', 'alcohol_type', 'alcohol_class', 'alcohol_from', 'alcohol_percent', 'alcohol_manufacturer', 'alcohol_importer', 'alcohol_color', 'alcohol_woody', 'alcohol_cereal', 'alcohol_painty', 'alcohol_floral', 'alcohol_winy', 'alcohol_pitty', 'alcohol_sulper', 'alcohol_fruity', 'alcohol_info'],
+        select: ['alcohol_idx', 'alcohol_imgpath', 'alcohol_name', 'alcohol_ename', 'alcohol_type', 'alcohol_class', 'alcohol_from', 'alcohol_percent', 'alcohol_manufacturer', 'alcohol_importer', 'alcohol_color', 'alcohol_woody', 'alcohol_cereal', 'alcohol_painty', 'alcohol_floral', 'alcohol_winy', 'alcohol_pitty', 'alcohol_sulper', 'alcohol_fruity', 'alcohol_info'],
       });
       return {message: `주간보틀(홈화면)`, data: alcohol, statusCode: 200};
     } catch (error) {
