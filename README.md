@@ -1,7 +1,7 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:B993D6,100:8CA6DB&height=200&section=header&text=Drunk%20Whale&fontColor=f7f5f5&fontSize=55&fontAlign=71&fontAlignY=40&desc=Backend.%20madeBy%20강한결&descSize=18&descAlign=78" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:B993D6,100:8CA6DB&height=200&section=header&text=Drunken%20Whale&fontColor=f7f5f5&fontSize=55&fontAlign=71&fontAlignY=40&desc=Backend.%20madeBy%20강한결&descSize=18&descAlign=78" />
 
 <p align="center">
-  <a href="#" target="blank"><img src="https://github.com/kanghankyel/drunkwhale_project/assets/100983731/cccc5d96-122b-4fad-bae7-936c9d9d787e" width="150" alt="drunkwhale_logo" /></a>
+  <a href="http://118.67.133.203/" target="blank"><img src="https://github.com/kanghankyel/drunkwhale_project/assets/100983731/7cc09b02-d042-48af-9995-aa1c07ade136" width="150" alt="drunkwhale_logo" /></a>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="http://118.67.133.203:3001/swagger" target="blank"><img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Swagger-logo.png" width="150" alt="Swagger Logo" /></a>
 </p>
@@ -9,7 +9,7 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">위 이미지 혹은 <a href="#" target="_blank">Homepage(준비중입니다)</a> / <a href="http://118.67.133.203:3001/swagger" target="_blank">Swagger</a> 클릭을 통해 제작된 프로젝트로 확인하실 수 있습니다.</p>
+  <p align="center">위 이미지 혹은 <a href="http://118.67.133.203/" target="_blank">Homepage(제작중입니다)</a> / <a href="http://118.67.133.203:3001/swagger" target="_blank">Swagger</a> 클릭을 통해 제작된 프로젝트로 확인하실 수 있습니다.</p>
     <p align="center">
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
@@ -69,7 +69,7 @@
 >> - 무중단 배포를 위해 PM2 프로세스 매니저를 사용.
 >>
 > ERD 구성
->> ![DrunkWhaleERD](https://github.com/kanghankyel/drunkwhale_project/assets/100983731/816889ec-e1e6-4736-b83b-cc769d9e7b55)
+>> ![drunkenwhale_erd](https://github.com/kanghankyel/drunkwhale_project/assets/100983731/e23143ac-2dd7-44f2-975b-1bebf068bcac)
 
 ## 설치 방법
 
