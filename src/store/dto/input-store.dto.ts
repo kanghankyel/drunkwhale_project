@@ -30,7 +30,7 @@ export class InputStoreDto {
 
     @ApiProperty({description:'스토어 키워드'})
     @IsString()
-    readonly stroe_keyword: string | null;
+    readonly store_keyword: string | null;
 
     @ApiProperty({description:'스토어 회원이메일'})
     @IsString()

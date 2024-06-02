@@ -76,7 +76,7 @@ export class StoreService {
         await queryRunner.startTransaction();
     }
     try {
-      const {store_opentime, store_closetime, store_info, user_email} = inputStoreDto;
+      const {store_opentime, store_closetime, store_offday, store_info, store_keyword, user_email} = inputStoreDto;
       const store = await this.storeRepository.findOne({where:{user_email, store_status:'A'}});
       if(!store) {
         return {message:`일치하는 스토어가 없습니다. 입력된 회원 : ${user_email}`, statusCode:404};
@@ -149,7 +149,9 @@ export class StoreService {
       // 파일 제외 나머지 정보 저장
       store.store_opentime = inputStoreDto.store_opentime;
       store.store_closetime = inputStoreDto.store_closetime;
+      store.store_offday = inputStoreDto.store_offday;
       store.store_info = inputStoreDto.store_info;
+      store.store_keyword = inputStoreDto.store_keyword;
       // 3. 스토어 정보 트랜잭션 저장. 기존 코드 변경. ( 기존코드 => const inputStore = await this.storeRepository.save(store); )
       await queryRunner.manager.save(store);
       this.logger.debug(JSON.stringify(store.user_email) + ' 님의 스토어정보입력 완료');
@@ -164,7 +166,9 @@ export class StoreService {
           store_name: store.store_name,
           store_opentime: store.store_opentime,
           store_closetime: store.store_closetime,
-          store_info: store.store_info
+          store_offday: store.store_offday,
+          store_info: store.store_info,
+          store_keyword: store.store_keyword
         },
         statusCode:200
       };
@@ -210,6 +214,7 @@ export class StoreService {
           'store.store_opentime',
           'store.store_closetime',
           'store.store_offday',
+          'store.store_keyword',
         ])
         .where('store.store_status = :status', { status: 'A' })
         .take(take)
@@ -276,7 +281,7 @@ export class StoreService {
   async getNewStore() {
     try {
       const store = await this.storeRepository.find({
-        select: ['store_idx', 'store_name', 'store_ownername', 'store_phone', 'store_mainimgpath', 'store_add', 'store_adddetail', 'store_latitude', 'store_longitude', 'store_opentime', 'store_closetime', 'store_info'],
+        select: ['store_idx', 'store_name', 'store_ownername', 'store_phone', 'store_mainimgpath', 'store_add', 'store_adddetail', 'store_latitude', 'store_longitude', 'store_opentime', 'store_closetime', 'store_offday', 'store_info', 'store_keyword'],
         where: {store_status:'A'},
         order: {store_idx: 'DESC'},
         take: 3,

@@ -164,7 +164,7 @@ export class UserService {
   // 가맹회원 가입신청
   async createOwner(createOwnerDto: CreateOwnerDto, userIp) {
     try {
-      const {user_email, user_pw, user_name, user_phone, store_name, store_registnum, store_phone, store_postcode, store_add, store_adddetail} = createOwnerDto;
+      const {user_email, user_pw, user_name, user_phone, store_name, store_registnum, store_phone, store_postcode, store_add, store_adddetail, store_latitude, store_longitude} = createOwnerDto;
       const ownerEmailCheck = await this.userRepository.findOne({where:{user_email, user_status:In(['Z', 'Y', 'W'])}});
       const ownerPhoneCheck = await this.userRepository.findOne({where:{user_phone, user_status:In(['Z', 'Y', 'W', 'A', 'B'])}});
       const ownerEamilCheckUser = await this.userRepository.findOne({where:{user_email, user_status:In(['A', 'B'])}});
@@ -197,6 +197,7 @@ export class UserService {
       const store = new Store();
       store.store_name = createOwnerDto.store_name;
       store.store_registnum = createOwnerDto.store_registnum;
+      store.store_ownername = createOwnerDto.user_name;
       store.store_phone = createOwnerDto.store_phone;
       store.store_postcode = createOwnerDto.store_postcode;
       store.store_add = createOwnerDto.store_add;
